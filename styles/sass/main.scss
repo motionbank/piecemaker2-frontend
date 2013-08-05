@@ -1,0 +1,368 @@
+/* ==========================================================================
+   Import libraries
+   ========================================================================== */
+
+@import '../bourbon/bourbon';
+
+/* ==========================================================================
+   Sizes
+   ========================================================================== */
+
+$header-height: 44px;
+$navigation-width: 60px;
+$wrapper-video-width: 500px; /* don't forget: the browser adds the padding to this value */
+$padding: 30px;
+
+/* ==========================================================================
+   Colors
+   ========================================================================== */
+
+$body-text-color: #333;
+$darkblue: #030D1F;
+$border-color: #eee;
+
+/* ==========================================================================
+   Mixins
+   ========================================================================== */
+
+/* ==========================================================================
+   General improvements
+   ========================================================================== */
+
+/*
+ * Fix box-sizing
+ */
+
+*,
+*:after,
+*:before {
+  box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+}
+
+/*
+ * A better looking default horizontal rule
+ */
+
+hr {
+  display: block;
+  height: 1px;
+  border: 0;
+  border-top: 1px solid $border-color;
+  margin: 1em 0;
+  padding: 0;
+}
+
+/*
+ * Remove the gap between images and the bottom of their containers: h5bp.com/i/440
+ */
+
+img {
+  vertical-align: middle;
+}
+
+/*
+ * Remove default fieldset styles.
+ */
+
+fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+/*
+ * Allow only vertical resizing of textareas.
+ */
+
+textarea {
+  resize: vertical;
+}
+
+/*
+ * Chrome frame
+ */
+
+.chromeframe {
+  margin: 0.2em 0;
+  background: #ccc;
+  color: #000;
+  padding: 0.2em 0;
+}
+
+/* ==========================================================================
+   General Styles
+   ========================================================================== */
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  font-size: 14px;
+  line-height: 18px;
+  color: $body-text-color;
+}
+
+h1 {
+  font-size: 26px;
+  margin:0 0 40px 0;
+  padding:0 0 10px 0;
+  border-bottom: 1px solid $border-color;
+}
+
+h2 {
+  font-size: 20px;
+  margin:0 0 20px 0;
+  padding: 0px;
+}
+
+ul {
+  list-style: square;
+  padding:0px;
+  margin:0 0 20px 16px;
+
+}
+
+.padding {
+  padding:$padding;
+}
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+
+header {
+  width:100%;
+  height: $header-height;
+  line-height: $header-height;
+  position: fixed;
+  background-color: $darkblue;
+  padding:0 20px;
+
+  a {
+    float:right;
+    display: block;
+    margin:0 20px;
+    color:rgba(255,255,255,0.6);
+    text-decoration: none;
+  }
+
+  .logo {
+    color:rgba(255,255,255,0.6);
+    text-transform: uppercase;
+
+    strong {
+      color:rgba(255,255,255,0.8);
+    }
+
+  }
+
+}
+
+/* ==========================================================================
+   Wrapper
+   ========================================================================== */
+
+#main-wrapper {
+  height:100%;
+
+  #content-section {
+    height:100%;
+    padding: $header-height 0 0 0;
+
+    #content {
+      height:100%;
+      @include transition(opacity 0.5s);
+    }
+
+    #content-inner {
+      height:100%;
+    }
+
+  }
+
+}
+
+/* ==========================================================================
+   Navigation
+   ========================================================================== */
+
+nav {
+  width: $navigation-width;
+  height:100%;
+  padding: 0px;
+  float:left;
+  background-color: #eee;
+  border-right:1px solid #ddd;
+
+  ul {
+    list-style: none;
+    margin:0px;
+    padding:0px;
+
+    li {
+      margin:0px;
+      padding:0px;
+      width: $navigation-width;
+      height: $navigation-width;
+      border-bottom:1px solid #ccc;
+      @include transition(all 0.2s);
+
+      &:hover {
+        background-color:#ddd;
+      }
+
+      a {
+        text-decoration: none;
+        color:$body-text-color;
+        display: block;
+        width: $navigation-width !important;
+        height: $navigation-width !important;
+        line-height: $navigation-width !important;
+        text-align: center;
+
+        span {
+          height: $navigation-width !important;
+          line-height: $navigation-width !important;
+          color:rgba(0,0,0,0.2);
+          text-shadow: 0 1px 0 rgba(255,255,255,0.7);
+          @include transition(all 0.2s);
+        }
+
+      }
+
+    }
+
+    li.active {
+      background-color: #ddd;
+
+      span {
+        color:rgba(0,0,0,0.3);
+      }
+    }
+
+  }
+
+}
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+
+.button-row {
+  height:60px;
+  line-height: 60px;
+  border-bottom: 1px solid $border-color;
+  padding:0 30px;
+
+  a {
+    background-color:#eee;
+    padding:8px;
+    color:$body-text-color;
+    text-decoration: none;
+  }
+
+}
+
+/* ==========================================================================
+   Wrapper - Left
+   ========================================================================== */
+
+.wrapper-left {
+  width: $wrapper-video-width;
+  height:100%;
+  float:left;
+  border-right:1px solid $border-color;
+
+  /* video content for pieces list view */
+  .video-content {
+    padding:0 0 30px 0;
+    border-bottom: 1px solid $border-color;
+
+    .video-content-inner {
+
+      h1 {
+        margin:0 0 10px 0;
+        font-size: 16px;
+      }
+
+      p {
+        margin:0 0 10px 0;
+      }
+
+      video {
+        width: 100%;
+        margin:0 0 30px 0;
+      }
+
+    }
+
+  }
+
+  /* styles for groups list */
+  .groups-list {
+
+    ul {
+      margin:0px;
+      padding:0px;
+      list-style: none;
+
+      li {
+        display: block;
+        border-bottom:1px solid $border-color;
+
+        a {
+          display:block;
+          padding:15px 30px;
+          color:$body-text-color;
+          text-decoration: none;
+          @include transition(all 0.2s);
+
+          span {
+            display: block;
+            color:#999;
+          }
+
+        }
+
+      }
+
+    }
+
+  }
+
+}
+
+/* styles for login form */
+.view-login {
+  input {
+    display: block;
+    background-color:#fff;
+    border:1px solid $border-color;
+    padding:10px;
+    margin:0 0 10px 0;
+    width:100%;
+    @include transition(all 0.2s);
+
+    &:focus {
+      outline:none;
+      border:1px solid $darkblue;
+    }
+  }
+
+  input[type="submit"] {
+    background-color: #eee;
+    color: $body-text-color;
+  }
+}
+
+/* ==========================================================================
+   Wrapper - Right
+   ========================================================================== */
+
+.wrapper-right {
+  height:100%;
+}

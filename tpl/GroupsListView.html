@@ -1,0 +1,16 @@
+<section class="wrapper-left">
+    <div class="groups-list">
+
+        <div class="button-row">
+            <a href="#" class="icon-plus">
+                Add Group
+            </a>
+        </div>
+
+        <ul>
+            {{#.}}
+                <li><a href="#/groups/{{id}}">{{title}}<span>{{text}}</span></a></li>
+            {{/.}}
+        </ul>
+    </div>
+</section>
