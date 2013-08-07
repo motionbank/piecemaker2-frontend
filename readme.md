@@ -50,8 +50,11 @@ If you are using another code editor, you can run an external file watcher, e.g.
 ```
 $ cd piecemaker2-frontend
 $ bundle install
+
 $ rake daemon[start]
-$ rake daemon[stop]
+$ open http://localhost:50726
+
 $ rake daemon[status]
+$ rake daemon[stop]
 ```
 
