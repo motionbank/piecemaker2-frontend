@@ -1,6 +1,8 @@
-// save some global api settings
-var apiURL = 'http://localhost:9292/api/v1/';
-var apiKey;
+var settings = {
+    base_url: 'http://localhost:9292'
+};
+
+var API = new PieceMakerApi(settings);
 
 var directory = {
 

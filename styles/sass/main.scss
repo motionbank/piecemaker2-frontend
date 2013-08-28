@@ -154,6 +154,11 @@ header {
     color:rgba(255,255,255,0.6);
     text-transform: uppercase;
 
+    a {
+      float:left;
+      margin:0px;
+    }
+
     strong {
       color:rgba(255,255,255,0.8);
     }
@@ -338,7 +343,9 @@ nav {
 
 /* styles for login form */
 .view-login {
-  input {
+  input[type="text"],
+  input[type="password"],
+  input[type="submit"] {
     display: block;
     background-color:#fff;
     border:1px solid $border-color;
@@ -353,9 +360,26 @@ nav {
     }
   }
 
+  label {
+    display: block;
+    float:left;
+    margin:10px 0 20px 0;
+
+    input {
+      margin:0 5px 0 0;
+    }
+  }
+
   input[type="submit"] {
     background-color: #eee;
     color: $body-text-color;
+  }
+
+  a {
+    display: block;
+    float:right;
+    margin:10px 0 20px 0;
+    color:#000;
   }
 }
 

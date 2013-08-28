@@ -1,8 +1,10 @@
 <section class="wrapper-left padding view-login">
     <h1>Login</h1>
-    <form action="#" method="post">
-        <input type="text" name="email" placeholder="Email" />
-        <input type="password" name="password" placeholder="Password" />
+    <form action="#" method="post" id="login-form">
+        <input type="text" name="email" placeholder="Email" value="{{#email}}{{email}}{{/email}}" />
+        <input type="password" name="password" placeholder="Password" value="{{#password}}{{password}}{{/password}}" />
+        <label><input type="checkbox" name="login-save">Login-Daten speicheren</label>
+        <a href="#" id="login-delete">Login-Daten löschen</a>
         <input type="submit" id="login" name="login" />
     </form>
 </section>
