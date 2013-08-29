@@ -93,7 +93,9 @@ directory.Router = Backbone.Router.extend({
     },
 
     logout: function() {
-        directory.router.navigate("#", true);
+        API.logout(function(){
+            directory.router.navigate("#", true);
+        });
     }
 
 });

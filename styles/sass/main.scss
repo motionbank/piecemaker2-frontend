@@ -19,9 +19,9 @@ $padding: 30px;
 
 $body-text-color: #333;
 $dark: #2D323C;
-$darkblue: #123351;
+$darkblue: #174A79;
 $middleblue: #3B86CC;
-$lightblue: #E8F1F8;
+$lightblue: #80B4E5;
 $orange: #F39C12;
 $border-color: #E5E5E5;
 $list-hover: #FAFAFA;
@@ -46,22 +46,24 @@ $list-hover: #FAFAFA;
 }
 
 @mixin buttons {
-  background-color:#E5E5E5;
+  background-color:$middleblue;
   padding:8px;
-  border:1px solid #E5E5E5;
-  color:$body-text-color;
+  border:1px solid $middleblue;
+  color:#f5f5f5;
   text-decoration: none;
   height: auto;
   @include transition(all 0.2s);
 }
 
 @mixin buttons-hover {
-  background-color:$middleblue;
+  background-color:$lightblue;
   border-color:$middleblue;
 }
 
 @mixin buttons-focus {
-  @include input-focus;
+  background-color:$lightblue;
+  border:1px solid $middleblue;
+  outline:none;
 }
 
 /* ==========================================================================
@@ -186,20 +188,19 @@ header {
   height: $header-height;
   line-height: $header-height;
   position: fixed;
-  background-color: #666;
+  background-color: #CAC6BC;
   padding:0 20px;
-  border-bottom:1px solid #222;
+  border-bottom:1px solid #54524C;
 
   a {
     float:right;
     display: block;
     margin:0 20px;
-    color:rgba(255,255,255,0.6);
+    color:rgba(0,0,0,0.6);
     text-decoration: none;
   }
 
   .logo {
-    color:rgba(255,255,255,0.6);
     text-transform: uppercase;
 
     a {
@@ -208,7 +209,7 @@ header {
     }
 
     strong {
-      color:rgba(255,255,255,0.8);
+      color:rgba(0,0,0,0.8);
     }
 
   }
@@ -330,6 +331,7 @@ button,
 
 .form-crud {
 
+  background-color: #eee;
   padding:15px 30px;
 
   input[type="text"],
@@ -433,7 +435,7 @@ button,
           a {
             display: inline-block;
             margin:0 0 0 5px;
-            color:$body-text-color;
+            color:#666;
             @include transition(color 0.2s);
 
             &:hover {
