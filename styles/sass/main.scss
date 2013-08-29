@@ -23,8 +23,8 @@ $darkblue: #174A79;
 $middleblue: #3B86CC;
 $lightblue: #80B4E5;
 $orange: #F39C12;
-$border-color: #E5E5E5;
-$list-hover: #FAFAFA;
+$border-color: #D3D0CA;
+$list-hover: #EDF1F4;
 
 /* ==========================================================================
    Mixins
@@ -80,6 +80,9 @@ $list-hover: #FAFAFA;
   box-sizing: border-box;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 /*
@@ -188,9 +191,8 @@ header {
   height: $header-height;
   line-height: $header-height;
   position: fixed;
-  background-color: #CAC6BC;
+  background-color: #D3D0CA;
   padding:0 20px;
-  border-bottom:1px solid #54524C;
 
   a {
     float:right;
@@ -229,6 +231,7 @@ header {
 
     #content {
       height:100%;
+      border-top: 1px solid #A19F9A;
       padding: 0 0 0 $navigation-width;
       @include transition(opacity 0.5s);
     }
@@ -331,7 +334,7 @@ button,
 
 .form-crud {
 
-  background-color: #eee;
+  background-color: $list-hover;
   padding:15px 30px;
 
   input[type="text"],
