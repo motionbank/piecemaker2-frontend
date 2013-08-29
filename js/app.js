@@ -80,21 +80,18 @@ directory.Router = Backbone.Router.extend({
 
     login: function () {
 
-        // Since the group list view never changes, we instantiate it and render it only once
-        if (!directory.loginView) {
-            directory.loginView = new directory.LoginView();
-            directory.loginView.render();
-        }
-
+        directory.loginView = new directory.LoginView();
+        directory.loginView.render();
         this.$content.html(directory.loginView.el);
 
         // remove active classes
         directory.shellView.selectMenuItem('');
+
     },
 
     logout: function() {
         API.logout(function(){
-            directory.router.navigate("#", true);
+            directory.router.navigate("", true);
         });
     }
 

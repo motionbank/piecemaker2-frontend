@@ -193,6 +193,7 @@ header {
   line-height: $header-height;
   position: fixed;
   background-color: #D3D0CA;
+  border-bottom: 1px solid #A19F9A;
   padding:0 20px;
 
   a {
@@ -232,7 +233,6 @@ header {
 
     #content {
       height:100%;
-      border-top: 1px solid #A19F9A;
       padding: 0 0 0 $navigation-width;
       @include transition(opacity 0.5s);
     }
@@ -253,6 +253,7 @@ nav {
   width: $navigation-width;
   height:100%;
   padding: 0px;
+  margin:-1px 0 0 0;
   float:left;
   background-color: #222;
   position: fixed;
@@ -327,10 +328,11 @@ button,
 }
 
 .button-row {
-  height:60px;
-  line-height: 60px;
+  height:59px;
+  line-height: 59px;
   border-bottom: 1px solid $border-color;
   padding:0 $padding;
+  background-color: $list-hover;
 }
 
 .form-crud {
