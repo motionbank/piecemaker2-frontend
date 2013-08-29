@@ -11,7 +11,8 @@
 $header-height: 44px;
 $navigation-width: 60px;
 $wrapper-video-width: 500px; /* don't forget: browser adds padding to this value */
-$padding: 30px;
+$padding: 25px;
+
 
 /* ==========================================================================
    Colors
@@ -329,13 +330,13 @@ button,
   height:60px;
   line-height: 60px;
   border-bottom: 1px solid $border-color;
-  padding:0 30px;
+  padding:0 $padding;
 }
 
 .form-crud {
 
   background-color: $list-hover;
-  padding:15px 30px;
+  padding:15px $padding;
 
   input[type="text"],
   textarea {
@@ -417,7 +418,7 @@ button,
 
         a.group-link {
           display:inline-block;
-          padding:15px 30px;
+          padding:15px $padding;
           color:$body-text-color;
           text-decoration: none;
           width:400px;
