@@ -46,7 +46,7 @@ directory.LoginView = Backbone.View.extend({
         }
 
         API.login(email,password,function(){
-            directory.router.navigate('/home', true);
+            directory.router.navigate('#/home', true);
         });
 
         return false;

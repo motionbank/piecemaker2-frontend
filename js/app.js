@@ -23,6 +23,7 @@ var directory = {
         });
 
         $.when.apply(null, deferreds).done(callback);
+
     }
 
 };
@@ -38,6 +39,13 @@ directory.Router = Backbone.Router.extend({
     },
 
     initialize: function () {
+
+        // force to login view if no api key is set
+        if (!API.api_key) {
+            window.location = '#';
+        }
+
+        // render main view
         directory.shellView = new directory.ShellView();
         $('body').html(directory.shellView.render().el);
         this.$content = $("#content");
@@ -45,40 +53,47 @@ directory.Router = Backbone.Router.extend({
 
     home: function () {
 
-        // Since the home view never changes, we instantiate it and render it only once
-        if (!directory.homelView) {
-            directory.homelView = new directory.HomeView();
-            directory.homelView.render();
-        } else {
-            directory.homelView.delegateEvents(); // delegate events when the view is recycled
+        if (API.api_key) {
+            // Since the home view never changes, we instantiate it and render it only once
+            if (!directory.homelView) {
+                directory.homelView = new directory.HomeView();
+                directory.homelView.render();
+            } else {
+                directory.homelView.delegateEvents(); // delegate events when the view is recycled
+            }
+
+            this.$content.html(directory.homelView.el);
+            directory.shellView.selectMenuItem('home-menu');
         }
-
-        // this.$content.transition({ opacity: 0, easing: 'snap', duration:100 }, function () { $(this).html(directory.homelView.el).css({'opacity':1}); }); // TODO: some nice fading?
-
-        this.$content.html(directory.homelView.el);
-        directory.shellView.selectMenuItem('home-menu');
     },
 
     groupsList: function () {
 
-        directory.groupsListView = new directory.GroupsListView();
-        directory.groupsListView.render();
-        this.$content.html(directory.groupsListView.el);
+        if (API.api_key) {
+            directory.groupsListView = new directory.GroupsListView();
+            directory.groupsListView.render();
+            this.$content.html(directory.groupsListView.el);
 
-        // add active class to navigation
-        directory.shellView.selectMenuItem('pieces-menu');
+            // add active class to navigation
+            directory.shellView.selectMenuItem('pieces-menu');
+        }
     },
 
     groupsDetail: function (id) {
-        directory.groupsDetailView = new directory.GroupsDetailView({model: id});
-        directory.groupsDetailView.render();
-        this.$content.html(directory.groupsDetailView.el);
 
-        // add active class to navigation
-        directory.shellView.selectMenuItem('pieces-menu');
+        if (API.api_key) {
+            directory.groupsDetailView = new directory.GroupsDetailView({model: id});
+            directory.groupsDetailView.render();
+            this.$content.html(directory.groupsDetailView.el);
+
+            // add active class to navigation
+            directory.shellView.selectMenuItem('pieces-menu');
+        }
     },
 
     login: function () {
+
+        alert(API.api_key)
 
         directory.loginView = new directory.LoginView();
         directory.loginView.render();
@@ -90,11 +105,34 @@ directory.Router = Backbone.Router.extend({
     },
 
     logout: function() {
-        API.logout(function(){
-            directory.router.navigate("", true);
-        });
+        if (API.api_key) {
+            API.logout(function(){
+
+                // reset API key
+                API.api_key = null;
+
+                // redirect to login form
+                directory.router.navigate("", true);
+            });
+        }
     }
 
+});
+
+// show/hide some elements if they are logged in
+// TODO: improve when implementing user groups: http://stackoverflow.com/questions/17974259/how-to-protect-routes-for-different-user-groups
+Backbone.history.bind("all", function (route, router) {
+
+    var $logout_button = $('.logout');
+
+    if (API.api_key) {
+        $logout_button.show();
+    } else {
+        $logout_button.hide();
+
+        // force to login view if no api key is set
+        directory.router.navigate("", true);
+    }
 });
 
 $(function(){
