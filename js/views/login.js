@@ -55,8 +55,10 @@ directory.LoginView = Backbone.View.extend({
     login_delete: function() {
         localStorage.removeItem('email');
         localStorage.removeItem('password');
+
         $('input[name="email"]').val('');
         $('input[name="password"]').val('');
+        $('input[name="login-save"]').attr('checked', false);
 
         return false;
     }
