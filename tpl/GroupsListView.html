@@ -23,7 +23,14 @@
             </li>
 
             <!-- partial template -->
-            <li data-id="{{id}}"><a href="#/groups/{{id}}">{{title}}<span>{{text}}</span></a></li>
+            <li data-id="{{id}}" class="item">
+                <a class="group-link" href="#/groups/{{id}}">{{title}}<span>{{text}}</span></a>
+                <div class="actions">
+                    <a href="#" class="icon-wrench group-edit">&nbsp;</a>
+                    <a href="#" class="icon-remove group-delete">&nbsp;</a>
+                </div>
+                <br class="clear" />
+            </li>
 
             {{#.}}
                 {{> list}}

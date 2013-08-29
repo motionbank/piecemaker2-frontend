@@ -10,7 +10,7 @@
 
 $header-height: 44px;
 $navigation-width: 60px;
-$wrapper-video-width: 500px; /* don't forget: the browser adds the padding to this value */
+$wrapper-video-width: 500px; /* don't forget: browser adds padding to this value */
 $padding: 30px;
 
 /* ==========================================================================
@@ -18,8 +18,11 @@ $padding: 30px;
    ========================================================================== */
 
 $body-text-color: #333;
-$darkblue: #030D1F;
-$border-color: #eee;
+$dark: #111;
+$middleblue: #62B4FF;
+$lightblue: #DBE8F4;
+$orange: #F39C12;
+$border-color: #ECF0F1;
 
 /* ==========================================================================
    Mixins
@@ -37,7 +40,7 @@ $border-color: #eee;
 
 @mixin input-focus {
   outline:none;
-  border:1px solid $darkblue;
+  border:1px solid $orange;
 }
 
 @mixin buttons {
@@ -47,11 +50,11 @@ $border-color: #eee;
   color:$body-text-color;
   text-decoration: none;
   height: auto;
-  @include transition(background-color, border-color 0.2s);
+  @include transition(all 0.2s);
 }
 
 @mixin buttons-hover {
-  background-color:#ddd;
+  background-color:$orange;
 }
 
 @mixin buttons-focus {
@@ -180,7 +183,7 @@ header {
   height: $header-height;
   line-height: $header-height;
   position: fixed;
-  background-color: $darkblue;
+  background-color: $dark;
   padding:0 20px;
 
   a {
@@ -327,9 +330,7 @@ button,
   padding:15px 30px;
 
   input[type="text"],
-  input[type="submit"],
-  textarea,
-  button {
+  textarea {
     @include input;
 
     &:focus {
@@ -390,24 +391,50 @@ button,
       padding:0px;
       list-style: none;
 
-      li {
+      li.item {
         display: block;
         border-bottom:1px solid $border-color;
+
+        &:hover {
+          background-color: $middleblue;
+        }
+
+        &:hover span {
+          color:$lightblue !important;
+        }
+
+        &:hover .actions {
+          opacity: 1;
+        }
 
         &:nth-child(2) {
           display: none !important; /* hide partial template */
         }
 
-        a {
-          display:block;
+        a.group-link {
+          display:inline-block;
           padding:15px 30px;
           color:$body-text-color;
           text-decoration: none;
-          @include transition(all 0.2s);
+          width:400px;
+          float:left;
 
           span {
             display: block;
             color:#999;
+          }
+
+        }
+
+        .actions {
+          text-align: right;
+          padding:15px 15px 0 0;
+          opacity:0;
+
+          a {
+            display: inline-block;
+            margin:0 0 0 5px;
+            color:$body-text-color;
           }
 
         }
@@ -456,7 +483,7 @@ button,
     display: block;
     float:right;
     margin:10px 0 20px 0;
-    color:#000;
+    color:$body-text-color;
   }
 }
 
