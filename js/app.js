@@ -93,16 +93,16 @@ directory.Router = Backbone.Router.extend({
     },
 
     logout: function() {
-        apiKey = '';
         directory.router.navigate("#", true);
     }
 
 });
 
-$(document).on("ready", function () {
+$(function(){
     directory.loadTemplates(["LoginView", "HomeView", "GroupsListView", "GroupsDetailView", "ShellView"],
         function () {
             directory.router = new directory.Router();
             Backbone.history.start();
         });
+
 });

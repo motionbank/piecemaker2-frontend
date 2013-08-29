@@ -7,24 +7,28 @@ directory.LoginView = Backbone.View.extend({
         var template = this.template();
         var obj = this.el;
 
-        /*
-         * don't worry, only for development
-         */
-
+        // don't worry, only for development
         var email = localStorage.getItem('email');
         var password = localStorage.getItem('password');
+        var checked = '';
+
+        if (email && password) {
+            checked = 'checked="checked"';
+        }
 
         var login_data = {
             email: email,
-            password: password
+            password: password,
+            checked: checked
         };
 
+        // render login template and set email and password if available
         $(obj).html(Mustache.to_html(template,login_data));
     },
 
     events: {
         "click #login": "login",
-        "click #login-delete": "login_delete",
+        "click #login-delete": "login_delete"
     },
 
     login: function(){
@@ -36,9 +40,12 @@ directory.LoginView = Backbone.View.extend({
         if ($login_save.is(':checked')) {
             localStorage.setItem('email', email);
             localStorage.setItem('password', password);
+        } else {
+            localStorage.removeItem('email');
+            localStorage.removeItem('password');
         }
 
-        API.login(email,password,function(res){
+        API.login(email,password,function(){
             directory.router.navigate('/home', true);
         });
 

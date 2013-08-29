@@ -25,6 +25,39 @@ $border-color: #eee;
    Mixins
    ========================================================================== */
 
+@mixin input {
+  display: block;
+  background-color:#fff;
+  border:1px solid $border-color;
+  padding:10px;
+  margin:0 0 10px 0;
+  width:100%;
+  @include transition(border-color 0.2s);
+}
+
+@mixin input-focus {
+  outline:none;
+  border:1px solid $darkblue;
+}
+
+@mixin buttons {
+  background-color:#eee;
+  padding:8px;
+  border:1px solid $border-color;
+  color:$body-text-color;
+  text-decoration: none;
+  height: auto;
+  @include transition(background-color, border-color 0.2s);
+}
+
+@mixin buttons-hover {
+  background-color:#ddd;
+}
+
+@mixin buttons-focus {
+  @include input-focus;
+}
+
 /* ==========================================================================
    General improvements
    ========================================================================== */
@@ -130,6 +163,14 @@ ul {
   padding:$padding;
 }
 
+.hide {
+  display: none !important;
+}
+
+.clear {
+  clear:both;
+}
+
 /* ==========================================================================
    Header
    ========================================================================== */
@@ -180,6 +221,7 @@ header {
 
     #content {
       height:100%;
+      padding: 0 0 0 $navigation-width;
       @include transition(opacity 0.5s);
     }
 
@@ -202,6 +244,7 @@ nav {
   float:left;
   background-color: #eee;
   border-right:1px solid #ddd;
+  position: fixed;
 
   ul {
     list-style: none;
@@ -257,17 +300,49 @@ nav {
    Buttons
    ========================================================================== */
 
+input[type="submit"],
+button,
+.button-row a {
+  @include buttons;
+
+  &:hover {
+    @include buttons-hover;
+  }
+
+  &:focus {
+    @include buttons-focus;
+  }
+
+}
+
 .button-row {
   height:60px;
   line-height: 60px;
   border-bottom: 1px solid $border-color;
   padding:0 30px;
+}
 
-  a {
-    background-color:#eee;
-    padding:8px;
-    color:$body-text-color;
-    text-decoration: none;
+.form-crud {
+
+  padding:15px 30px;
+
+  input[type="text"],
+  input[type="submit"],
+  textarea,
+  button {
+    @include input;
+
+    &:focus {
+      @include input-focus;
+    }
+
+  }
+
+  input[type="submit"],
+  button {
+    width: auto;
+    float:left;
+    margin:0 5px 0 0;
   }
 
 }
@@ -278,7 +353,7 @@ nav {
 
 .wrapper-left {
   width: $wrapper-video-width;
-  height:100%;
+  min-height:100%;
   float:left;
   border-right:1px solid $border-color;
 
@@ -319,6 +394,10 @@ nav {
         display: block;
         border-bottom:1px solid $border-color;
 
+        &:nth-child(2) {
+          display: none !important; /* hide partial template */
+        }
+
         a {
           display:block;
           padding:15px 30px;
@@ -341,22 +420,25 @@ nav {
 
 }
 
+.group-add-wrapper {
+  height: 0px;
+  overflow: hidden;
+  border-bottom:none !important;
+}
+
+.group-add-wrapper-open {
+  height: auto;
+  border-bottom:1px solid $border-color !important;
+}
+
 /* styles for login form */
 .view-login {
   input[type="text"],
-  input[type="password"],
-  input[type="submit"] {
-    display: block;
-    background-color:#fff;
-    border:1px solid $border-color;
-    padding:10px;
-    margin:0 0 10px 0;
-    width:100%;
-    @include transition(all 0.2s);
+  input[type="password"] {
+    @include input;
 
     &:focus {
-      outline:none;
-      border:1px solid $darkblue;
+      @include input-focus;
     }
   }
 
@@ -368,11 +450,6 @@ nav {
     input {
       margin:0 5px 0 0;
     }
-  }
-
-  input[type="submit"] {
-    background-color: #eee;
-    color: $body-text-color;
   }
 
   a {
