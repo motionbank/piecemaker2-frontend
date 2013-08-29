@@ -93,8 +93,6 @@ directory.Router = Backbone.Router.extend({
 
     login: function () {
 
-        alert(API.api_key)
-
         directory.loginView = new directory.LoginView();
         directory.loginView.render();
         this.$content.html(directory.loginView.el);
