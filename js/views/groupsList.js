@@ -3,6 +3,7 @@ directory.GroupsListView = Backbone.View.extend({
     obj: null,
     template: null,
     partial_list_item: null,
+    tmp: null, // var to store misc html temporary
     id: 'content-inner',
 
     render:function () {
@@ -29,52 +30,109 @@ directory.GroupsListView = Backbone.View.extend({
     },
 
     events: {
-        "click #group-add": "group_add",
-        "click #group-add-cancel": "group_add_cancel",
-        "click #group-save": "group_save",
-        "click #group-update": "group_update",
+        "click .group-add": "group_add",
+        "click .group-cancel": "group_cancel",
+        "click .group-save": "group_save",
+        "click .group-update": "group_update",
         "click .group-delete": "group_delete"
     },
 
     group_add: function() {
-        $('.group-add-wrapper').addClass('group-add-wrapper-open');
+        $('.group-crud-wrapper').addClass('group-crud-wrapper-open');
         return false;
     },
 
-    group_add_cancel: function() {
-        $('.group-add-wrapper').removeClass('group-add-wrapper-open');
+    group_cancel: function(e) {
+
+        var obj = e.target;
+        var parent = $(obj).closest('li');
+
+        // check if form is inside a list item or standalone (add form)
+        if (parent.attr('class') == 'item') {
+
+            // show old content
+            parent.html(this.tmp);
+        } else if (parent.hasClass('group-crud-wrapper')) {
+
+            // close add form
+            $('.group-crud-wrapper').removeClass('group-crud-wrapper-open');
+        }
+
         return false;
     },
 
-    group_save: function() {
-        var title = $('input[name="title"]').val();
-        var text = $('textarea[name="text"]').val();
+    group_save: function(e) {
+        var obj = e.target;
+        var parent = $(obj).closest('li');
 
-        API.createGroup(title,text,function(res){
+        var title = parent.find('input[name="title"]').val();
+        var text = parent.find('textarea[name="text"]').val();
 
-            // append new content
-            var content = Mustache.render(partial_list_item.list,res);
-            $('.groups-list').find('ul').append(content);
+        // if form is inside list item, use update function
+        if (parent.attr('class') == 'item') {
 
-            // reset form
-            $('form')[0].reset();
-            $('#group-add-cancel').click();
+            var id = parent.data('id');
+            var data = {
+                title:title,
+                text:text
+            };
+
+            API.updateGroup(id,data,function(res){
+
+                // update new content
+                var content = Mustache.render(partial_list_item.list,res);
+                parent.replaceWith(content);
+
+            });
+
+        // if form is standalone (add form), use create function
+        } else if (parent.hasClass('group-crud-wrapper')) {
+            API.createGroup(title,text,function(res){
+
+                // append new content
+                var content = Mustache.render(partial_list_item.list,res);
+                $('.groups-list').find('ul').append(content);
+
+                // reset form
+                var $wrapper = $('.group-crud-wrapper');
+                $wrapper.find('form')[0].reset();
+                $wrapper.find('.group-cancel').click();
+
+            });
+        }
+
+        return false;
+
+    },
+
+    group_update: function(e) {
+        var obj = e.target;
+        var parent = $(obj).closest('.item');
+        var id = parent.data('id');
+
+        // store old content temporary
+        this.tmp = parent.html();
+
+        // get form html and append it
+        var form = $('.group-crud-wrapper').html();
+        parent.html(form);
+
+        // get group details and put them in edit form
+        API.getGroup(id,function(res){
+
+            parent.find('input[name="title"]').val(res.title);
+            parent.find('textarea[name="text"]').val(res.text);
 
         });
 
         return false;
-
-    },
-
-    group_update: function() {
-        return false;
     },
 
     group_delete: function(e) {
-
         var obj = e.target;
         var parent = $(obj).closest('.item');
         var id = parent.data('id');
+
         var check = confirm('Delete?');
         if (check) {
             API.deleteGroup(id,function(){

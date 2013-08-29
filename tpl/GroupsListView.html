@@ -2,7 +2,7 @@
     <div class="groups-list">
 
         <div class="button-row">
-            <a href="#" class="icon-plus" id="group-add">
+            <a href="#" class="icon-plus group-add">
                 Add Group
             </a>
         </div>
@@ -10,13 +10,13 @@
         <ul>
 
             <!-- add form -->
-            <li class="group-add-wrapper">
+            <li class="group-crud-wrapper">
                 <form action="#" method="post" class="form-crud">
                     <input type="text" name="title" placeholder="Title" required />
                     <textarea name="text" placeholder="Text" required></textarea>
 
-                    <input type="submit" id="group-save" value="Save" />
-                    <button type="button" id="group-add-cancel">Cancel</button>
+                    <input type="submit" class="group-save" value="Save" />
+                    <button type="button" class="group-cancel">Cancel</button>
                     <br class="clear" />
 
                 </form>
@@ -26,12 +26,13 @@
             <li data-id="{{id}}" class="item">
                 <a class="group-link" href="#/groups/{{id}}">{{title}}<span>{{text}}</span></a>
                 <div class="actions">
-                    <a href="#" class="icon-wrench group-edit">&nbsp;</a>
+                    <a href="#" class="icon-wrench group-update">&nbsp;</a>
                     <a href="#" class="icon-remove group-delete">&nbsp;</a>
                 </div>
                 <br class="clear" />
             </li>
 
+            <!-- list groups -->
             {{#.}}
                 {{> list}}
             {{/.}}

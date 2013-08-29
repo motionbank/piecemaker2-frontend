@@ -18,11 +18,13 @@ $padding: 30px;
    ========================================================================== */
 
 $body-text-color: #333;
-$dark: #111;
-$middleblue: #62B4FF;
-$lightblue: #DBE8F4;
+$dark: #2D323C;
+$darkblue: #123351;
+$middleblue: #3B86CC;
+$lightblue: #E8F1F8;
 $orange: #F39C12;
-$border-color: #ECF0F1;
+$border-color: #E5E5E5;
+$list-hover: #FAFAFA;
 
 /* ==========================================================================
    Mixins
@@ -40,13 +42,13 @@ $border-color: #ECF0F1;
 
 @mixin input-focus {
   outline:none;
-  border:1px solid $orange;
+  border:1px solid $middleblue;
 }
 
 @mixin buttons {
-  background-color:#eee;
+  background-color:#E5E5E5;
   padding:8px;
-  border:1px solid $border-color;
+  border:1px solid #E5E5E5;
   color:$body-text-color;
   text-decoration: none;
   height: auto;
@@ -54,7 +56,8 @@ $border-color: #ECF0F1;
 }
 
 @mixin buttons-hover {
-  background-color:$orange;
+  background-color:$middleblue;
+  border-color:$middleblue;
 }
 
 @mixin buttons-focus {
@@ -183,8 +186,9 @@ header {
   height: $header-height;
   line-height: $header-height;
   position: fixed;
-  background-color: $dark;
+  background-color: #666;
   padding:0 20px;
+  border-bottom:1px solid #222;
 
   a {
     float:right;
@@ -245,8 +249,7 @@ nav {
   height:100%;
   padding: 0px;
   float:left;
-  background-color: #eee;
-  border-right:1px solid #ddd;
+  background-color: #222;
   position: fixed;
 
   ul {
@@ -259,11 +262,11 @@ nav {
       padding:0px;
       width: $navigation-width;
       height: $navigation-width;
-      border-bottom:1px solid #ccc;
+      border-bottom:1px solid #444;
       @include transition(all 0.2s);
 
       &:hover {
-        background-color:#ddd;
+        background-color:#333;
       }
 
       a {
@@ -278,8 +281,8 @@ nav {
         span {
           height: $navigation-width !important;
           line-height: $navigation-width !important;
-          color:rgba(0,0,0,0.2);
-          text-shadow: 0 1px 0 rgba(255,255,255,0.7);
+          color:#777;
+          text-shadow: 0 1px 0 rgba(0,0,0,0.9);
           @include transition(all 0.2s);
         }
 
@@ -288,10 +291,10 @@ nav {
     }
 
     li.active {
-      background-color: #ddd;
+      background-color: #333;
 
       span {
-        color:rgba(0,0,0,0.3);
+        color:#777;
       }
     }
 
@@ -396,11 +399,7 @@ button,
         border-bottom:1px solid $border-color;
 
         &:hover {
-          background-color: $middleblue;
-        }
-
-        &:hover span {
-          color:$lightblue !important;
+          background-color: $list-hover;
         }
 
         &:hover .actions {
@@ -435,6 +434,12 @@ button,
             display: inline-block;
             margin:0 0 0 5px;
             color:$body-text-color;
+            @include transition(color 0.2s);
+
+            &:hover {
+              color:$middleblue;
+            }
+
           }
 
         }
@@ -447,13 +452,13 @@ button,
 
 }
 
-.group-add-wrapper {
+.group-crud-wrapper {
   height: 0px;
   overflow: hidden;
   border-bottom:none !important;
 }
 
-.group-add-wrapper-open {
+.group-crud-wrapper-open {
   height: auto;
   border-bottom:1px solid $border-color !important;
 }
