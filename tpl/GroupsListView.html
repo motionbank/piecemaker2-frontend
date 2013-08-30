@@ -5,6 +5,13 @@
             <a href="#" class="icon-plus group-add">
                 Add Group
             </a>
+
+            <div class="info-wrapper">
+                <span class="info icon-info-sign">
+                    <span class="counter">{{count}}</span> Groups
+                </span>
+            </div>
+
         </div>
 
         <ul>
@@ -15,8 +22,8 @@
                     <input type="text" name="title" placeholder="Title" required />
                     <textarea name="text" placeholder="Text" required></textarea>
 
-                    <input type="submit" class="group-save" value="Save" />
-                    <button type="button" class="group-cancel">Cancel</button>
+                    <button type="submit" class="group-save icon-ok">Save</button>
+                    <button type="button" class="group-cancel icon-remove">Cancel</button>
                     <br class="clear" />
 
                 </form>
@@ -33,9 +40,9 @@
             </li>
 
             <!-- list groups -->
-            {{#.}}
+            {{#groups}}
                 {{> list}}
-            {{/.}}
+            {{/groups}}
         </ul>
     </div>
 </section>

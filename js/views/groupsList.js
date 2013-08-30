@@ -23,8 +23,13 @@ directory.GroupsListView = Backbone.View.extend({
         // define mustache partial
         partial_list_item = { "list" : $el[0].outerHTML };
 
-        API.listGroups(function(res){
-            $(obj).html(Mustache.render(tpl,res,partial_list_item));
+        API.listGroups(function(res) {
+            var data = {
+                groups:res,
+                count:res.length
+            };
+
+            $(obj).html(Mustache.render(tpl,data,partial_list_item));
         });
 
     },
@@ -93,6 +98,10 @@ directory.GroupsListView = Backbone.View.extend({
                 var content = Mustache.render(partial_list_item.list,res);
                 $('.groups-list').find('ul').append(content);
 
+                // update group counter
+                var $counter = $('.counter');
+                $counter.text(parseInt($counter.text()) + 1);
+
                 // reset form
                 var $wrapper = $('.group-crud-wrapper');
                 $wrapper.find('form')[0].reset();
@@ -136,6 +145,12 @@ directory.GroupsListView = Backbone.View.extend({
         var check = confirm('Delete?');
         if (check) {
             API.deleteGroup(id,function(){
+
+                // update group counter
+                var $counter = $('.counter');
+                $counter.text(parseInt($counter.text()) - 1);
+
+                // remove list item
                 parent.remove();
             });
         }
