@@ -1,4 +1,37 @@
+/*
+ * user right management
+ */
+
+function userHasPermission() {
+
+    // only simple detection (same as userLoggedIn()) until user permissions are implemented
+    return API.api_key;
+}
+
+function userLoggedIn() {
+    return API.api_key;
+}
+
+/*
+ * global error handling
+ */
+
+function errorHandling(err) {
+    var status = err[0];
+    var route = Backbone.history.fragment;
+    if (status == 401 && route == '') {
+        alert('Wrong login data');
+    } else if (status == 401 && route != '') {
+        alert('Unauthorized');
+    }
+}
+
 var settings = {
+    context: {
+        piecemakerError: function () {
+            errorHandling(arguments);
+        }
+    },
     base_url: 'http://localhost:9292'
 };
 
@@ -40,8 +73,8 @@ directory.Router = Backbone.Router.extend({
 
     initialize: function () {
 
-        // force to login view if no api key is set
-        if (!API.api_key) {
+        // force to login view if no api key is set/user isn't logged in
+        if (!userHasPermission()) {
             window.location = '#';
         }
 
@@ -53,7 +86,7 @@ directory.Router = Backbone.Router.extend({
 
     home: function () {
 
-        if (API.api_key) {
+        if (userHasPermission()) {
             // Since the home view never changes, we instantiate it and render it only once
             if (!directory.homelView) {
                 directory.homelView = new directory.HomeView();
@@ -69,7 +102,7 @@ directory.Router = Backbone.Router.extend({
 
     groupsList: function () {
 
-        if (API.api_key) {
+        if (userHasPermission()) {
             directory.groupsListView = new directory.GroupsListView();
             directory.groupsListView.render();
             this.$content.html(directory.groupsListView.el);
@@ -81,7 +114,7 @@ directory.Router = Backbone.Router.extend({
 
     groupsDetail: function (id) {
 
-        if (API.api_key) {
+        if (userHasPermission()) {
             directory.groupsDetailView = new directory.GroupsDetailView({model: id});
             directory.groupsDetailView.render();
             this.$content.html(directory.groupsDetailView.el);
@@ -103,7 +136,7 @@ directory.Router = Backbone.Router.extend({
     },
 
     logout: function() {
-        if (API.api_key) {
+        if (userHasPermission()) {
             API.logout(function(){
 
                 // reset API key
@@ -123,7 +156,7 @@ Backbone.history.bind("all", function (route, router) {
 
     var $logout_button = $('.logout');
 
-    if (API.api_key) {
+    if (userLoggedIn()) {
         $logout_button.show();
     } else {
         $logout_button.hide();
