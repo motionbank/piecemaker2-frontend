@@ -244,9 +244,10 @@ header {
   }
 
   a.logout {
-    @include buttons;
-    background-color: $sand-dark;
-    border-color: $sand-dark;
+    @include buttons-general;
+    background-color: rgba($sand-dark,0.4);
+    color: darken($sand-dark,20%);
+    border: 1px solid $sand-dark;
     line-height: normal;
 
     &:hover {
