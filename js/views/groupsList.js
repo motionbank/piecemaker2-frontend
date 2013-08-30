@@ -26,7 +26,7 @@ directory.GroupsListView = Backbone.View.extend({
         API.listGroups(function(res) {
             var data = {
                 groups:res,
-                count:res.length
+                counter:res.length
             };
 
             $(obj).html(Mustache.render(tpl,data,partial_list_item));
