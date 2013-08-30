@@ -1,13 +1,13 @@
 <section class="wrapper-left padding view-login">
     <h1>Login</h1>
     <form action="#" method="post" id="login-form">
-        <input type="email" name="email" placeholder="Email" value="{{email}}" required />
-        <input type="password" name="password" placeholder="Password" value="{{password}}" required />
+        <input type="email" name="email" placeholder="Email" value="{{email}}" required tabindex="1" />
+        <input type="password" name="password" placeholder="Password" value="{{password}}" required tabindex="2" />
 
-        <label><input type="checkbox" name="login-save" {{checked}}>Save login data</label>
-        <a href="#" id="login-delete">Delete login data</a>
+        <input type="checkbox" name="login-save" id="login-save" tabindex="3" {{checked}} ><label for="login-save">Save login data</label>
+        <a href="#" id="login-delete" class="button-light icon-remove" tabindex="5">Delete login data</a>
         <br class="clear" />
 
-        <button type="submit" id="login" name="login" class="icon-key">Login</button>
+        <button type="submit" id="login" name="login" class="icon-key" tabindex="4">Login</button>
     </form>
 </section>

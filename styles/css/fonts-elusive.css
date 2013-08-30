@@ -21,11 +21,6 @@
     -webkit-font-smoothing: antialiased;
 }
 
-[class^="icon-"]:before,
-[class*=" icon-"]:before {
-    margin:0 6px 0 0 !important;
-}
-
 /* Use the following CSS code if you want to have a class per icon */
 /*
 Instead of a list of all class selectors,

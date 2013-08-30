@@ -49,25 +49,55 @@ $sand-light:#D3D0CA;
   border:1px solid $middleblue;
 }
 
-@mixin buttons {
-  background-color:$middleblue;
-  padding:6px 8px;
-  border:1px solid $middleblue;
-  color:#f5f5f5;
+@mixin buttons-general {
   text-decoration: none;
   height: auto;
   @include transition(all 0.2s);
+  padding:6px 8px;
 }
 
-@mixin buttons-hover {
-  background-color:$lightblue;
-  border-color:$middleblue;
-}
-
-@mixin buttons-focus {
-  background-color:$lightblue;
+@mixin buttons {
+  @include buttons-general;
+  background-color:$middleblue;
   border:1px solid $middleblue;
-  outline:none;
+  color:#f5f5f5;
+
+  &:hover {
+    background-color:$lightblue;
+    border-color:$middleblue;
+  }
+
+  &:focus {
+    background-color:$lightblue;
+    border-color:$middleblue;
+    outline:none;
+  }
+
+}
+
+@mixin buttons-light {
+  @include buttons-general;
+  background-color:rgba($middleblue,0.1);
+  border:1px solid rgba($middleblue,0.1);
+  color:rgba($darkblue,0.8);
+
+  &:hover {
+    background-color:rgba($middleblue,0.2);
+    border:1px solid rgba($middleblue,0.2);
+    color:rgba($darkblue,0.9);
+  }
+
+  &:focus {
+    background-color:rgba($middleblue,0.2);
+    border:1px solid rgba($middleblue,0.2);
+    color:rgba($darkblue,0.9);
+    outline:none;
+  }
+
+  &:before {
+    color:rgba($darkblue,0.6);
+  }
+
 }
 
 /* ==========================================================================
@@ -171,7 +201,15 @@ ul {
   list-style: square;
   padding:0px;
   margin:0 0 20px 16px;
+}
 
+a:not(.button, .button-light) {
+  color:$body-text-color;
+  @include transition(color 0.2s);
+
+  &:hover {
+    color:rgba($body-text-color,0.6);
+  }
 }
 
 .padding {
@@ -325,19 +363,26 @@ nav {
    Buttons & Forms
    ========================================================================== */
 
+[class^="icon-"]:before,
+[class*=" icon-"]:before {
+  margin:0 6px 0 0 !important;
+  font-size: 0.8em;
+}
+
+nav [class^="icon-"]:before,
+nav [class*=" icon-"]:before {
+  font-size: 1.2em;
+}
+
 input[type="submit"],
 button,
-.button-row a {
+.button-row a,
+.button {
   @include buttons;
+}
 
-  &:hover {
-    @include buttons-hover;
-  }
-
-  &:focus {
-    @include buttons-focus;
-  }
-
+.button-light {
+  @include buttons-light;
 }
 
 .button-row {
@@ -369,6 +414,53 @@ button,
     color:rgba(0,0,0,0.5);
   }
 
+}
+
+input[type="checkbox"] {
+  position: absolute;
+  clip: rect(0,0,0,0);
+}
+
+input[type="checkbox"] + label {
+  line-height: 16px;
+  @include transition(color 0.2s);
+
+  &:hover {
+    cursor: pointer;
+    color:rgba($body-text-color,0.6);
+  }
+}
+
+input[type="checkbox"]:focus + label:before {
+  border-color: $middleblue;
+}
+
+input[type="checkbox"] + label:before {
+  @include transition(border-color 0.2s);
+  content: "";
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  margin: 0 5px 0 0;
+  border: 1px solid $border-color;
+  color: $body-text-color;
+  content: "\e070";
+  font-family: 'Elusive-Icons';
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 14px;
+  text-align: center;
+  -webkit-font-smoothing: antialiased;
+  font-size: 9px;
+  line-height: 12px;
+  text-indent: -9999px;
+}
+
+input[type=checkbox]:checked + label:before {
+  text-indent: 0px;
 }
 
 .form-crud {
@@ -538,7 +630,6 @@ button,
     display: block;
     float:right;
     margin:10px 0 20px 0;
-    color:$body-text-color;
   }
 }
 
