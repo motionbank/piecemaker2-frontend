@@ -52,6 +52,7 @@ $sand-light:#D3D0CA;
 @mixin buttons-general {
   text-decoration: none;
   height: auto;
+  line-height: normal !important;
   @include transition(all 0.2s);
   padding:6px 8px;
   border-radius: 3px;
@@ -226,142 +227,6 @@ a:not(.button, .button-light) {
 }
 
 /* ==========================================================================
-   Header
-   ========================================================================== */
-
-header {
-  width:100%;
-  height: $header-height;
-  line-height: $header-height;
-  position: fixed;
-  background-color: $sand-light;
-  border-bottom: 1px solid $sand-dark;
-  padding:0 20px;
-  text-align: right;
-
-  a {
-    color:rgba(0,0,0,0.6);
-    text-decoration: none;
-  }
-
-  a.logout {
-    @include buttons-general;
-    background-color: rgba($sand-dark,0.4);
-    color: darken($sand-dark,40%);
-    border: 1px solid $sand-dark;
-    line-height: normal;
-
-    &:hover {
-      background-color:rgba($sand-dark,0.6);
-    }
-
-  }
-
-  .logo {
-    text-transform: uppercase;
-
-    a {
-      float:left;
-      margin:0px;
-    }
-
-    strong {
-      color:rgba(0,0,0,0.8);
-    }
-
-  }
-
-}
-
-/* ==========================================================================
-   Wrapper
-   ========================================================================== */
-
-#main-wrapper {
-  height:100%;
-
-  #content-section {
-    height:100%;
-    padding: $header-height 0 0 0;
-
-    #content {
-      height:100%;
-      padding: 0 0 0 $navigation-width;
-      @include transition(opacity 0.5s);
-    }
-
-    #content-inner {
-      height:100%;
-    }
-
-  }
-
-}
-
-/* ==========================================================================
-   Navigation
-   ========================================================================== */
-
-nav {
-  width: $navigation-width;
-  height:100%;
-  padding: 0px;
-  margin:-1px 0 0 0;
-  float:left;
-  background-color: #222;
-  position: fixed;
-
-  ul {
-    list-style: none;
-    margin:0px;
-    padding:0px;
-
-    li {
-      margin:0px;
-      padding:0px;
-      width: $navigation-width;
-      height: $navigation-width;
-      border-bottom:1px solid #444;
-      @include transition(all 0.2s);
-
-      &:hover {
-        background-color:#333;
-      }
-
-      a {
-        text-decoration: none;
-        color:$body-text-color;
-        display: block;
-        width: $navigation-width !important;
-        height: $navigation-width !important;
-        line-height: $navigation-width !important;
-        text-align: center;
-
-        span {
-          height: $navigation-width !important;
-          line-height: $navigation-width !important;
-          color:#777;
-          text-shadow: 0 1px 0 rgba(0,0,0,0.9);
-          @include transition(all 0.2s);
-        }
-
-      }
-
-    }
-
-    li.active {
-      background-color: #333;
-
-      span {
-        color:#777;
-      }
-    }
-
-  }
-
-}
-
-/* ==========================================================================
    Buttons & Forms
    ========================================================================== */
 
@@ -487,6 +352,144 @@ input[type=checkbox]:checked + label:before {
     width: auto;
     float:left;
     margin:0 10px 0 0;
+  }
+
+}
+
+/* ==========================================================================
+   Header
+   ========================================================================== */
+
+header {
+  width:100%;
+  height: $header-height;
+  line-height: $header-height;
+  position: fixed;
+  background-color: $sand-light;
+  border-bottom: 1px solid $sand-dark;
+  padding:0 20px;
+  text-align: right;
+
+  a {
+    color:rgba(0,0,0,0.6);
+    text-decoration: none;
+  }
+
+  a.logout,
+  button {
+    @include buttons-general;
+    background-color: rgba($sand-dark,0.4);
+    color: darken($sand-dark,40%);
+    border: 1px solid $sand-dark;
+    display: inline-block;
+
+    &:hover {
+      background-color:rgba($sand-dark,0.6);
+      border: 1px solid $sand-dark;
+    }
+
+  }
+
+  .logo {
+    text-transform: uppercase;
+
+    a {
+      float:left;
+      margin:0px;
+    }
+
+    strong {
+      color:rgba(0,0,0,0.8);
+    }
+
+  }
+
+}
+
+/* ==========================================================================
+   Wrapper
+   ========================================================================== */
+
+#main-wrapper {
+  height:100%;
+
+  #content-section {
+    height:100%;
+    padding: $header-height 0 0 0;
+
+    #content {
+      height:100%;
+      padding: 0 0 0 $navigation-width;
+      @include transition(opacity 0.5s);
+    }
+
+    #content-inner {
+      height:100%;
+    }
+
+  }
+
+}
+
+/* ==========================================================================
+   Navigation
+   ========================================================================== */
+
+nav {
+  width: $navigation-width;
+  height:100%;
+  padding: 0px;
+  margin:-1px 0 0 0;
+  float:left;
+  background-color: #222;
+  position: fixed;
+
+  ul {
+    list-style: none;
+    margin:0px;
+    padding:0px;
+
+    li {
+      margin:0px;
+      padding:0px;
+      width: $navigation-width;
+      height: $navigation-width;
+      border-bottom:1px solid #444;
+      @include transition(all 0.2s);
+
+      &:hover {
+        background-color:#333;
+      }
+
+      a {
+        text-decoration: none;
+        color:$body-text-color;
+        display: block;
+        width: $navigation-width !important;
+        height: $navigation-width !important;
+        line-height: $navigation-width !important;
+        text-align: center;
+
+        span {
+          height: $navigation-width !important;
+          line-height: $navigation-width !important;
+          color:#777;
+          text-shadow: 0 1px 0 rgba(0,0,0,0.9);
+          @include transition(all 0.2s);
+        }
+
+      }
+
+    }
+
+    li.active {
+      background-color: #333;
+
+      span {
+        color:#777;
+      }
+    }
+
   }
 
 }

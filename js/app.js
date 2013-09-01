@@ -13,6 +13,14 @@ function userLoggedIn() {
 }
 
 /*
+ * help overlay
+ */
+
+$(document).on('click','.help', function(){
+    // ...
+});
+
+/*
  * global shortcut handling
  */
 
