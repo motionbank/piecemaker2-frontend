@@ -54,6 +54,7 @@ $sand-light:#D3D0CA;
   height: auto;
   @include transition(all 0.2s);
   padding:6px 8px;
+  border-radius: 3px;
 }
 
 @mixin buttons {
@@ -246,7 +247,7 @@ header {
   a.logout {
     @include buttons-general;
     background-color: rgba($sand-dark,0.4);
-    color: darken($sand-dark,20%);
+    color: darken($sand-dark,40%);
     border: 1px solid $sand-dark;
     line-height: normal;
 
@@ -465,7 +466,6 @@ input[type=checkbox]:checked + label:before {
 
 .form-crud {
 
-  background-color: $list-hover-light;
   padding:15px $padding;
 
   input[type="text"],
@@ -502,11 +502,10 @@ input[type=checkbox]:checked + label:before {
   border-right:1px solid $border-color;
 
   /* video content for pieces list view */
-  .video-content {
-    padding:0 0 30px 0;
+  .group-detail {
     border-bottom: 1px solid $border-color;
 
-    .video-content-inner {
+    .video-content {
 
       h1 {
         margin:0 0 10px 0;
@@ -524,10 +523,19 @@ input[type=checkbox]:checked + label:before {
 
     }
 
+    .form-crud {
+      border-top:1px solid $border-color;
+      background-color: $list-hover-light;
+    }
+
   }
 
   /* styles for groups list */
   .groups-list {
+
+    .form-crud {
+      background-color: $list-hover-light;
+    }
 
     ul {
       margin:0px;

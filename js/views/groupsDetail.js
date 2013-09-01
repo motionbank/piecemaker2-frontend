@@ -8,15 +8,19 @@ directory.GroupsDetailView = Backbone.View.extend({
         var template = this.template();
         var el = this.el;
         var self = this;
+        var data;
 
         // get the id of the piece
         var id = this.model;
 
         // get group details and render html
-        API.getGroup(id,function(res){
+        API.getGroup(id,function(group) {
 
-            $(el).html(Mustache.render(template,res));
+            data = {
+                group: group
+            };
 
+            /*
             // cache elements
             var $video = self.$('video');
             var video = $video.get(0);
@@ -25,6 +29,7 @@ directory.GroupsDetailView = Backbone.View.extend({
             video.addEventListener('timeupdate',function(){
                 self.$('#video-time').val(video.currentTime);
             },false);
+            */
 
             // enable window resizing
             self.$('.wrapper-left').resizable({
@@ -32,6 +37,22 @@ directory.GroupsDetailView = Backbone.View.extend({
                 autoHide: true,
                 handles: "e" // disable vertical resize
             });
+
+        });
+
+        // get events
+        API.listEvents(id,function(events) {
+            $.extend(data,{event_counter:events.length});
+        });
+
+        // render template when all ajax requests are finished
+        $(document).ajaxStop(function() {
+
+            // render template
+            $(el).html(Mustache.render(template,data));
+
+            // set focus to form field
+            $('textarea').focus();
 
         });
 

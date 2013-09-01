@@ -1,21 +1,48 @@
 <section class="wrapper-left">
 
-    <div class="video-content">
+    <div class="group-detail">
 
         <div class="button-row">
+
+            <!--
             <a href="#" class="icon-user group-users-get">
-                Show Users
+                Shortcuts
             </a>
+            -->
+
+            <div class="info-wrapper">
+                <span class="info icon-info-sign">
+                    <span class="counter">{{event_counter}}</span> Events
+                </span>
+            </div>
+
         </div>
 
-        <div class="video-content-inner padding">
+        <div class="video-content padding">
 
-            <h1>{{title}}</h1>
-            <p>{{text}}</p>
+            <h1>{{group.title}}</h1>
+            <p>{{group.text}}</p>
+
+            <!--
             <video id="video" controls src="http://gopeter.de/misc/test.MOV"></video>
             <label for="video-time">Timestamp:</label> <input id="video-time" name="video-time" type="text" />
+            -->
+
         </div>
+
+        <form action="#" method="post" class="form-crud">
+
+            <h2>Add Event</h2>
+            <textarea name="text" placeholder="Text" class="mousetrap" required></textarea>
+            <button type="submit" class="group-save icon-ok">Save</button>
+            <br class="clear" />
+
+        </form>
+
+        <!--
         <div class="timestamp-note"></div>
+        -->
+
     </div>
 </section>
 
