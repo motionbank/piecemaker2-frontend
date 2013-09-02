@@ -53,7 +53,8 @@ directory.GroupsDetailView = Backbone.View.extend({
         });
 
         // render template when all ajax requests are finished
-        $(document).ajaxStop(function() {
+        // render it only once at initialization; prevent rendering everytime an ajax call stops
+        $(document).one('ajaxStop', function() {
 
             // render template
             $(el).html(Mustache.render(template,data));
