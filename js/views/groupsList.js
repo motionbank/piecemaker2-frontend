@@ -35,11 +35,11 @@ directory.GroupsListView = Backbone.View.extend({
     },
 
     events: {
-        "click .group-add": "group_add",
-        "click .group-cancel": "group_cancel",
-        "click .group-save": "group_save",
-        "click .group-update": "group_update",
-        "click .group-delete": "group_delete"
+        "submit":               "group_save",
+        "click .group-add":     "group_add",
+        "click .group-cancel":  "group_cancel",
+        "click .group-update":  "group_update",
+        "click .group-delete":  "group_delete"
     },
 
     group_add: function() {

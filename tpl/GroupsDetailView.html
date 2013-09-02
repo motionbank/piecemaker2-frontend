@@ -4,11 +4,9 @@
 
         <div class="button-row">
 
-            <!--
             <a href="#" class="icon-user group-users-get">
-                Shortcuts
+                Show Users
             </a>
-            -->
 
             <div class="info-wrapper">
                 <span class="info icon-info-sign">
@@ -18,7 +16,7 @@
 
         </div>
 
-        <div class="video-content padding">
+        <div class="group-detail-content padding">
 
             <h1>{{group.title}}</h1>
             <p>{{group.text}}</p>
@@ -34,6 +32,15 @@
 
             <h2>Add Event</h2>
             <textarea name="text" placeholder="Text" class="mousetrap" required></textarea>
+
+            <div class="event-type-selection">
+                <select name="event-type">
+                    {{#event_types}}
+                        <option value="{{slug}}">{{name}}</option>
+                    {{/event_types}}
+                </select>
+            </div>
+
             <button type="submit" class="group-save icon-ok">Save</button>
             <br class="clear" />
 

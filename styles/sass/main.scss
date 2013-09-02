@@ -2,105 +2,9 @@
    Import libraries
    ========================================================================== */
 
+@import 'options';
 @import '../bourbon/bourbon';
-
-/* ==========================================================================
-   Sizes
-   ========================================================================== */
-
-$header-height: 44px;
-$navigation-width: 60px;
-$wrapper-video-width: 500px; /* don't forget: browser adds padding to this value */
-$padding: 25px;
-
-
-/* ==========================================================================
-   Colors
-   ========================================================================== */
-
-$body-text-color: #333;
-$dark: #2D323C;
-$darkblue: #174A79;
-$middleblue: #3B86CC;
-$lightblue: #80B4E5;
-$orange: #F39C12;
-$border-color: #D3D0CA;
-$list-hover: #EDF1F4;
-$list-hover-light:#FAFBFC;
-$sand-dark:#A19F9A;
-$sand-light:#D3D0CA;
-
-/* ==========================================================================
-   Mixins
-   ========================================================================== */
-
-@mixin input {
-  display: block;
-  background-color:#fff;
-  border:1px solid $border-color;
-  padding:10px;
-  margin:0 0 10px 0;
-  width:100%;
-  @include transition(border-color 0.2s);
-}
-
-@mixin input-focus {
-  outline:none;
-  border:1px solid $middleblue;
-}
-
-@mixin buttons-general {
-  text-decoration: none;
-  height: auto;
-  line-height: normal !important;
-  @include transition(all 0.2s);
-  padding:6px 8px;
-  border-radius: 3px;
-}
-
-@mixin buttons {
-  @include buttons-general;
-  background-color:$middleblue;
-  border:1px solid $middleblue;
-  color:#f5f5f5;
-
-  &:hover {
-    background-color:$lightblue;
-    border-color:$middleblue;
-  }
-
-  &:focus {
-    background-color:$lightblue;
-    border-color:$middleblue;
-    outline:none;
-  }
-
-}
-
-@mixin buttons-light {
-  @include buttons-general;
-  background-color:rgba($middleblue,0.1);
-  border:1px solid rgba($middleblue,0.1);
-  color:rgba($darkblue,0.8);
-
-  &:hover {
-    background-color:rgba($middleblue,0.2);
-    border:1px solid rgba($middleblue,0.2);
-    color:rgba($darkblue,0.9);
-  }
-
-  &:focus {
-    background-color:rgba($middleblue,0.2);
-    border:1px solid rgba($middleblue,0.2);
-    color:rgba($darkblue,0.9);
-    outline:none;
-  }
-
-  &:before {
-    color:rgba($darkblue,0.6);
-  }
-
-}
+@import 'chosen';
 
 /* ==========================================================================
    General improvements
@@ -382,6 +286,7 @@ header {
     color: darken($sand-dark,40%);
     border: 1px solid $sand-dark;
     display: inline-block;
+    margin:0 0 0 6px;
 
     &:hover {
       background-color:rgba($sand-dark,0.6);
@@ -504,11 +409,10 @@ nav {
   float:left;
   border-right:1px solid $border-color;
 
-  /* video content for pieces list view */
   .group-detail {
     border-bottom: 1px solid $border-color;
 
-    .video-content {
+    .group-detail-content {
 
       h1 {
         margin:0 0 10px 0;
@@ -529,6 +433,11 @@ nav {
     .form-crud {
       border-top:1px solid $border-color;
       background-color: $list-hover-light;
+
+      .event-type-selection {
+        margin:0 0 10px 0;
+      }
+
     }
 
   }
