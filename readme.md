@@ -1,3 +1,9 @@
+# App Tips
+
+## Shortcuts
+
+- CTRL/CMD + S: save current form
+
 # Coding Tips
 
 Some general information about frontend development
