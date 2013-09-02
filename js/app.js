@@ -17,7 +17,7 @@ function userLoggedIn() {
  */
 
 $(document).on('click','.help', function(){
-    // ...
+    alert('This alert box will be styled soon\n\nPress CMD/CTRL + S to save forms');
 });
 
 /*
