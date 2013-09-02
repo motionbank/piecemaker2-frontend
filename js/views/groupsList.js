@@ -8,6 +8,16 @@ directory.GroupsListView = Backbone.View.extend({
 
     render:function () {
 
+        /*
+         * global shortcut handling
+         */
+
+        /*
+        Mousetrap.bind(['mod+s'], function(e) {
+            self.group_save(e);
+        });
+        */
+
         // store template and obj global
         this.template = this.template();
         this.obj = this.el;

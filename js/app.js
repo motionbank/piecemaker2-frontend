@@ -21,24 +21,6 @@ $(document).on('click','.help', function(){
 });
 
 /*
- * global shortcut handling
- */
-
-function saveDraft() {
-    alert('save!');
-}
-
-Mousetrap.bind(['ctrl+s', 'meta+s'], function(e) {
-    if (e.preventDefault) {
-        e.preventDefault();
-    } else {
-        // internet explorer
-        e.returnValue = false;
-    }
-    saveDraft();
-});
-
-/*
  * global error handling
  */
 
