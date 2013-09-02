@@ -13,11 +13,20 @@ function userLoggedIn() {
 }
 
 /*
+ * global shortcut handling
+ */
+
+Mousetrap.bind(['mod+s'], function(e) {
+    $(':focus').closest('.form-crud').find(':submit').click();
+    return false;
+});
+
+/*
  * help overlay
  */
 
 $(document).on('click','.help', function(){
-    alert('This alert box will be styled soon\n\nPress CMD/CTRL + S to save forms (someday...)');
+    alert('This alert box will be styled soon\n\nPress CMD/CTRL + S to save forms');
 });
 
 /*
