@@ -4,6 +4,10 @@
 
 - CTRL/CMD + S: save current form
 
+## Misc
+
+Columns in group detail view are resizable.
+
 # Coding Tips
 
 Some general information about frontend development

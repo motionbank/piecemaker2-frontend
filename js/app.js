@@ -26,7 +26,7 @@ Mousetrap.bind(['mod+s'], function(e) {
  */
 
 $(document).on('click','.help', function(){
-    alert('This alert box will be styled soon\n\nPress CMD/CTRL + S to save forms\nColumns in group detail view are resizeable');
+    alert('This alert box will be styled soon\n\nPress CMD/CTRL + S to save forms\nColumns in group detail view are resizable');
 });
 
 /*
