@@ -1,43 +1,48 @@
 directory.GroupsDetailView = Backbone.View.extend({
 
     group_id: null,
+    partials: null,
     id: 'content-inner',
 
     render:function () {
 
-        // save object vars
-        var template = this.template();
+        // store template and obj globally
         var el = this.el;
         var self = this;
+        var template = this.template();
+
+        // save object vars
         var data = {};
+
+        // get partial: list element
+        $template = $(template);
+        var $el = $('.events-list-content ul li:nth-child(1)',$template);
+
+        // define mustache partial
+        this.partials = { "list" : $el[0].outerHTML };
 
         // store the id of the group
         this.group_id = this.model;
 
-        // clone id for local use
-        var id = this.group_id;
-
         // get group details and render html
-        API.getGroup(id,function(group) {
+        API.getGroup(this.group_id,function(group) {
 
             $.extend(data,{group:group});
 
-            /*
-            // cache elements
-            var $video = self.$('video');
-            var video = $video.get(0);
-
-            // update timestamp on input field while playing video
-            video.addEventListener('timeupdate',function(){
-                self.$('#video-time').val(video.currentTime);
-            },false);
-            */
+//             // cache elements
+//             var $video = self.$('video');
+//             var video = $video.get(0);
+//
+//             // update timestamp on input field while playing video
+//             video.addEventListener('timeupdate',function(){
+//             self.$('#video-time').val(video.currentTime);
+//             },false);
 
         });
 
         // get events
-        API.listEvents(id,function(events) {
-            $.extend(data,{event_counter:events.length});
+        API.listEvents(this.group_id,function(res) {
+            $.extend(data,{event_counter:res.length});
         });
 
         // get event types and put them in a selectbox
@@ -66,7 +71,11 @@ directory.GroupsDetailView = Backbone.View.extend({
             self.$('.wrapper-left').resizable({
                 minWidth: 300,
                 autoHide: true,
-                handles: "e" // disable vertical resize
+                handles: "e", // disable vertical resize
+                resize : function(event,ui) {
+                    $('.wrapper-right').css({'padding-left':$('.wrapper-left').outerWidth()});
+                }
+
             });
 
             // enable nice styled select boxes
@@ -79,32 +88,103 @@ directory.GroupsDetailView = Backbone.View.extend({
 
     },
 
-    events: {
-        "submit":                   "event_save",
-        "click .group-users-get":   "group_users_get"
+    check_list_placeholder: function() {
+        if ($('.items').find('li').length > 2) {
+            $('.list-placeholder').hide();
+        }
     },
 
-    group_users_get: function() {
-        return false;
+    events: {
+        "submit":                       "event_save",
+        "click .events-show-all":       "events_show_all",
+        "click .events-filter":         "events_filter",
+        "click .events-delete":         "events_delete",
+        "click .event-toggle-details":  "event_toggle_details",
+        "click .group-toggle-details":  "group_toggle_details"
     },
 
     event_save: function() {
 
-        var id = this.group_id;
-        var data = {
-            utc_timestamp: Math.floor(Date.now() / 1000),
-            type: $('select[name="event-type"]').val()
+        var self = this;
+
+        // get partials in tmp var, cause we can't use "this" in ajax callbacks
+        var _partials = this.partials;
+
+        var fields = {
+            description: $('#event-create-form').find('textarea').val()
         };
 
-        API.createEvent(id,data,function(res){
+        var data = {
+            utc_timestamp: Math.floor(Date.now() / 1000),
+            type: $('#event-create-form').find('select[name="event-type"]').val(),
+            fields: fields
+        };
+
+        API.createEvent(this.group_id,data,function(res){
 
             // update event counter
             var $counter = $('.counter');
             $counter.text(parseInt($counter.text()) + 1);
 
+            // show new event
+            var content = Mustache.render(_partials.list,res);
+            $('.events-list').find('ul').append(content);
+
+            self.check_list_placeholder();
+
+            // reset form
+            $('#event-create-form')[0].reset();
+
         });
 
         return false;
+    },
+
+    events_show_all: function() {
+
+        var self = this;
+
+        // get partials in tmp var, cause we can't use "this" in ajax callbacks
+        var _partials = this.partials;
+
+        // get events
+        API.listEvents(this.group_id,function(res) {
+
+            // clear item list
+            $('.events-list').find('.item').not(':first-child').remove();
+
+            // list events
+            $.each(res, function(index,value) {
+                var content = Mustache.render(_partials.list,value);
+                $('.events-list').find('ul').append(content);
+            });
+
+            self.check_list_placeholder();
+
+        });
+
+        return false;
+    },
+
+    events_filter: function() {
+        alert('coming soon');
+        return false;
+    },
+
+    events_delete: function() {
+        alert('coming soon');
+        return false;
+    },
+
+    event_toggle_details: function() {
+        alert('coming soon');
+        return false;
+    },
+
+    group_toggle_details: function() {
+        $('.group-detail-content').toggleClass('toggle');
+        return false;
     }
+
 
 });

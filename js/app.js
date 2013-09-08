@@ -49,7 +49,7 @@ var settings = {
             errorHandling(arguments);
         }
     },
-    base_url: 'http://localhost:9292'
+    host: 'http://localhost:9292'
 };
 
 var API = new PieceMakerApi(settings);

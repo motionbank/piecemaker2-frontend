@@ -2,29 +2,29 @@
     <div class="group-detail">
 
         <div class="button-row">
-            <a href="#" class="icon-user group-users-get">Show Users</a>
-
-            <div class="info-wrapper">
-                <span class="info icon-info-sign">
-                    <span class="counter" id="boah">{{event_counter}}</span> Events
-                </span>
-            </div>
-
+            <a href="#" class="icon-th-list group-toggle-details">Show Group Details</a>
         </div>
 
-        <div class="group-detail-content padding">
+        <div class="group-detail-content padding toggle">
 
             <h1>{{group.title}}</h1>
             <p>{{group.text}}</p>
-
-            <!--
-            <video id="video" controls src="http://gopeter.de/misc/test.MOV"></video>
-            <label for="video-time">Timestamp:</label> <input id="video-time" name="video-time" type="text" />
-            -->
+            <hr />
+            <a href="#" class="button icon-remove group-toggle-details">Close</a>
 
         </div>
 
-        <form action="#" method="post" class="form-crud">
+        <!--
+        <div class="event-video-content padding toggleable">
+
+            <video id="video" controls src="http://gopeter.de/misc/test.MOV"></video>
+            <label for="video-time">Timestamp:</label> <input id="video-time" name="video-time" type="text" />
+            <div class="timestamp-note"></div>
+
+        </div>
+        -->
+
+        <form action="#" method="post" class="form-crud" id="event-create-form">
 
             <h2>Add Event</h2>
             <textarea name="text" placeholder="Text" class="mousetrap" required></textarea>
@@ -42,12 +42,46 @@
 
         </form>
 
-        <!--
-        <div class="timestamp-note"></div>
-        -->
-
     </div>
 </section>
 
 <section class="wrapper-right">
+    <div class="events-list">
+        <div class="button-row">
+
+            <a href="#" class="icon-video events-show-all">Show all Events</a>
+            <a href="#" class="icon-search events-filter">Filter</a>
+
+            <div class="info-wrapper">
+                <span class="info icon-info-sign">
+                    <span class="counter">{{event_counter}}</span> Events
+                </span>
+            </div>
+
+        </div>
+
+        <div class="events-list-content">
+            <ul class="items">
+
+                <!-- partial template -->
+                <li data-id="{{id}}" data-timestamp="{{utc_timestamp}}" class="item">
+                    <a class="link event-toggle-details" href="#">{{fields.description}}</a>
+
+                    <!--
+                    <div class="actions">
+                        <a href="#" class="icon-wrench group-update">&nbsp;</a>
+                        <a href="#" class="icon-remove group-delete">&nbsp;</a>
+                    </div>
+                    -->
+                </li>
+
+                <!-- placeholder -->
+                <li class="list-placeholder">
+                    No events selected.
+                </li>
+
+            </ul>
+        </div>
+
+    </div>
 </section>

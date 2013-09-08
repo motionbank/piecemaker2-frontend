@@ -1,27 +1,24 @@
 directory.GroupsListView = Backbone.View.extend({
 
-    obj: null,
-    template: null,
-    partial_list_item: null,
+    partials: null,
     tmp: null, // var to store misc html temporary
     id: 'content-inner',
 
     render:function () {
 
-        // store template and obj global
-        this.template = this.template();
-        this.obj = this.el;
-
-        // clone for local use, cause we can't use "this" in API callback
-        var tpl = this.template;
-        var obj = this.obj;
+        // store template and obj globally
+        var template = this.template();
+        var obj = this.el;
 
         // get partial: list element
-        $template = $(this.template);
-        var $el = $('.groups-list ul li:nth-child(2)',$template);
+        $template = $(template);
+        var $el = $('.groups-list ul li:nth-child(1)',$template);
 
         // define mustache partial
-        partial_list_item = { "list" : $el[0].outerHTML };
+        this.partials = { "list" : $el[0].outerHTML };
+
+        // get partials in tmp var, cause we can't use "this" in ajax callbacks
+        var _partials = this.partials;
 
         API.listGroups(function(res) {
             var data = {
@@ -29,7 +26,7 @@ directory.GroupsListView = Backbone.View.extend({
                 counter:res.length
             };
 
-            $(obj).html(Mustache.render(tpl,data,partial_list_item));
+            $(obj).html(Mustache.render(template,data,_partials));
         });
 
     },
@@ -43,7 +40,7 @@ directory.GroupsListView = Backbone.View.extend({
     },
 
     group_add: function() {
-        $('.group-crud-wrapper').addClass('group-crud-wrapper-open');
+        $('.group-crud-wrapper').removeClass('toggle');
         return false;
     },
 
@@ -57,10 +54,11 @@ directory.GroupsListView = Backbone.View.extend({
 
             // show old content
             parent.html(this.tmp);
+
         } else if (parent.hasClass('group-crud-wrapper')) {
 
             // close add form
-            $('.group-crud-wrapper').removeClass('group-crud-wrapper-open');
+            $('.group-crud-wrapper').addClass('toggle');
         }
 
         return false;
@@ -74,6 +72,9 @@ directory.GroupsListView = Backbone.View.extend({
         var title = parent.find('input[name="title"]').val();
         var text = parent.find('textarea[name="text"]').val();
 
+        // get partials in tmp var, cause we can't use "this" in ajax callbacks
+        var _partials = this.partials;
+
         // if form is inside list item, use update function
         if (parent.attr('class') == 'item') {
 
@@ -86,7 +87,7 @@ directory.GroupsListView = Backbone.View.extend({
             API.updateGroup(id,data,function(res){
 
                 // update new content
-                var content = Mustache.render(partial_list_item.list,res);
+                var content = Mustache.render(_partials.list,res);
                 parent.replaceWith(content);
 
             });
@@ -96,7 +97,7 @@ directory.GroupsListView = Backbone.View.extend({
             API.createGroup(title,text,function(res){
 
                 // append new content
-                var content = Mustache.render(partial_list_item.list,res);
+                var content = Mustache.render(_partials.list,res);
                 $('.groups-list').find('ul').append(content);
 
                 // update group counter

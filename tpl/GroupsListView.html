@@ -12,10 +12,19 @@
 
         </div>
 
-        <ul>
+        <ul class="items">
+
+            <!-- partial template -->
+            <li data-id="{{id}}" class="item">
+                <a class="link group-link" href="#/groups/{{id}}">{{title}}<span>{{text}}</span></a>
+                <div class="actions">
+                    <a href="#" class="icon-wrench group-update">&nbsp;</a>
+                    <a href="#" class="icon-remove group-delete">&nbsp;</a>
+                </div>
+            </li>
 
             <!-- add form -->
-            <li class="group-crud-wrapper">
+            <li class="item-form group-crud-wrapper toggle">
                 <form action="#" method="post" class="form-crud">
                     <input type="text" name="title" placeholder="Title" class="mousetrap" required/>
                     <textarea name="text" placeholder="Text" class="mousetrap" required></textarea>
@@ -27,16 +36,6 @@
                 </form>
             </li>
 
-            <!-- partial template -->
-            <li data-id="{{id}}" class="item">
-                <a class="group-link" href="#/groups/{{id}}">{{title}}<span>{{text}}</span></a>
-                <div class="actions">
-                    <a href="#" class="icon-wrench group-update">&nbsp;</a>
-                    <a href="#" class="icon-remove group-delete">&nbsp;</a>
-                </div>
-                <br class="clear" />
-            </li>
-
             <!-- list groups -->
             {{#groups}}
                 {{> list}}
@@ -44,3 +43,5 @@
         </ul>
     </div>
 </section>
+
+<section class="wrapper-right">&nbsp;</section>
