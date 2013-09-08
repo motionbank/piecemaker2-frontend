@@ -71,11 +71,7 @@ directory.GroupsDetailView = Backbone.View.extend({
             self.$('.wrapper-left').resizable({
                 minWidth: 300,
                 autoHide: true,
-                handles: "e", // disable vertical resize
-                resize : function(event,ui) {
-                    $('.wrapper-right').css({'padding-left':$('.wrapper-left').outerWidth()});
-                }
-
+                handles: "e" // disable vertical resize
             });
 
             // enable nice styled select boxes

@@ -452,7 +452,7 @@ ul.items {
 
     .actions {
       position: absolute;
-      top:0; 
+      top:0;
       right:0;
       text-align: right;
       padding:15px 15px 0 15px;
@@ -574,6 +574,7 @@ ul.items {
    ========================================================================== */
 
 .wrapper-right {
+  min-width: 400px;
 
   .events-list {
   }
