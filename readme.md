@@ -3,6 +3,7 @@
 ## Shortcuts
 
 - CTRL/CMD + S: save current form
+- ?: open help-box
 
 ## Misc
 
