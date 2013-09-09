@@ -11,7 +11,7 @@ directory.GroupsListView = Backbone.View.extend({
         var obj = this.el;
 
         // get partial: list element
-        $template = $(template);
+        var $template = $(template);
         var $el = $('.groups-list ul li:nth-child(1)',$template);
 
         // define mustache partial

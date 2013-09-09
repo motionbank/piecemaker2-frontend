@@ -15,7 +15,7 @@ directory.GroupsDetailView = Backbone.View.extend({
         var data = {};
 
         // get partial: list element
-        $template = $(template);
+        var $template = $(template);
         var $el = $('.events-list-content ul li:nth-child(1)',$template);
 
         // define mustache partial
@@ -29,7 +29,6 @@ directory.GroupsDetailView = Backbone.View.extend({
 
             $.extend(data,{group:group});
 
-//             // cache elements
 //             var $video = self.$('video');
 //             var video = $video.get(0);
 //
