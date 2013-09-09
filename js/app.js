@@ -21,12 +21,17 @@ Mousetrap.bind(['mod+s'], function(e) {
     return false;
 });
 
+Mousetrap.bind(['?'], function(e) {
+    $('.help').trigger('click');
+    return false;
+});
+
 /*
  * help overlay
  */
 
 $(document).on('click','.help', function(){
-    alert('This alert box will be styled soon\n\nPress CMD/CTRL + S to save forms\nColumns in group detail view are resizable');
+    alert('This alert box will be styled soon\n\n- Press CMD/CTRL + S to save forms\n- Columns in group detail view are resizable\n- Open this Help-Box by pressing "?"');
 });
 
 /*
