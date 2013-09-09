@@ -54,7 +54,7 @@ For example:
 If you are using another code editor, you can run an external file watcher, e.g. Scout [Scout](mhs.github.io/scout-app/) or [Prepos](http://alphapixels.com/prepros/).
 
 
-### HTTP Static File Serving 
+## HTTP Static File Serving
 ... used by [.app](https://github.com/motionbank/piecemaker2-app) but might be helpful for others as well.
 
 ```
