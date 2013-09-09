@@ -9,6 +9,11 @@
 
 Columns in group detail view are resizable.
 
+# Todos
+
+- use [RequireJS](http://requirejs.org/) to load views/controllers/models when they're needed
+- protect routes depending on user group/check some security matters → adding user management
+
 # Coding Tips
 
 Some general information about frontend development
@@ -21,12 +26,6 @@ Some general information about frontend development
 - [jQuery](http://jquery.com/)
 - [jQuery UI](http://jqueryui.com/)
 - [jQuery Transit](http://ricostacruz.com/jquery.transit/)
-
-## Todos
-
-- use [RequireJS](http://requirejs.org/) to load views/controllers/models when they're needed
-- protect routes depending on user group
-- check some security matters
 
 ## CSS Authoring
 
