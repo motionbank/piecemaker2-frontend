@@ -40,8 +40,8 @@ directory.GroupsDetailView = Backbone.View.extend({
         });
 
         // get events
-        API.listEvents(this.group_id,function(res) {
-            $.extend(data,{event_counter:res.length});
+        API.findEvents(this.group_id,{'count_only':true},function(res) {
+            $.extend(data,{event_counter:res.count});
         });
 
         // get event types and put them in a selectbox
