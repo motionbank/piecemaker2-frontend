@@ -1,3 +1,23 @@
+/*
+ * Overview
+ *
+ * group_id:                    int
+ * partials:                    obj
+ * render:                      initial render function
+ * check_list_placeholder:      helper function
+ * get_selected_events_count:   helper function
+ * events:                      bind UI interactions
+ * event_save:                  function for UI interaction
+ * events_show_all:             function for UI interaction
+ * events_filter:               function for UI interaction
+ * events_delete:               function for UI interaction
+ * event_delete:                function for UI interaction
+ * event_toggle_details:        function for UI interaction
+ * group_toggle_details:        function for UI interaction
+ * change_event_type:           function for UI interaction
+ *
+ */
+
 directory.GroupsDetailView = Backbone.View.extend({
 
     group_id: null,
