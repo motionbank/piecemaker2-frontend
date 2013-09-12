@@ -297,8 +297,18 @@ directory.GroupsDetailView = Backbone.View.extend({
     change_event_type: function(e) {
         var obj = e.target;
         var val = $(obj).val();
+
+        // hide all event-type-addition wrappers
         $('.event-type-addition').hide();
+
+        // disable all unused input fields to bypass required attribute
+        $('.event-type-addition:hidden').find('input').attr({'disabled':'disabled'});
+
+        // show only type-specific container
         $('.event-type-addition[data-slug="'+val+'"]').show();
+
+        // enable input field for selected type
+        $('.event-type-addition:visible').find('input').removeAttr('disabled');
     }
 
 });
