@@ -29,13 +29,13 @@ directory.GroupsDetailView = Backbone.View.extend({
 
             $.extend(data,{group:group});
 
-//             var $video = self.$('video');
-//             var video = $video.get(0);
+//          var $video = self.$('video');
+//          var video = $video.get(0);
 //
-//             // update timestamp on input field while playing video
-//             video.addEventListener('timeupdate',function(){
-//             self.$('#video-time').val(video.currentTime);
-//             },false);
+//          // update timestamp on input field while playing video
+//          video.addEventListener('timeupdate',function(){
+//          self.$('#video-time').val(video.currentTime);
+//          },false);
 
         });
 
@@ -111,13 +111,15 @@ directory.GroupsDetailView = Backbone.View.extend({
         // get partials in tmp var, cause we can't use "this" in ajax callbacks
         var _partials = this.partials;
 
+        var $form = $('#event-create-form');
+
         var fields = {
-            description: $('#event-create-form').find('textarea').val()
+            description: $form.find('textarea').val(),
         };
 
         var data = {
             utc_timestamp: Math.floor(Date.now() / 1000),
-            type: $('#event-create-form').find('select[name="event-type"]').val(),
+            type: $form.find('select[name="event-type"]').val(),
             fields: fields
         };
 
@@ -220,6 +222,5 @@ directory.GroupsDetailView = Backbone.View.extend({
         $('.event-type-addition').hide();
         $('.event-type-addition[data-slug="'+val+'"]').show();
     }
-
 
 });

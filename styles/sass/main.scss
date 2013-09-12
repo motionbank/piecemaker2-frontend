@@ -458,6 +458,7 @@ ul.items {
       padding:15px 15px 0 15px;
       opacity:0;
       height: 100%;
+      @include transition(opacity 0.2s);
 
       a {
         text-decoration:none;
@@ -577,6 +578,41 @@ ul.items {
   min-width: 400px;
 
   .events-list {
+
+    .events-list-content {
+
+      .item {
+
+        &:before {
+          position: absolute;
+          font-family: 'Elusive-Icons';
+          top:15px;
+          color:rgba($body-text-color,0.2);
+          left: $padding;
+          @include transition(color 0.2s);
+        }
+
+        &:hover:before {
+          color:rgba($body-text-color,0.6);
+        }
+
+        a.link {
+          padding-left:50px;
+
+        }
+
+      }
+
+      .item[data-type="movie"]:before {
+        content: "\e012"; // .icon-video
+      }
+
+      .item[data-type="note"]:before {
+        content: "\e029"; // .icon-tag
+      }
+
+    }
+
   }
 
 }
