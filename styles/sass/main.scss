@@ -597,6 +597,15 @@ ul.items {
 
       .item {
 
+        &.active {
+          background-color: $list-hover-light;
+        }
+
+        &.active:before,
+        &.active:hover:before {
+          color:$middleblue;
+        }
+
         &:before {
           position: absolute;
           font-family: 'Elusive-Icons';

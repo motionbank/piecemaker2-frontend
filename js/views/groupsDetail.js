@@ -258,14 +258,24 @@ directory.GroupsDetailView = Backbone.View.extend({
         var event_id = $(obj).parent().data('id');
         var group_id = $('input[name="group-id"]').val();
 
+        // cache video wrapper object
+        var $video_wrapper = $('.event-video-content');
+
+        // remove all active classes
+        $('.item').removeClass('active');
+
+        // add active class to item
+        $(obj).parent().toggleClass('active');
+
+        // close all open wrappers
+        $video_wrapper.addClass('toggle');
+
         if (type == 'movie') {
             API.getEvent(group_id, event_id, function(res) {
 
+                // get movie specific vars
                 var movie_description = res.fields.movie_description;
                 var movie_path = res.fields.movie_path;
-
-                // cache video wrapper object
-                var $video_wrapper = $('.event-video-content');
 
                 // set movie description
                 $video_wrapper.find('h2').text(movie_description);
@@ -295,6 +305,7 @@ directory.GroupsDetailView = Backbone.View.extend({
     },
 
     change_event_type: function(e) {
+
         var obj = e.target;
         var val = $(obj).val();
 
