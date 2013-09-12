@@ -84,7 +84,11 @@ directory.GroupsDetailView = Backbone.View.extend({
     },
 
     check_list_placeholder: function() {
-        if ($('.items').find('li').length > 2) {
+        var l = $('.items').find('li').length;
+        console.log(l)
+        if (l == 2) {
+            $('.list-placeholder').show();
+        } else if (l > 2) {
             $('.list-placeholder').hide();
         }
     },
@@ -94,6 +98,7 @@ directory.GroupsDetailView = Backbone.View.extend({
         "click .events-show-all":           "events_show_all",
         "click .events-filter":             "events_filter",
         "click .events-delete":             "events_delete",
+        "click .event-delete":              "event_delete",
         "click .event-toggle-details":      "event_toggle_details",
         "click .group-toggle-details":      "group_toggle_details",
         "change select[name=event-type]":   "change_event_type"
@@ -169,6 +174,33 @@ directory.GroupsDetailView = Backbone.View.extend({
 
     events_delete: function() {
         alert('coming soon');
+        return false;
+    },
+
+    event_delete: function(e) {
+
+        var self = this;
+        var obj = e.target;
+        var event_id = $(obj).closest('.item').data('id');
+        var group_id = $('input[name="group-id"]').val();
+
+        API.deleteEvent(group_id, event_id, function() {
+
+            // remove item
+            $(obj).closest('.item').remove();
+
+            // update event counter
+            var $counter = $('.counter');
+            var n = parseInt($counter.text()) - 1;
+            $counter.text(n);
+
+            // show placeholder if there are no events
+            if (n == 0) {
+                self.check_list_placeholder();
+            }
+
+        });
+
         return false;
     },
 

@@ -2,15 +2,14 @@
     <div class="group-detail">
 
         <div class="button-row">
-            <a href="#" class="icon-th-list group-toggle-details">Show Group Details</a>
+            <a href="#" class="icon-th-list group-toggle-details">Toggle Group Details</a>
         </div>
 
         <div class="group-detail-content padding toggle">
 
             <h1>{{group.title}}</h1>
             <p>{{group.text}}</p>
-            <hr />
-            <a href="#" class="button icon-remove group-toggle-details">Close</a>
+            <input type="hidden" name="group-id" val="{{group.id}}" />
 
         </div>
 
@@ -77,12 +76,10 @@
                 <li data-id="{{id}}" data-timestamp="{{utc_timestamp}}" class="item">
                     <a class="link event-toggle-details" href="#">{{fields.description}}</a>
 
-                    <!--
                     <div class="actions">
-                        <a href="#" class="icon-wrench group-update">&nbsp;</a>
-                        <a href="#" class="icon-remove group-delete">&nbsp;</a>
+                        <a href="#" class="icon-wrench event-update">&nbsp;</a>
+                        <a href="#" class="icon-remove event-delete">&nbsp;</a>
                     </div>
-                    -->
                 </li>
 
                 <!-- placeholder -->
