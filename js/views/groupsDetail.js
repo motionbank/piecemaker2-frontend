@@ -26,17 +26,7 @@ directory.GroupsDetailView = Backbone.View.extend({
 
         // get group details and render html
         API.getGroup(this.group_id,function(group) {
-
             $.extend(data,{group:group});
-
-//          var $video = self.$('video');
-//          var video = $video.get(0);
-//
-//          // update timestamp on input field while playing video
-//          video.addEventListener('timeupdate',function(){
-//          self.$('#video-time').val(video.currentTime);
-//          },false);
-
         });
 
         // get events
@@ -242,6 +232,7 @@ directory.GroupsDetailView = Backbone.View.extend({
 
     event_toggle_details: function(e) {
 
+        var self = this;
         var obj = e.target;
         var type = $(obj).parent().data('type');
         var event_id = $(obj).parent().data('id');
@@ -249,7 +240,29 @@ directory.GroupsDetailView = Backbone.View.extend({
 
         if (type == 'movie') {
             API.getEvent(group_id, event_id, function(res) {
-                console.log(res);
+
+                var movie_description = res.fields.movie_description;
+                var movie_path = res.fields.movie_path;
+
+                // cache video wrapper object
+                var $video_wrapper = $('.event-video-content');
+
+                // set movie description
+                $video_wrapper.find('h2').text(movie_description);
+                $video_wrapper.find('video').attr({'src':movie_path});
+
+                // cache video object
+                var $video = self.$('video');
+                var video = $video.get(0);
+
+                // update timestamp on input field while playing video
+                video.addEventListener('timeupdate',function(){
+                    self.$('#video-time').val(video.currentTime);
+                },false);
+
+                // show video wrapper
+                $video_wrapper.toggleClass('toggle');
+
             });
         }
 
