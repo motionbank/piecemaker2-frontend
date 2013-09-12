@@ -40,7 +40,7 @@
             {{#event_types}}
                 {{#fields}}
                     <div class="event-type-addition" data-slug="{{slug}}">
-                        <input id="i-{{field_slug}}" type="text" placeholder="{{field_name}}" />
+                        <input name="{{field_slug}}" type="text" placeholder="{{field_name}}" class="mousetrap" required />
                     </div>
                 {{/fields}}
             {{/event_types}}
@@ -63,7 +63,7 @@
 
             <div class="info-wrapper">
                 <span class="info icon-info-sign">
-                    <span class="counter">{{event_counter}}</span> Events
+                    <span class="counter-selected">0</span>/<span class="counter-total">{{event_counter}}</span> Events selected
                 </span>
             </div>
 

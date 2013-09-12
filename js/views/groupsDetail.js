@@ -84,13 +84,27 @@ directory.GroupsDetailView = Backbone.View.extend({
     },
 
     check_list_placeholder: function() {
+
+        // get count of list items
         var l = $('.items').find('li').length;
-        console.log(l)
+
+        // if there are 2 items, show the placeholder
+        // item 1: hidden partial
+        // item: 2 placeholder
         if (l == 2) {
             $('.list-placeholder').show();
+
+        // if there are more than 2 items, hide placeholder
         } else if (l > 2) {
             $('.list-placeholder').hide();
         }
+    },
+
+    get_selected_events_count: function() {
+
+        // get count of list items and substract 2, cause the first two doesn't contain event content
+        var l = $('.items').find('li').length - 2;
+        $('.counter-selected').text(l);
     },
 
     events: {
@@ -111,22 +125,38 @@ directory.GroupsDetailView = Backbone.View.extend({
         // get partials in tmp var, cause we can't use "this" in ajax callbacks
         var _partials = this.partials;
 
+        // store form object
         var $form = $('#event-create-form');
 
+        // get additional fields
         var fields = {
-            description: $form.find('textarea').val(),
+            description: $form.find('textarea').val()
         };
 
+        // get type if event
+        var type = $form.find('select[name="event-type"]').val();
+
+        // if type is movie, extend fields object
+        if (type == 'movie') {
+            var movie_fields = {
+                'movie_description' : $form.find('input[name="movie_description"]').val(),
+                'movie_path' : $form.find('input[name="movie_path"]').val()
+            };
+
+            $.extend(fields,movie_fields);
+        }
+
+        // store data
         var data = {
             utc_timestamp: Math.floor(Date.now() / 1000),
-            type: $form.find('select[name="event-type"]').val(),
+            type: type,
             fields: fields
         };
 
         API.createEvent(this.group_id,data,function(res){
 
             // update event counter
-            var $counter = $('.counter');
+            var $counter = $('.counter-total');
             $counter.text(parseInt($counter.text()) + 1);
 
             // show new event
@@ -134,6 +164,7 @@ directory.GroupsDetailView = Backbone.View.extend({
             $('.events-list').find('ul').append(content);
 
             self.check_list_placeholder();
+            self.get_selected_events_count();
 
             // reset form
             $('#event-create-form')[0].reset();
@@ -163,6 +194,7 @@ directory.GroupsDetailView = Backbone.View.extend({
             });
 
             self.check_list_placeholder();
+            self.get_selected_events_count();
 
         });
 
@@ -192,7 +224,7 @@ directory.GroupsDetailView = Backbone.View.extend({
             $(obj).closest('.item').remove();
 
             // update event counter
-            var $counter = $('.counter');
+            var $counter = $('.counter-total');
             var n = parseInt($counter.text()) - 1;
             $counter.text(n);
 
@@ -201,13 +233,26 @@ directory.GroupsDetailView = Backbone.View.extend({
                 self.check_list_placeholder();
             }
 
+            self.get_selected_events_count();
+
         });
 
         return false;
     },
 
-    event_toggle_details: function() {
-        alert('coming soon');
+    event_toggle_details: function(e) {
+
+        var obj = e.target;
+        var type = $(obj).parent().data('type');
+        var event_id = $(obj).parent().data('id');
+        var group_id = $('input[name="group-id"]').val();
+
+        if (type == 'movie') {
+            API.getEvent(group_id, event_id, function(res) {
+                console.log(res);
+            });
+        }
+
         return false;
     },
 
