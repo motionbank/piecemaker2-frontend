@@ -37,6 +37,16 @@
                 </select>
             </div>
 
+            <div class="event-type-additions">
+            {{#event_types}}
+                {{#fields}}
+                    <div class="event-type-addition" data-slug="{{slug}}">
+                        <input id="i-{{field_slug}}" type="text" placeholder="{{field_name}}" />
+                    </div>
+                {{/fields}}
+            {{/event_types}}
+            </div>
+
             <button type="submit" class="group-save icon-ok">Save</button>
             <br class="clear" />
 

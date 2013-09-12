@@ -90,12 +90,13 @@ directory.GroupsDetailView = Backbone.View.extend({
     },
 
     events: {
-        "submit":                       "event_save",
-        "click .events-show-all":       "events_show_all",
-        "click .events-filter":         "events_filter",
-        "click .events-delete":         "events_delete",
-        "click .event-toggle-details":  "event_toggle_details",
-        "click .group-toggle-details":  "group_toggle_details"
+        "submit":                           "event_save",
+        "click .events-show-all":           "events_show_all",
+        "click .events-filter":             "events_filter",
+        "click .events-delete":             "events_delete",
+        "click .event-toggle-details":      "event_toggle_details",
+        "click .group-toggle-details":      "group_toggle_details",
+        "change select[name=event-type]":   "change_event_type"
     },
 
     event_save: function() {
@@ -179,6 +180,13 @@ directory.GroupsDetailView = Backbone.View.extend({
     group_toggle_details: function() {
         $('.group-detail-content').toggleClass('toggle');
         return false;
+    },
+
+    change_event_type: function(e) {
+        var obj = e.target;
+        var val = $(obj).val();
+        $('.event-type-addition').hide();
+        $('.event-type-addition[data-slug="'+val+'"]').show();
     }
 
 

@@ -1,7 +1,17 @@
 [
     {
-        "slug": "video",
-        "name": "Video"
+        "slug": "movie",
+        "name": "Movie",
+        "fields": [
+            {
+                "field_slug":"movie_description",
+                "field_name":"Movie Description"
+            },
+            {
+                "field_slug":"movie_path",
+                "field_name":"Path/URL"
+            }
+        ]
     },
     {
         "slug": "note",
