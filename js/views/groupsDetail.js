@@ -52,8 +52,13 @@ directory.GroupsDetailView = Backbone.View.extend({
         });
 
         // get events counter
-        API.findEvents(this.group_id,{'count_only':true},function(res) {
-            $.extend(data,{event_counter:res.count});
+        // don't count events with type "group_movie"
+        API.listEvents(this.group_id,function(res) {
+            var count = 0;
+            $.each(res,function(){
+                if (this.type != 'group_movie') count++;
+            });
+            $.extend(data,{event_counter:count});
         });
 
         // get event types and put them in a selectbox
@@ -229,8 +234,10 @@ directory.GroupsDetailView = Backbone.View.extend({
 
             // list events
             $.each(res, function(index,value) {
-                var content = Mustache.render(_partials.list,value);
-                $('.events-list').find('ul').append(content);
+                if (value.type != 'group_movie') {
+                    var content = Mustache.render(_partials.list,value);
+                    $('.events-list').find('ul').append(content);
+                }
             });
 
             self.check_list_placeholder();
