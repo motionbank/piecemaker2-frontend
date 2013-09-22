@@ -60,7 +60,14 @@ directory.GroupsDetailView = Backbone.View.extend({
             var event_types_array = new Array();
 
             $.each(event_types, function(key, val) {
-                event_types_array.push(val);
+
+                // at the moment, the "movie"-type isn't used anymore, beacuse movies are attached to groups for now
+                // that's why we leave it out, but we don't remove the code, because it might be useful for the future
+
+                if (val.slug != 'movie') {
+                    event_types_array.push(val);
+                }
+
             });
 
             $.extend(data,{event_types:event_types_array});
@@ -147,6 +154,10 @@ directory.GroupsDetailView = Backbone.View.extend({
         var type = $form.find('select[name="event-type"]').val();
 
         // if type is movie, extend fields object
+        //
+        // at the moment, the "movie"-type isn't used anymore, beacuse movies are attached to groups for now
+        // we leave it, cause i might be useful for future changes
+
         if (type == 'movie') {
             var movie_fields = {
                 'movie_description' : $form.find('input[name="movie_description"]').val(),
@@ -270,6 +281,9 @@ directory.GroupsDetailView = Backbone.View.extend({
         // close all open wrappers
         $video_wrapper.addClass('toggle');
 
+        // at the moment, the "movie"-type isn't used anymore, beacuse movies are attached to groups for now
+        // we leave it, cause i might be useful for future changes
+
         if (type == 'movie') {
             API.getEvent(group_id, event_id, function(res) {
 
@@ -303,6 +317,9 @@ directory.GroupsDetailView = Backbone.View.extend({
         $('.group-detail-content').toggleClass('toggle');
         return false;
     },
+
+    // at the moment, the "movie"-type isn't used anymore, beacuse movies are attached to groups for now
+    // we leave it, cause i might be useful for future changes
 
     change_event_type: function(e) {
 
