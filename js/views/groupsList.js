@@ -71,6 +71,7 @@ directory.GroupsListView = Backbone.View.extend({
 
         var title = parent.find('input[name="title"]').val();
         var text = parent.find('textarea[name="text"]').val();
+        var movie_path = parent.find('input[name="movie-path"]').val();
 
         // get partials in tmp var, cause we can't use "this" in ajax callbacks
         var _partials = this.partials;
@@ -94,6 +95,11 @@ directory.GroupsListView = Backbone.View.extend({
 
         // if form is standalone (add form), use create function
         } else if (parent.hasClass('group-crud-wrapper')) {
+
+            // we have to seperate the group creation and the movie-assignation to a group, because the API don't allow
+            // to save additional fields to groups
+            // that's why we create an extra event with a special type to assign a movie to a group
+
             API.createGroup(title,text,function(res){
 
                 // append new content
@@ -108,6 +114,19 @@ directory.GroupsListView = Backbone.View.extend({
                 var $wrapper = $('.group-crud-wrapper');
                 $wrapper.find('form')[0].reset();
                 $wrapper.find('.group-cancel').click();
+
+                // we have to save the new event that assigns a movie to a group in the createGroup Callback, because
+                // we need the ID of the new group
+
+                var group_id = res.id;
+                var event_data = {
+                    utc_timestamp: Date.now(),
+                    type: 'group_movie'
+                };
+
+                API.createEvent(group_id,event_data,function(res){
+                    console.log(res);
+                });
 
             });
         }

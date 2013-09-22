@@ -169,7 +169,7 @@ directory.GroupsDetailView = Backbone.View.extend({
 
         // store data
         var data = {
-            utc_timestamp: Math.floor(Date.now() / 1000),
+            utc_timestamp: Date.now(),
             type: type,
             fields: fields
         };
