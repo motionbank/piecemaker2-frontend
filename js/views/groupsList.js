@@ -1,3 +1,19 @@
+/*
+ * Overview
+ *
+ * partials:                    obj
+ * tmp:                         temporary var to store html snippets
+ * id:                          id of the wrapper (<div>)
+ * render:                      initial render function
+ * events:                      bind UI interactions
+ * submit:                      function for UI interaction
+ * group-add                    function for UI interaction
+ * group-cancel                 function for UI interaction
+ * group-update                 function for UI interaction
+ * group-delete                 function for UI interaction
+ *
+ */
+
 directory.GroupsListView = Backbone.View.extend({
 
     partials: null,
@@ -151,6 +167,14 @@ directory.GroupsListView = Backbone.View.extend({
 
             parent.find('input[name="title"]').val(res.title);
             parent.find('textarea[name="text"]').val(res.text);
+
+        });
+
+        // get assigned group movie
+        API.listEventsOfType(id,'group_movie',function(res) {
+
+            var movie_path = res[0].fields.movie_path;
+            parent.find('input[name="movie-path"]').val(movie_path);
 
         });
 

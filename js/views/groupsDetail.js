@@ -3,6 +3,7 @@
  *
  * group_id:                    int
  * partials:                    obj
+ * id:                          id of the wrapper (<div>)
  * render:                      initial render function
  * check_list_placeholder:      helper function
  * get_selected_events_count:   helper function
@@ -12,7 +13,7 @@
  * events_filter:               function for UI interaction
  * events_delete:               function for UI interaction
  * event_delete:                function for UI interaction
- * event_toggle_details:        function for UI interaction
+ * event_go_to_timestamp:       function for UI interaction
  * group_toggle_details:        function for UI interaction
  * change_event_type:           function for UI interaction
  *
@@ -148,7 +149,7 @@ directory.GroupsDetailView = Backbone.View.extend({
         "click .events-filter":             "events_filter",
         "click .events-delete":             "events_delete",
         "click .event-delete":              "event_delete",
-        "click .event-toggle-details":      "event_toggle_details",
+        "click .event-go-to-timestamp":     "event_go_to_timestamp",
         "click .group-toggle-details":      "group_toggle_details",
         "change select[name=event-type]":   "change_event_type"
     },
@@ -279,54 +280,11 @@ directory.GroupsDetailView = Backbone.View.extend({
         return false;
     },
 
-    event_toggle_details: function(e) {
+    event_go_to_timestamp: function(e) {
 
         var self = this;
         var obj = e.target;
-        var type = $(obj).parent().data('type');
-        var event_id = $(obj).parent().data('id');
-        var group_id = $('input[name="group-id"]').val();
-
-        // cache video wrapper object
-        var $video_wrapper = $('.group-video-content');
-
-        // remove all active classes
-        $('.item').removeClass('active');
-
-        // add active class to item
-        $(obj).parent().toggleClass('active');
-
-        // close all open wrappers
-        $video_wrapper.addClass('toggle');
-
-        // at the moment, the "movie"-type isn't used anymore, beacuse movies are attached to groups for now
-        // we leave it, cause i might be useful for future changes
-
-        if (type == 'movie') {
-            API.getEvent(group_id, event_id, function(res) {
-
-                // get movie specific vars
-                var movie_description = res.fields.movie_description;
-                var movie_path = res.fields.movie_path;
-
-                // set movie values
-                $video_wrapper.find('h2').text(movie_description);
-                $video_wrapper.find('video').attr({'src':movie_path});
-
-                // cache video object
-                var $video = self.$('video');
-                var video = $video.get(0);
-
-                // update timestamp on input field while playing video
-                video.addEventListener('timeupdate',function(){
-                    self.$('#video-time').val(video.currentTime);
-                },false);
-
-                // show video wrapper
-                $video_wrapper.toggleClass('toggle');
-
-            });
-        }
+        var timestamp = $(obj).data('timestamp');
 
         return false;
     },
