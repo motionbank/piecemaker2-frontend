@@ -270,7 +270,7 @@ directory.GroupsDetailView = Backbone.View.extend({
         var group_id = $('input[name="group-id"]').val();
 
         // cache video wrapper object
-        var $video_wrapper = $('.event-video-content');
+        var $video_wrapper = $('.group-video-content');
 
         // remove all active classes
         $('.item').removeClass('active');
