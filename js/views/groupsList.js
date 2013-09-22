@@ -32,8 +32,6 @@ directory.GroupsListView = Backbone.View.extend({
 
         // define mustache partial
         this.partials = { "list" : $el[0].outerHTML };
-
-        // get partials in tmp var, cause we can't use "this" in ajax callbacks
         var _partials = this.partials;
 
         API.listGroups(function(res) {
@@ -84,13 +82,11 @@ directory.GroupsListView = Backbone.View.extend({
 
         var obj = e.target;
         var parent = $(obj).closest('li');
+        var _partials = this.partials;
 
         var title = parent.find('input[name="title"]').val();
         var text = parent.find('textarea[name="text"]').val();
         var movie_path = parent.find('input[name="movie-path"]').val();
-
-        // get partials in tmp var, cause we can't use "this" in ajax callbacks
-        var _partials = this.partials;
 
         // if form is inside list item, use update function
         if (parent.attr('class') == 'item') {
@@ -115,7 +111,6 @@ directory.GroupsListView = Backbone.View.extend({
             // we have to seperate the group creation and the movie-assignation to a group, because the API don't allow
             // to save additional fields to groups
             // that's why we create an extra event with a special type to assign a movie to a group
-
             API.createGroup(title,text,function(res){
 
                 // append new content

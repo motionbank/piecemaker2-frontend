@@ -11,7 +11,6 @@
  * event_save:                  function for UI interaction
  * events_show_all:             function for UI interaction
  * events_filter:               function for UI interaction
- * events_delete:               function for UI interaction
  * event_delete:                function for UI interaction
  * event_go_to_timestamp:       function for UI interaction
  * group_toggle_details:        function for UI interaction
@@ -152,7 +151,6 @@ directory.GroupsDetailView = Backbone.View.extend({
         "submit":                           "event_save",
         "click .events-show-all":           "events_show_all",
         "click .events-filter":             "events_filter",
-        "click .events-delete":             "events_delete",
         "click .event-delete":              "event_delete",
         "click .event-go-to-timestamp":     "event_go_to_timestamp",
         "click .group-toggle-details":      "group_toggle_details",
@@ -162,8 +160,6 @@ directory.GroupsDetailView = Backbone.View.extend({
     event_save: function() {
 
         var self = this;
-
-        // get partials in tmp var, cause we can't use "this" in ajax callbacks
         var _partials = this.partials;
 
         // store form object
@@ -174,8 +170,12 @@ directory.GroupsDetailView = Backbone.View.extend({
             description: $form.find('textarea').val()
         };
 
-        // get type if event
+        // get type of event
         var type = $form.find('select[name="event-type"]').val();
+
+        // get timestamp of video
+        var timestamp = $('input[name="video-time"]').val();
+        $.extend(fields,{'movie_timestamp':timestamp});
 
         // if type is movie, extend fields object
         //
@@ -222,8 +222,6 @@ directory.GroupsDetailView = Backbone.View.extend({
     events_show_all: function() {
 
         var self = this;
-
-        // get partials in tmp var, cause we can't use "this" in ajax callbacks
         var _partials = this.partials;
 
         // get events
@@ -249,11 +247,6 @@ directory.GroupsDetailView = Backbone.View.extend({
     },
 
     events_filter: function() {
-        alert('coming soon');
-        return false;
-    },
-
-    events_delete: function() {
         alert('coming soon');
         return false;
     },
