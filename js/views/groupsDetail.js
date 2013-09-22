@@ -43,13 +43,14 @@ directory.GroupsDetailView = Backbone.View.extend({
 
         // store the id of the group
         this.group_id = this.model;
+        var group_id = this.group_id;
 
         // get group details and render html
         API.getGroup(this.group_id,function(group) {
             $.extend(data,{group:group});
         });
 
-        // get events
+        // get events counter
         API.findEvents(this.group_id,{'count_only':true},function(res) {
             $.extend(data,{event_counter:res.count});
         });
@@ -94,6 +95,23 @@ directory.GroupsDetailView = Backbone.View.extend({
             $('select').chosen({
                 disable_search_threshold: 10, // enable search only if there are more than 10 entries
                 width: "100%"
+            });
+
+            // get assigned movie
+            API.listEventsOfType(group_id,'group_movie',function(res) {
+
+                var movie_path = res[0].fields.movie_path;
+                $('.group-video-content').find('video').attr({'src':movie_path});
+
+                 // cache video object
+                 var $video = self.$('video');
+                 var video = $video.get(0);
+
+                 // update timestamp on input field while playing video
+                 video.addEventListener('timeupdate',function(){
+                 self.$('#video-time').val(video.currentTime);
+                 },false);
+
             });
 
         });
@@ -291,7 +309,7 @@ directory.GroupsDetailView = Backbone.View.extend({
                 var movie_description = res.fields.movie_description;
                 var movie_path = res.fields.movie_path;
 
-                // set movie description
+                // set movie values
                 $video_wrapper.find('h2').text(movie_description);
                 $video_wrapper.find('video').attr({'src':movie_path});
 

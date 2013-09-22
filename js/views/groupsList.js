@@ -121,12 +121,11 @@ directory.GroupsListView = Backbone.View.extend({
                 var group_id = res.id;
                 var event_data = {
                     utc_timestamp: Date.now(),
-                    type: 'group_movie'
+                    type: 'group_movie',
+                    fields: {'movie_path':movie_path}
                 };
 
-                API.createEvent(group_id,event_data,function(res){
-                    console.log(res);
-                });
+                API.createEvent(group_id,event_data);
 
             });
         }
