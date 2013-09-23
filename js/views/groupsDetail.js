@@ -103,7 +103,11 @@ directory.GroupsDetailView = Backbone.View.extend({
             self.$('.wrapper-left').resizable({
                 minWidth: 300,
                 autoHide: true,
-                handles: "e" // disable vertical resize
+                handles: "e", // disable vertical resize
+                start: function(){
+                    // close filer bubble
+                    $('.bubble').removeClass('bubble-open');
+                }
             });
 
             // enable nice styled select boxes
@@ -328,7 +332,14 @@ directory.GroupsDetailView = Backbone.View.extend({
     },
 
     toggle_filter_bubble: function() {
-        $('.bubble').toggleClass('bubble-open');
+        
+        // set correct position
+        var button = $('.toggle-filter-bubble');
+        var bubble = $('.bubble');
+        var toggle_button_position = (button.offset().left + (button.outerWidth() / 2)) - (bubble.outerWidth() / 2);
+        
+        bubble.css({'left':toggle_button_position + 'px'}).toggleClass('bubble-open');
+        
         return false;
     },
     
