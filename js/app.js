@@ -21,7 +21,7 @@ Mousetrap.bind(['mod+s'], function(e) {
     return false;
 });
 
-Mousetrap.bind(['?'], function(e) {
+Mousetrap.bind(['mod+h'], function(e) {
     $('.help').trigger('click');
     return false;
 });
@@ -31,7 +31,7 @@ Mousetrap.bind(['?'], function(e) {
  */
 
 $(document).on('click','.help', function(){
-    alert('This alert box will be styled soon\n\n- Press CMD/CTRL + S to save forms\n- Columns in group detail view are resizable\n- Open this Help-Box by pressing "?"');
+    alert('This alert box will be styled soon\n\n- Press CMD/CTRL + S to save forms\n- Columns in group detail view are resizable\n- Open this Help-Box by pressing CMD/CTRL + H');
 });
 
 /*
