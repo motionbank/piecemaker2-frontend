@@ -7,6 +7,7 @@
  * render:                      initial render function
  * check_list_placeholder:      helper function
  * get_selected_events_count:   helper function
+ * make_first_item_active       helper function
  * events:                      bind UI interactions
  * event_save:                  function for UI interaction
  * events_show_all:             function for UI interaction
@@ -108,14 +109,36 @@ directory.GroupsDetailView = Backbone.View.extend({
                 var movie_path = res[0].fields.movie_path;
                 $('.group-video-content').find('video').attr({'src':movie_path});
 
-                 // cache video object
-                 var $video = self.$('video');
-                 var video = $video.get(0);
+                // cache video object
+                var $video = self.$('video');
+                var video = $video.get(0);
+                var end_time = video.endTime;                
 
-                 // update timestamp on input field while playing video
-                 video.addEventListener('timeupdate',function(){
-                 self.$('#video-time').val(video.currentTime);
-                 },false);
+                video.addEventListener('timeupdate',function() {
+                    
+                    var $active = $('.items').find('li.active');
+                    var current_time = video.currentTime; 
+
+                    // update timestamp on input field while playing video                    
+                    self.$('#video-time').val(current_time);
+                    
+                    // make list item active, depending on the timestamp
+                    var range_min = $active.data('timestamp');
+                    var range_max = $active.next().data('timestamp');
+                    if (!range_max) {
+                        range_max = end_time;
+                    }
+                    
+                    if (current_time > range_max) {
+                        $active.removeClass('active');
+                        $active.next().addClass('active');
+                    } else if (current_time < range_min) {
+                        $active.removeClass('active');
+                        $active.prev().addClass('active');                        
+                    }
+                    
+                     
+                },false);
 
             });
 
@@ -146,6 +169,12 @@ directory.GroupsDetailView = Backbone.View.extend({
         var l = $('.items').find('li').length - 2;
         $('.counter-selected').text(l);
     },
+    
+    make_first_item_active: function() {
+        
+        // get 3rd child, cause first two are helper items 
+        $('.items').find('li:nth-child(3)').addClass('active');
+    }, 
 
     events: {
         "submit":                           "event_save",
@@ -240,6 +269,7 @@ directory.GroupsDetailView = Backbone.View.extend({
 
             self.check_list_placeholder();
             self.get_selected_events_count();
+            self.make_first_item_active();2
 
         });
 
