@@ -9,7 +9,8 @@
  * render:                      initial render function
  * check_list_placeholder:      helper function
  * get_selected_events_count:   helper function
- * make_first_item_active       helper function
+ * make_first_item_active:      helper function
+ * sort_events_list:            helper function
  * events:                      bind UI interactions
  * event_save:                  function for UI interaction
  * events_show_all:             function for UI interaction
@@ -196,6 +197,21 @@ directory.GroupsDetailView = Backbone.View.extend({
         // get 3rd child, cause first two are helper items 
         $('.items').find('li:nth-child(3)').addClass('active');
     }, 
+    
+    sort_events_list: function() {
+
+        var $events_list = $('.events-list');
+        var $list = $events_list.find('ul');        
+        
+        // sort by timestamp
+        var arr = [].slice.call($events_list.find('.item').not(':first-child')).sort(function (a, b) {
+            return parseFloat($(a).data('timestamp')) > parseFloat($(b).data('timestamp')) ? 1 : -1;
+        });
+
+        arr.forEach(function (p) {
+            $list.append(p);
+        });    
+    },
 
     events: {
         "submit":                           "event_save",
@@ -256,8 +272,9 @@ directory.GroupsDetailView = Backbone.View.extend({
 
             // show new event after active item
             var content = Mustache.render(_partials.list,res);
-            self.active_event.after(content);
+            $('.events-list').find('ul').append(content);
 
+            self.sort_events_list();
             self.check_list_placeholder();
             self.get_selected_events_count();
 
@@ -292,15 +309,7 @@ directory.GroupsDetailView = Backbone.View.extend({
                 }
             });
 
-            // sort by timestamp
-            var arr = [].slice.call($events_list.find('.item').not(':first-child')).sort(function (a, b) {
-                return parseFloat($(a).data('timestamp')) > parseFloat($(b).data('timestamp')) ? 1 : -1;
-            });
-
-            arr.forEach(function (p) {
-                $list.append(p);
-            });
-
+            self.sort_events_list();
             self.check_list_placeholder();
             self.get_selected_events_count();
             self.make_first_item_active();
