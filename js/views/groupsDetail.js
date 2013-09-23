@@ -119,9 +119,13 @@ directory.GroupsDetailView = Backbone.View.extend({
                 
                 var video = $video.get(0);
                 self.video = video;
-                
-                var end_time = video.endTime;                
 
+                var end_time;
+                video.addEventListener('loadedmetadata', function() {
+                    end_time = video.duration;
+                });
+
+                // add active class to events while playing 
                 video.addEventListener('timeupdate',function() {
                     
                     self.active_event = $items.find('li.active');
@@ -137,14 +141,25 @@ directory.GroupsDetailView = Backbone.View.extend({
                         var range_min = $(this).data('timestamp');
                         var range_max = $(this).next().data('timestamp');
                         
-                        if (!range_max) {
-                            range_max = end_time;
-                        }                        
+                        if (range_max == null) {  
+                            range_max = end_time;                            
+                        } 
                         
                         return current_time >= range_min && current_time < range_max;
+                        
                     }).addClass('active');
+                    
+                    // fix for last item at video end
+                    if (current_time == end_time) {
+                        $items.find('li:last-child').addClass('active');
+                    }
                      
                 },false);
+
+                // set video time on input change
+                self.$('#video-time').bind('input', function(){
+                    self.video.currentTime = parseFloat($(this).val());
+                });
 
             });
 
