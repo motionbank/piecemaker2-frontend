@@ -1,7 +1,7 @@
 /*
  * Overview
  *
- * partials:                    obj
+ * partials:                    cached partials html
  * tmp:                         temporary var to store html snippets
  * id:                          id of the wrapper (<div>)
  * render:                      initial render function
@@ -17,7 +17,7 @@
 directory.GroupsListView = Backbone.View.extend({
 
     partials: null,
-    tmp: null, // var to store misc html temporary
+    tmp: null,
     id: 'content-inner',
 
     render:function () {

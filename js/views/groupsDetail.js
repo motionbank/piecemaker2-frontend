@@ -2,9 +2,10 @@
  * Overview
  *
  * group_id:                    int
- * partials:                    obj
- * active_event:                active event object 
- * video:                       video element
+ * partials:                    cached partials html
+ * active_event:                cached active event object 
+ * video:                       cached video element
+ * tmp:                         temporary var to store html snippets
  * id:                          id of the wrapper (<div>)
  * render:                      initial render function
  * check_list_placeholder:      helper function
@@ -16,6 +17,7 @@
  * events_show_all:             function for UI interaction
  * toggle_filter_bubble:        function for UI interaction 
  * events_filter:               function for UI interaction
+ * event_update:                function for UI interaction
  * event_delete:                function for UI interaction
  * event_go_to_timestamp:       function for UI interaction
  * group_toggle_details:        function for UI interaction
@@ -29,6 +31,7 @@ directory.GroupsDetailView = Backbone.View.extend({
     partials: null,
     active_event: null,
     video: null,
+    tmp: null,
     id: 'content-inner',
 
     render:function () {
@@ -215,10 +218,13 @@ directory.GroupsDetailView = Backbone.View.extend({
     },
 
     events: {
-        "submit .form-crud":                "event_save",
+        "submit #event-create-form":        "event_save",
         "click .events-show-all":           "events_show_all",
         "click .toggle-filter-bubble":      "toggle_filter_bubble",
         "click .events-filter":             "events_filter",
+        "click .event-update":              "event_update",
+        "click .event-update-save":         "event_update_save",
+        "click .event-update-cancel":       "event_update_cancel",
         "click .event-delete":              "event_delete",
         "click .event-go-to-timestamp":     "event_go_to_timestamp",
         "click .group-toggle-details":      "group_toggle_details",
@@ -358,6 +364,55 @@ directory.GroupsDetailView = Backbone.View.extend({
                 
         return false;
     },
+
+    event_update: function(e) {
+        var obj = e.target;
+        var parent = $(obj).closest('.item');
+        var event_id = parent.data('id');
+        var group_id = this.group_id;
+        
+        // get event details and put them in edit form
+        API.getEvent(group_id,event_id,function(res){
+            
+            // TODO: cleanup!
+            parent.find('.link').replaceWith('<form method="post" action="#" class="form-crud"><textarea>'+res.fields.description+'</textarea><button type="submit" class="event-update-save icon-ok">Save</button><button class="event-update-cancel icon-remove">Cancel</button></form>');
+        });
+
+        return false;        
+    },
+
+    event_update_save: function(e) {
+        var obj = e.target;
+        var parent = $(obj).closest('.item');
+        var event_id = parent.data('id');
+        var group_id = this.group_id;
+        var content = parent.find('textarea').val();
+
+        // store data
+        var data = {
+            utc_timestamp: Date.now(),
+            fields: {
+                description: content
+            }
+        };
+
+        // get event details and put them in edit form
+        API.updateEvent(group_id,event_id,data,function(res){
+            parent.find('form').replaceWith('<a class="link event-go-to-timestamp" href="#">'+res.fields.description+'</a>');
+        });
+        
+        return false;
+    },
+
+    event_update_cancel: function(e) {
+        var obj = e.target;
+        var parent = $(obj).closest('.item');
+        var content = parent.find('textarea').val();
+        
+        parent.find('form').replaceWith('<a class="link event-go-to-timestamp" href="#">'+content+'</a>');
+        
+        return false;
+    },    
 
     event_delete: function(e) {
 
