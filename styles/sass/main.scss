@@ -260,6 +260,68 @@ input[type=checkbox]:checked + label:before {
 
 }
 
+.bubble {
+  position: absolute;
+  left:620px;
+  z-index: 1000000;
+  top:80px;
+  padding: $padding;
+  padding-bottom: 5px;
+  width: 300px;
+  background: #FFFFFF;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  border: $middleblue solid 1px;
+  visibility: hidden;
+  opacity: 0;
+  @include transition(opacity 0.5s, visibility 0.5s, top 0.5s);
+
+  input {
+    @include input;
+
+    &:focus {
+      @include input-focus;
+    }
+
+  }
+  
+}
+
+.bubble-open {
+  opacity: 1;  
+  visibility: visible;
+  top:106px;
+}
+
+.bubble:after {
+  content: '';
+  position: absolute;
+  z-index: 1000000;  
+  border-style: solid;
+  border-width: 0 15px 10px;
+  border-color: #FFFFFF transparent;
+  display: block;
+  width: 0;
+  z-index: 1;
+  top: -10px;
+  left: 135px;
+}
+
+.bubble:before {
+  content: '';
+  position: absolute;
+  z-index: 1000000;  
+  border-style: solid;
+  border-width: 0 15px 10px;
+  border-color: $middleblue transparent;
+  display: block;
+  width: 0;
+  z-index: 0;
+  top: -11px;
+  left: 135px;
+}
+
 /* ==========================================================================
    Header
    ========================================================================== */

@@ -58,7 +58,15 @@
         <div class="button-row">
 
             <a href="#" class="icon-video events-show-all">Show all Events</a>
-            <a href="#" class="icon-search events-filter">Filter</a>
+            <a href="#" class="icon-search toggle-filter-bubble">Filter</a>
+            
+            <div class="bubble">
+                <form action="#" method="post">
+                    <input type="text" name="filter-min" placeholder="From Timestamp" />
+                    <input type="text" name="filter-max"  placeholder="To Timestamp" />
+                    <button type="submit" class="events-filter">Get Events</button>
+                </form>
+            </div>
 
             <div class="info-wrapper">
                 <span class="info icon-info-sign">

@@ -14,6 +14,7 @@
  * events:                      bind UI interactions
  * event_save:                  function for UI interaction
  * events_show_all:             function for UI interaction
+ * toggle_filter_bubble:        function for UI interaction 
  * events_filter:               function for UI interaction
  * event_delete:                function for UI interaction
  * event_go_to_timestamp:       function for UI interaction
@@ -214,8 +215,9 @@ directory.GroupsDetailView = Backbone.View.extend({
     },
 
     events: {
-        "submit":                           "event_save",
+        "submit .form-crud":                "event_save",
         "click .events-show-all":           "events_show_all",
+        "click .toggle-filter-bubble":      "toggle_filter_bubble",
         "click .events-filter":             "events_filter",
         "click .event-delete":              "event_delete",
         "click .event-go-to-timestamp":     "event_go_to_timestamp",
@@ -319,8 +321,41 @@ directory.GroupsDetailView = Backbone.View.extend({
         return false;
     },
 
+    toggle_filter_bubble: function() {
+        $('.bubble').toggleClass('bubble-open');
+        return false;
+    },
+    
     events_filter: function() {
-        alert('coming soon');
+        
+        var self = this;
+        var filter_max = parseFloat($('input[name="filter-max"]').val());
+        var filter_min = parseFloat($('input[name="filter-min"]').val());
+
+        // get all events...
+        self.events_show_all();
+
+        $(document).one('ajaxStop', function() {
+
+            var $items = $('.items');
+
+            // ... then remove all unnecessary evetns
+            // TODO: extend API functions
+            
+            $items.find('li').slice(2).filter(function() {
+    
+                var t = parseFloat($(this).data('timestamp'));
+                return t < filter_min || t > filter_max;
+    
+            }).remove();
+
+            self.check_list_placeholder();
+            self.get_selected_events_count();
+            self.make_first_item_active();            
+            self.toggle_filter_bubble();
+                
+        });
+                
         return false;
     },
 
