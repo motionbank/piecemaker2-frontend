@@ -3,6 +3,8 @@
  *
  * group_id:                    int
  * partials:                    obj
+ * active_event:                active event object 
+ * video:                       video element
  * id:                          id of the wrapper (<div>)
  * render:                      initial render function
  * check_list_placeholder:      helper function
@@ -23,10 +25,12 @@ directory.GroupsDetailView = Backbone.View.extend({
 
     group_id: null,
     partials: null,
+    active_event: null,
+    video: null,
     id: 'content-inner',
 
     render:function () {
-
+        
         // store template and obj globally
         var el = this.el;
         var self = this;
@@ -111,32 +115,34 @@ directory.GroupsDetailView = Backbone.View.extend({
 
                 // cache video object
                 var $video = self.$('video');
+                var $items = $('.items');
+                
                 var video = $video.get(0);
+                self.video = video;
+                
                 var end_time = video.endTime;                
 
                 video.addEventListener('timeupdate',function() {
                     
-                    var $active = $('.items').find('li.active');
+                    self.active_event = $items.find('li.active');
+                    var $active = self.active_event;
                     var current_time = video.currentTime; 
 
                     // update timestamp on input field while playing video                    
                     self.$('#video-time').val(current_time);
-                    
-                    // make list item active, depending on the timestamp
-                    var range_min = $active.data('timestamp');
-                    var range_max = $active.next().data('timestamp');
-                    if (!range_max) {
-                        range_max = end_time;
-                    }
-                    
-                    if (current_time > range_max) {
-                        $active.removeClass('active');
-                        $active.next().addClass('active');
-                    } else if (current_time < range_min) {
-                        $active.removeClass('active');
-                        $active.prev().addClass('active');                        
-                    }
-                    
+
+                    $active.removeClass('active');
+                    $items.find('li').slice(2).filter(function() {
+
+                        var range_min = $(this).data('timestamp');
+                        var range_max = $(this).next().data('timestamp');
+                        
+                        if (!range_max) {
+                            range_max = end_time;
+                        }                        
+                        
+                        return current_time >= range_min && current_time < range_max;
+                    }).addClass('active');
                      
                 },false);
 
@@ -233,9 +239,9 @@ directory.GroupsDetailView = Backbone.View.extend({
             var $counter = $('.counter-total');
             $counter.text(parseInt($counter.text()) + 1);
 
-            // show new event
+            // show new event after active item
             var content = Mustache.render(_partials.list,res);
-            $('.events-list').find('ul').append(content);
+            self.active_event.after(content);
 
             self.check_list_placeholder();
             self.get_selected_events_count();
@@ -256,20 +262,33 @@ directory.GroupsDetailView = Backbone.View.extend({
         // get events
         API.listEvents(this.group_id,function(res) {
 
-            // clear item list
-            $('.events-list').find('.item').not(':first-child').remove();
+            var $events_list = $('.events-list');
+            var $list = $events_list.find('ul');
+            
+            $events_list.find('.item').not(':first-child').remove();
 
             // list events
             $.each(res, function(index,value) {
                 if (value.type != 'group_movie') {
+                    
+                    // we need an "last-added" class to sort events by timestamp
                     var content = Mustache.render(_partials.list,value);
-                    $('.events-list').find('ul').append(content);
+                    $list.append(content);
                 }
+            });
+
+            // sort by timestamp
+            var arr = [].slice.call($events_list.find('.item').not(':first-child')).sort(function (a, b) {
+                return parseFloat($(a).data('timestamp')) > parseFloat($(b).data('timestamp')) ? 1 : -1;
+            });
+
+            arr.forEach(function (p) {
+                $list.append(p);
             });
 
             self.check_list_placeholder();
             self.get_selected_events_count();
-            self.make_first_item_active();2
+            self.make_first_item_active();
 
         });
 
@@ -314,13 +333,15 @@ directory.GroupsDetailView = Backbone.View.extend({
 
         var self = this;
         var obj = e.target;
-        var timestamp = $(obj).data('timestamp');
+        self.video.currentTime = parseFloat($(obj).parent().data('timestamp'));
 
         return false;
     },
 
     group_toggle_details: function() {
+
         $('.group-detail-content').toggleClass('toggle');
+
         return false;
     },
 
