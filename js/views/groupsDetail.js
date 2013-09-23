@@ -386,7 +386,7 @@ directory.GroupsDetailView = Backbone.View.extend({
         API.getEvent(group_id,event_id,function(res){
             
             // TODO: cleanup!
-            parent.find('.link').replaceWith('<form method="post" action="#" class="form-crud"><textarea>'+res.fields.description+'</textarea><button type="submit" class="event-update-save icon-ok">Save</button><button class="event-update-cancel icon-remove">Cancel</button></form>');
+            parent.find('.link').replaceWith('<form method="post" action="#" class="form-crud"><textarea class="mousetrap">'+res.fields.description+'</textarea><button type="submit" class="event-update-save icon-ok">Save</button><button class="event-update-cancel icon-remove">Cancel</button></form>');
         });
 
         return false;        
@@ -406,8 +406,6 @@ directory.GroupsDetailView = Backbone.View.extend({
                 description: content
             }
         };
-
-        // TODO: save with CMD+S
 
         // get event details and put them in edit form
         API.updateEvent(group_id,event_id,data,function(res){
