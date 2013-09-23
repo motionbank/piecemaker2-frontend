@@ -105,6 +105,8 @@ directory.GroupsListView = Backbone.View.extend({
 
             });
 
+            // TODO: update movie URL/PATH          
+
         // if form is standalone (add form), use create function
         } else if (parent.hasClass('group-crud-wrapper')) {
 

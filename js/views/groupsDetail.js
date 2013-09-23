@@ -407,6 +407,8 @@ directory.GroupsDetailView = Backbone.View.extend({
             }
         };
 
+        // TODO: save with CMD+S
+
         // get event details and put them in edit form
         API.updateEvent(group_id,event_id,data,function(res){
             parent.find('form').replaceWith('<a class="link event-go-to-timestamp" href="#">'+res.fields.description+'</a>');
