@@ -105,7 +105,12 @@ directory.GroupsListView = Backbone.View.extend({
 
             });
 
-            // TODO: update movie URL/PATH          
+            API.listEventsOfType(id,'group_movie',function(movs){
+                                 if ( movs && movs.length > 0 ) {
+                                 console.log( movs );
+                                    //API.updateMovie(id,movs[0].id,movs[0].id);
+                                 }
+            });
 
         // if form is standalone (add form), use create function
         } else if (parent.hasClass('group-crud-wrapper')) {

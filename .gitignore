@@ -2,4 +2,6 @@
 Gemfile.lock
 *.log
 *.pid
-.idea/
+.idea/.bundle
+.ruby-version
+.bundle/
