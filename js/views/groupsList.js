@@ -85,7 +85,7 @@ directory.GroupsListView = Backbone.View.extend({
         var _partials = this.partials;
 
         var title = parent.find('input[name="title"]').val();
-        var text = parent.find('textarea[name="description"]').val();
+        var description = parent.find('textarea[name="description"]').val();
         var movie_path = parent.find('input[name="movie-path"]').val();
 
         // if form is inside list item, use update function
@@ -94,7 +94,7 @@ directory.GroupsListView = Backbone.View.extend({
             var id = parent.data('id');
             var data = {
                 title:title,
-                description:text
+                description:description
             };
 
             API.updateGroup(id,data,function(res){
@@ -121,7 +121,7 @@ directory.GroupsListView = Backbone.View.extend({
             // we have to seperate the group creation and the movie-assignation to a group, because the API don't allow
             // to save additional fields to groups
             // that's why we create an extra event with a special type to assign a movie to a group
-            API.createGroup(title,text,function(res){
+            API.createGroup(title,description,function(res){
 
                 // append new content
                 var content = Mustache.render(_partials.list,res);
@@ -171,7 +171,7 @@ directory.GroupsListView = Backbone.View.extend({
         API.getGroup(id,function(res){
 
             parent.find('input[name="title"]').val(res.title);
-            parent.find('textarea[name="description"]').val(res.text);
+            parent.find('textarea[name="description"]').val(res.description);
 
         });
 
