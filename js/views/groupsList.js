@@ -94,7 +94,7 @@ directory.GroupsListView = Backbone.View.extend({
             var id = parent.data('id');
             var data = {
                 title:title,
-                text:text
+                description:text
             };
 
             API.updateGroup(id,data,function(res){
@@ -106,10 +106,13 @@ directory.GroupsListView = Backbone.View.extend({
             });
 
             API.listEventsOfType(id,'group_movie',function(movs){
-                                 if ( movs && movs.length > 0 ) {
-                                 console.log( movs );
-                                    //API.updateMovie(id,movs[0].id,movs[0].id);
-                                 }
+                if ( movs && movs.length > 0 ) {
+                    var movie = movs[0];
+                    movie.fields['movie_path'] = movie_path;
+                    API.updateMovie(id,movie.id,movie,function(){
+                        // should be ok now ...
+                    });
+                }
             });
 
         // if form is standalone (add form), use create function
