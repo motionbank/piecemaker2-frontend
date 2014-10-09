@@ -109,7 +109,7 @@ directory.GroupsListView = Backbone.View.extend({
                 if ( movs && movs.length > 0 ) {
                     var movie = movs[0];
                     movie.fields['movie_path'] = movie_path;
-                    API.updateMovie(id,movie.id,movie,function(){
+                    API.updateEvent(id,movie.id,movie,function(m){
                         // should be ok now ...
                     });
                 }
