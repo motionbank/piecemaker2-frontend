@@ -43,6 +43,10 @@ directory.GroupsListView = Backbone.View.extend({
             $(obj).html(Mustache.render(template,data,_partials));
         });
 
+        // PiecemakerBridge.recorder("start")
+        // PiecemakerBridge.recorder("stop")
+        console.log( PiecemakerBridge.recorder("fetch").split(";") );
+
     },
 
     events: {
@@ -88,6 +92,15 @@ directory.GroupsListView = Backbone.View.extend({
         var description = parent.find('textarea[name="description"]').val();
         var movie_path = parent.find('input[name="movie-path"]').val();
 
+        var movie_date = new Date();
+        console.log( movie_date );
+        if ( movie_path && /.*[\/]*[0-9]+\.[0-9]+\.(mp4|mov)$/i.test(movie_path) ) {
+            var movie_ts = movie_path.replace(/[^0-9]*([0-9]+\.[0-9]+)\.(mp4|mov)$/,'$1');
+            movie_ts = parseFloat(movie_ts);
+            movie_date = new Date( movie_ts * 1000 );
+            console.log( movie_date );
+        }
+
         // if form is inside list item, use update function
         if (parent.attr('class') == 'item') {
 
@@ -108,6 +121,7 @@ directory.GroupsListView = Backbone.View.extend({
             API.listEventsOfType(id,'group_movie',function(movs){
                 if ( movs && movs.length > 0 ) {
                     var movie = movs[0];
+                    movie.utc_timestamp = movie_date;
                     movie.fields['movie_path'] = movie_path;
                     API.updateEvent(id,movie.id,movie,function(m){
                         // should be ok now ...
@@ -141,7 +155,7 @@ directory.GroupsListView = Backbone.View.extend({
 
                 var group_id = res.id;
                 var event_data = {
-                    utc_timestamp: Date.now(),
+                    utc_timestamp: movie_date,
                     type: 'group_movie',
                     fields: {'movie_path':movie_path}
                 };
