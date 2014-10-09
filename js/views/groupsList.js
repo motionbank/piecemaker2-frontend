@@ -94,8 +94,7 @@ directory.GroupsListView = Backbone.View.extend({
             var id = parent.data('id');
             var data = {
                 title:title,
-                description:description,
-                text:description
+                description:description
             };
 
             API.updateGroup(id,data,function(res){
