@@ -85,7 +85,7 @@ directory.GroupsListView = Backbone.View.extend({
         var _partials = this.partials;
 
         var title = parent.find('input[name="title"]').val();
-        var text = parent.find('textarea[name="text"]').val();
+        var text = parent.find('textarea[name="description"]').val();
         var movie_path = parent.find('input[name="movie-path"]').val();
 
         // if form is inside list item, use update function
@@ -171,7 +171,7 @@ directory.GroupsListView = Backbone.View.extend({
         API.getGroup(id,function(res){
 
             parent.find('input[name="title"]').val(res.title);
-            parent.find('textarea[name="text"]').val(res.text);
+            parent.find('textarea[name="description"]').val(res.text);
 
         });
 
