@@ -384,7 +384,7 @@ directory.GroupsDetailView = Backbone.View.extend({
         
         // get event details and put them in edit form
         API.getEvent(group_id,event_id,function(res){
-            
+            parent.data('token',res.token);
             // TODO: cleanup!
             parent.find('.link').replaceWith('<form method="post" action="#" class="form-crud"><textarea class="mousetrap">'+res.fields.description+'</textarea><button type="submit" class="event-update-save icon-ok">Save</button><button class="event-update-cancel icon-remove">Cancel</button></form>');
         });

@@ -90,22 +90,23 @@ directory.GroupsListView = Backbone.View.extend({
 
         var title = parent.find('input[name="title"]').val();
         var description = parent.find('textarea[name="description"]').val();
-        var movie_path = parent.find('input[name="movie-path"]').val();
+        
+        // var movie_path = parent.find('input[name="movie-path"]').val();
 
-        var movie_date = new Date();
-        //console.log( movie_date );
-        if ( movie_path && /.*[\/]*[0-9]+\.[0-9]+\.(mp4|mov)$/i.test(movie_path) ) {
-            var movie_ts = movie_path.replace(/^(.+[^0-9])?([0-9]{10}\.[0-9]+)\.(mp4|mov)$/i,'$2');
-            //console.log( movie_ts );
-            movie_ts = parseFloat(movie_ts);
-            //console.log( movie_path, movie_ts, movie_date_new );
-            if ( !isNaN(movie_ts) ) {
-                var movie_date_new = new Date( movie_ts * 1000 );
-                if ( !isNaN(movie_date_new.getTime()) ) {
-                    movie_date = movie_date_new;
-                }
-            }
-        }
+        // var movie_date = new Date();
+        // //console.log( movie_date );
+        // if ( movie_path && /.*[\/]*[0-9]+\.[0-9]+\.(mp4|mov)$/i.test(movie_path) ) {
+        //     var movie_ts = movie_path.replace(/^(.+[^0-9])?([0-9]{10}\.[0-9]+)\.(mp4|mov)$/i,'$2');
+        //     //console.log( movie_ts );
+        //     movie_ts = parseFloat(movie_ts);
+        //     //console.log( movie_path, movie_ts, movie_date_new );
+        //     if ( !isNaN(movie_ts) ) {
+        //         var movie_date_new = new Date( movie_ts * 1000 );
+        //         if ( !isNaN(movie_date_new.getTime()) ) {
+        //             movie_date = movie_date_new;
+        //         }
+        //     }
+        // }
 
         // if form is inside list item, use update function
         if (parent.attr('class') == 'item') {
@@ -124,16 +125,16 @@ directory.GroupsListView = Backbone.View.extend({
 
             });
 
-            API.listEventsOfType(id,'group_movie',function(movs){
-                if ( movs && movs.length > 0 ) {
-                    var movie = movs[0];
-                    movie.utc_timestamp = movie_date;
-                    movie.fields['movie_path'] = movie_path;
-                    API.updateEvent(id,movie.id,movie,function(m){
-                        // should be ok now ...
-                    });
-                }
-            });
+            // API.listEventsOfType(id,'group_movie',function(movs){
+            //     if ( movs && movs.length > 0 ) {
+            //         var movie = movs[0];
+            //         movie.utc_timestamp = movie_date;
+            //         movie.fields['movie_path'] = movie_path;
+            //         API.updateEvent(id,movie.id,movie,function(m){
+            //             // should be ok now ...
+            //         });
+            //     }
+            // });
 
         // if form is standalone (add form), use create function
         } else if (parent.hasClass('group-crud-wrapper')) {
@@ -159,14 +160,14 @@ directory.GroupsListView = Backbone.View.extend({
                 // we have to save the new event that assigns a movie to a group in the createGroup Callback, because
                 // we need the ID of the new group
 
-                var group_id = res.id;
-                var event_data = {
-                    utc_timestamp: movie_date,
-                    type: 'group_movie',
-                    fields: {'movie_path':movie_path}
-                };
+                // var group_id = res.id;
+                // var event_data = {
+                //     utc_timestamp: movie_date,
+                //     type: 'group_movie',
+                //     fields: {'movie_path':movie_path}
+                // };
 
-                API.createEvent(group_id,event_data);
+                // API.createEvent(group_id,event_data);
 
             });
         }
@@ -195,13 +196,13 @@ directory.GroupsListView = Backbone.View.extend({
 
         });
 
-        // get assigned group movie
-        API.listEventsOfType(id,'group_movie',function(res) {
+        // // get assigned group movie
+        // API.listEventsOfType(id,'group_movie',function(res) {
 
-            var movie_path = res[0].fields.movie_path;
-            parent.find('input[name="movie-path"]').val(movie_path);
+        //     var movie_path = res[0].fields.movie_path;
+        //     parent.find('input[name="movie-path"]').val(movie_path);
 
-        });
+        // });
 
         return false;
     },
