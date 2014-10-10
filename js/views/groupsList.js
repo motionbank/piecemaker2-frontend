@@ -93,12 +93,18 @@ directory.GroupsListView = Backbone.View.extend({
         var movie_path = parent.find('input[name="movie-path"]').val();
 
         var movie_date = new Date();
-        console.log( movie_date );
+        //console.log( movie_date );
         if ( movie_path && /.*[\/]*[0-9]+\.[0-9]+\.(mp4|mov)$/i.test(movie_path) ) {
-            var movie_ts = movie_path.replace(/[^0-9]*([0-9]+\.[0-9]+)\.(mp4|mov)$/,'$1');
+            var movie_ts = movie_path.replace(/^(.+[^0-9])?([0-9]{10}\.[0-9]+)\.(mp4|mov)$/i,'$2');
+            //console.log( movie_ts );
             movie_ts = parseFloat(movie_ts);
-            movie_date = new Date( movie_ts * 1000 );
-            console.log( movie_date );
+            //console.log( movie_path, movie_ts, movie_date_new );
+            if ( !isNaN(movie_ts) ) {
+                var movie_date_new = new Date( movie_ts * 1000 );
+                if ( !isNaN(movie_date_new.getTime()) ) {
+                    movie_date = movie_date_new;
+                }
+            }
         }
 
         // if form is inside list item, use update function
