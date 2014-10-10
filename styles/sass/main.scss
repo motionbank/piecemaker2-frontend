@@ -379,6 +379,7 @@ header {
    ========================================================================== */
 
 #main-wrapper {
+
   height:100%;
 
   #content-section {
@@ -404,6 +405,25 @@ header {
       }
     }
 
+  }
+
+  a.is-button {
+
+    @include buttons-general;
+    background-color: rgba($sand-dark,0.4);
+    color: darken($sand-dark,40%);
+    border: 1px solid $sand-dark;
+    display: inline-block;
+    margin:0 0 0 6px;
+
+    &:hover {
+      background-color:rgba($sand-dark,0.6);
+      border: 1px solid $sand-dark;
+    }
+
+    &.first {
+      margin-left: 0px;
+    }
   }
 
 }
@@ -576,8 +596,12 @@ ul.items {
 
     }
 
+    //.group-video-add,
     .group-video-content {
       border-bottom:1px solid $border-color;
+    }
+
+    .group-video-content {
 
       video {
         width: 100%;

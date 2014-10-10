@@ -119,56 +119,65 @@ directory.GroupsDetailView = Backbone.View.extend({
             // get assigned movie
             API.listEventsOfType(group_id,'group_movie',function(res) {
 
-                var movie_path = res[0].fields.movie_path;
-                $('.group-video-content').find('video').attr({'src':movie_path});
+                if ( res.length > 0 ) {
 
-                // cache video object
-                var $video = self.$('video');
-                var $items = $('.items');
-                
-                var video = $video.get(0);
-                self.video = video;
+                    var movie_path = res[0].fields.movie_path;
+                    $('.group-video-content').find('video').attr({'src':movie_path});
 
-                var end_time;
-                video.addEventListener('loadedmetadata', function() {
-                    end_time = video.duration;
-                });
-
-                // add active class to events while playing 
-                video.addEventListener('timeupdate',function() {
+                    // cache video object
+                    var $video = self.$('video');
+                    var $items = $('.items');
                     
-                    self.active_event = $items.find('li.active');
-                    var $active = self.active_event;
-                    var current_time = video.currentTime; 
+                    var video = $video.get(0);
+                    self.video = video;
 
-                    // update timestamp on input field while playing video                    
-                    self.$('#video-time').val(current_time);
+                    var end_time;
+                    video.addEventListener('loadedmetadata', function() {
+                        end_time = video.duration;
+                    });
 
-                    $active.removeClass('active');
-                    $items.find('li').slice(2).filter(function() {
-
-                        var range_min = $(this).data('timestamp');
-                        var range_max = $(this).next().data('timestamp');
+                    // add active class to events while playing 
+                    video.addEventListener('timeupdate',function() {
                         
-                        if (range_max == null) {  
-                            range_max = end_time;                            
-                        } 
-                        
-                        return current_time >= range_min && current_time < range_max;
-                        
-                    }).addClass('active');
-                    
-                    // fix for last item at video end
-                    if (current_time == end_time) {
-                        $items.find('li:last-child').addClass('active');
-                    }
-                     
-                },false);
+                        self.active_event = $items.find('li.active');
+                        var $active = self.active_event;
+                        var current_time = video.currentTime; 
 
-                // set video time on input change
-                self.$('#video-time').bind('input', function(){
-                    self.video.currentTime = parseFloat($(this).val());
-                });
+                        // update timestamp on input field while playing video                    
+                        self.$('#video-time').val(current_time);
+
+                        $active.removeClass('active');
+                        $items.find('li').slice(2).filter(function() {
+
+                            var range_min = $(this).data('timestamp');
+                            var range_max = $(this).next().data('timestamp');
+                            
+                            if (range_max == null) {  
+                                range_max = end_time;                            
+                            } 
+                            
+                            return current_time >= range_min && current_time < range_max;
+                            
+                        }).addClass('active');
+                        
+                        // fix for last item at video end
+                        if (current_time == end_time) {
+                            $items.find('li:last-child').addClass('active');
+                        }
+                         
+                    },false);
+
+                    // set video time on input change
+                    self.$('#video-time').bind('input', function(){
+                        self.video.currentTime = parseFloat($(this).val());
+                    });
+
+                } else {
+
+                    $('.group-video-content').hide();
+                    $('#event-create-form').hide();
+
+                }
 
             });
 
