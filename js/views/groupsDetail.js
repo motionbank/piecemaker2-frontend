@@ -46,10 +46,12 @@ directory.GroupsDetailView = Backbone.View.extend({
 
         // get partial: list element
         var $template = $(template);
-        var $el = $('.events-list-content ul li:nth-child(1)',$template);
 
         // define mustache partial
-        this.partials = { "list" : $el[0].outerHTML };
+        this.partials = {
+            "list" :         $('.events-list-content ul li:nth-child(1)',$template)[0].outerHTML,
+            'select_media' : $('#select-local-media',$template)[0].outerHTML 
+        };
 
         // store the id of the group
         this.group_id = this.model;
@@ -176,6 +178,7 @@ directory.GroupsDetailView = Backbone.View.extend({
 
                     $('.group-video-content').hide();
                     $('#event-create-form').hide();
+                    $('.group-video-add .tab-container').easytabs();
 
                 }
 
@@ -241,7 +244,60 @@ directory.GroupsDetailView = Backbone.View.extend({
         "click .event-delete":              "event_delete",
         "click .event-go-to-timestamp":     "event_go_to_timestamp",
         "click .group-toggle-details":      "group_toggle_details",
-        "change select[name=event-type]":   "change_event_type"
+        "change select[name=event-type]":   "change_event_type",
+
+        'click #event-start-recording':     'start_recording',
+        'click #event-add-local-media':     'add_local_media',
+        'click #event-add-remote-media':    'add_remote_media', 
+    },
+
+    start_recording : function () {
+        if ( typeof PiecemakerBridge !== 'undefined' ) {
+            PiecemakerBridge.recorder('start');
+            return false;
+        }
+    },
+
+    add_local_media : function () {
+
+        var self = this;
+        var _partials = self.partials;
+
+        var $ms = $('<div class="media-source" />');
+        $('#tab-add-local-media .media-source').remove();
+
+        if ( typeof PiecemakerBridge !== 'undefined' ) {
+
+            var local_media = PiecemakerBridge.recorder("fetch").split(";");
+
+            if ( local_media.length > 0 ) {
+
+                var $select_container = $( Mustache.render(_partials.select_media,local_media) );
+                var $select_list = $('select',$select_container);
+                
+                $select_list.chosen({width:'100%'});
+                $select_container.show();
+                
+                $( 'button', $select_container ).bind('click',function(){
+                    var file_path = $select_list.val();
+                });
+                
+                $ms.append($select_container);
+            }
+
+        } else {
+
+            $ms.append('Drop file here');
+        }
+
+        $('#tab-add-local-media').append($ms);
+        $('#tab-add-local-media').show();
+
+        return false;
+    },
+
+    add_remote_media : function () {
+
     },
 
     event_save: function() {

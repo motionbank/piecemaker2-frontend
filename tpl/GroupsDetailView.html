@@ -13,11 +13,38 @@
 
         </div>
 
-        <div class="group-video-add padding">
+        <div class="group-video-add">
 
-            <a href="#" class="is-button first icon-caret-right">Start recording</a>
-            <a href="#" class="is-button icon-film">Add file</a>
-            <a href="#" class="is-button last icon-youtube">Add remote</a>
+            <div id="tab-container" class='tab-container'>
+                <ul class='etabs'>
+                    <li class='tab'>
+                        <a href="#tab-record-media" class="icon-caret-right">Start recording</a></li>
+                    <li class='tab'>
+                        <a href="#tab-add-local-media" id="event-add-local-media" class="icon-film">Add file</a></li>
+                    <li class='tab'>
+                        <a href="#tab-add-remote-media" class="icon-youtube">Embed media</a></li>
+                </ul>
+                <div class='panel-container padding'>
+                    <div id="tab-record-media">
+                        <a href="#" id="event-start-recording" class="is-button first">Record</a>
+                    </div>
+                    <div id="tab-add-local-media">
+                        <!-- partial -->
+                        <div id="select-local-media" style="display:none">
+                            <select class="chosen-select">
+                                {{#.}}
+                                    <option name="" id="" value="{{.}}">{{.}}</option>
+                                {{/.}}
+                            </select>
+                            <button>Add</button>
+                        </div>
+                        <!-- /partial -->
+                    </div>
+                    <div id="tab-add-remote-media">
+                        YouTube, Vimeo, ...
+                    </div>
+                </div>
+            </div>
 
         </div>
 
