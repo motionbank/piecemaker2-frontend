@@ -645,7 +645,7 @@ ul.items {
       margin: 0; 
       padding: 10px;
       padding-bottom: 0;
-      // background-color: $list-hover;
+      background-color: lighten($sand-dark,40%);
     }
     .tab { 
       display: inline-block; 
