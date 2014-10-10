@@ -45,7 +45,7 @@ directory.GroupsListView = Backbone.View.extend({
 
         // PiecemakerBridge.recorder("start")
         // PiecemakerBridge.recorder("stop")
-        console.log( PiecemakerBridge.recorder("fetch").split(";") );
+        // console.log( PiecemakerBridge.recorder("fetch").split(";") );
 
     },
 

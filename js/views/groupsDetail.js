@@ -304,7 +304,7 @@ directory.GroupsDetailView = Backbone.View.extend({
         var _partials = this.partials;
 
         // get events
-        API.listEvents(this.group_id,function(res) {
+        API.listEvents( this.group_id, function(res) {
 
             var $events_list = $('.events-list');
             var $list = $events_list.find('ul');
@@ -396,12 +396,14 @@ directory.GroupsDetailView = Backbone.View.extend({
         var obj = e.target;
         var parent = $(obj).closest('.item');
         var event_id = parent.data('id');
+        var event_token = parent.data('token');
         var group_id = this.group_id;
         var content = parent.find('textarea').val();
 
         // store data
         var data = {
             utc_timestamp: Date.now(),
+            token: event_token,
             fields: {
                 description: content
             }
@@ -409,6 +411,7 @@ directory.GroupsDetailView = Backbone.View.extend({
 
         // get event details and put them in edit form
         API.updateEvent(group_id,event_id,data,function(res){
+            parent.data('token',res.token);
             parent.find('form').replaceWith('<a class="link event-go-to-timestamp" href="#">'+res.fields.description+'</a>');
         });
         
