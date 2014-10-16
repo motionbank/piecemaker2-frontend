@@ -48,6 +48,9 @@ directory.LoginView = Backbone.View.extend({
             API.whoAmI(function(u){
                 user = u;
             });
+            // API.listPermissions(function(perms){
+            //     console.log( perms );
+            // });
             directory.router.navigate('#/home', true);
         });
 
