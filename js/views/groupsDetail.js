@@ -124,7 +124,7 @@ directory.GroupsDetailView = Backbone.View.extend({
                 if ( res.length > 0 ) {
 
                     var movie_path = res[0].fields.movie_path;
-                    $('.group-video-content').find('video').attr({'src':movie_path});
+                    $('.group-video-content').find('video').attr({'src':'http://localhost:50728/'+movie_path});
 
                     // cache video object
                     var $video = self.$('video');
@@ -173,6 +173,8 @@ directory.GroupsDetailView = Backbone.View.extend({
                     self.$('#video-time').bind('input', function(){
                         self.video.currentTime = parseFloat($(this).val());
                     });
+
+                    $('.group-video-add').hide();
 
                 } else {
 
@@ -272,6 +274,8 @@ directory.GroupsDetailView = Backbone.View.extend({
 
             if ( local_media.length > 0 ) {
 
+                // TODO: filter out already linked videos
+
                 var $select_container = $( Mustache.render(_partials.select_media,local_media) );
                 var $select_list = $('select',$select_container);
                 
@@ -279,7 +283,23 @@ directory.GroupsDetailView = Backbone.View.extend({
                 $select_container.show();
                 
                 $( 'button', $select_container ).bind('click',function(){
+                    
                     var file_path = $select_list.val();
+                    var file_timestamp = new Date().getTime();
+                    var f_ts = self.timestamp_from_movie_path( file_path );
+                    if ( f_ts !== null ) {
+                        file_timestamp = f_ts;
+                    }
+
+                    API.createEvent( self.group_id, {
+                        type : 'group_movie',
+                        utc_timestamp : file_timestamp,
+                        fields : {
+                            movie_path : file_path
+                        }
+                    }, function (mov) {
+                        console.log(mov);
+                    });
                 });
                 
                 $ms.append($select_container);
@@ -298,6 +318,20 @@ directory.GroupsDetailView = Backbone.View.extend({
 
     add_remote_media : function () {
 
+    },
+
+    timestamp_from_movie_path : function ( movie_path ) {
+        if ( movie_path && /.*[\/]*[0-9]+\.[0-9]+\.(mp4|mov)$/i.test(movie_path) ) {
+            var movie_ts = movie_path.replace(/^(.+[^0-9])?([0-9]{10}\.[0-9]+)\.(mp4|mov)$/i,'$2');
+            movie_ts = parseFloat(movie_ts);
+            if ( !isNaN(movie_ts) ) {
+                var movie_date_new = new Date( movie_ts * 1000 );
+                if ( !isNaN(movie_date_new.getTime()) ) {
+                    return movie_date_new;
+                }
+            }
+        }
+        return null;
     },
 
     event_save: function() {

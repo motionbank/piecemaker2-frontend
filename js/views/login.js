@@ -41,20 +41,27 @@ directory.LoginView = Backbone.View.extend({
             localStorage.setItem('email', email);
             localStorage.setItem('password', password);
         } else {
-            localStorage.removeItem('email');
-            localStorage.removeItem('password');
+            clear_local_storage();
         }
 
-        API.login(email,password,function(){
+        API.login(email,password,function(api_key){
+            API.whoAmI(function(u){
+                user = u;
+            });
             directory.router.navigate('#/home', true);
         });
 
         return false;
     },
 
-    login_delete: function() {
+    clear_local_storage : function () {
         localStorage.removeItem('email');
         localStorage.removeItem('password');
+    },
+
+    login_delete: function() {
+        
+        clear_local_storage();
 
         $('input[name="email"]').val('');
         $('input[name="password"]').val('');

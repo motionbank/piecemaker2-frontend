@@ -59,6 +59,12 @@ var settings = {
 
 var API = new PieceMakerApi(settings);
 
+var user = undefined;
+
+var userHasRole = function ( role_id ) {
+    return user && 'user_role_id' in user && user.user_role_id === role_id;
+}
+
 var directory = {
 
     views: {},

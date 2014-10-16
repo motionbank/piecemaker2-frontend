@@ -34,14 +34,20 @@ directory.GroupsListView = Backbone.View.extend({
         this.partials = { "list" : $el[0].outerHTML };
         var _partials = this.partials;
 
-        API.listGroups(function(res) {
+        var handleApiResponse = function(res) {
             var data = {
                 groups:res,
                 counter:res.length
             };
 
             $(obj).html(Mustache.render(template,data,_partials));
-        });
+        };
+
+        if ( userHasRole('super_admin') ) {
+            API.listAllGroups(handleApiResponse);
+        } else {
+            API.listGroups(handleApiResponse);
+        }
 
         // PiecemakerBridge.recorder("start")
         // PiecemakerBridge.recorder("stop")
