@@ -142,6 +142,7 @@ a:not(.button, .button-light) {
 
 nav [class^="icon-"]:before,
 nav [class*=" icon-"]:before {
+  margin:0 0 0 0 !important;
   font-size: 1.2em;
 }
 
