@@ -37,11 +37,11 @@ directory.LoginView = Backbone.View.extend({
         var password = $('input[name="password"]').val();
         var $login_save = $('input[name="login-save"]');
 
-        if ($login_save.is(':checked')) {
+        if ( $login_save.is(':checked') ) {
             localStorage.setItem('email', email);
             localStorage.setItem('password', password);
         } else {
-            clear_local_storage();
+            this.clear_local_storage();
         }
 
         API.login(email,password,function(api_key){
@@ -64,7 +64,7 @@ directory.LoginView = Backbone.View.extend({
 
     login_delete: function() {
         
-        clear_local_storage();
+        this.clear_local_storage();
 
         $('input[name="email"]').val('');
         $('input[name="password"]').val('');

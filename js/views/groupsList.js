@@ -214,6 +214,7 @@ directory.GroupsListView = Backbone.View.extend({
     },
 
     group_delete: function(e) {
+        
         var obj = e.target;
         var parent = $(obj).closest('.item');
         var id = parent.data('id');

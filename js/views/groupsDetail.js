@@ -34,6 +34,8 @@ directory.GroupsDetailView = Backbone.View.extend({
     tmp: null,
     id: 'content-inner',
 
+    time_reference : null,      // a Date reference, for example utc_timestamp of a movie 
+
     render:function () {
         
         // store template and obj globally
@@ -119,12 +121,21 @@ directory.GroupsDetailView = Backbone.View.extend({
             });
 
             // get assigned movie
-            API.listEventsOfType(group_id,'group_movie',function(res) {
+            API.listEventsOfType( group_id, 'group_movie', function(res) {
 
+                // any group videos available?
                 if ( res.length > 0 ) {
 
-                    var movie_path = res[0].fields.movie_path;
-                    $('.group-video-content').find('video').attr({'src':'http://localhost:50728/'+movie_path});
+                    var current_movie = res[0];
+
+                    self.time_reference = new Date(current_movie.utc_timestamp.getTime());
+
+                    $('.group-video-add').hide();
+
+                    var movie_path = current_movie.fields.movie_path;
+                    $('.group-video-content').find('video').attr({
+                        src: 'http://localhost/piecemaker2-app/mov/'+movie_path
+                    });
 
                     // cache video object
                     var $video = self.$('video');
@@ -134,6 +145,7 @@ directory.GroupsDetailView = Backbone.View.extend({
                     self.video = video;
 
                     var end_time;
+
                     video.addEventListener('loadedmetadata', function() {
                         end_time = video.duration;
                     });
@@ -173,8 +185,6 @@ directory.GroupsDetailView = Backbone.View.extend({
                     self.$('#video-time').bind('input', function(){
                         self.video.currentTime = parseFloat($(this).val());
                     });
-
-                    $('.group-video-add').hide();
 
                 } else {
 
@@ -223,7 +233,7 @@ directory.GroupsDetailView = Backbone.View.extend({
     sort_events_list: function() {
 
         var $events_list = $('.events-list');
-        var $list = $events_list.find('ul');        
+        var $list = $events_list.find('ul');  
         
         // sort by timestamp
         var arr = [].slice.call($events_list.find('.item').not(':first-child')).sort(function (a, b) {
@@ -254,8 +264,28 @@ directory.GroupsDetailView = Backbone.View.extend({
     },
 
     start_recording : function () {
+
+        var self = this;
+
         if ( typeof PiecemakerBridge !== 'undefined' ) {
-            PiecemakerBridge.recorder('start');
+            var file_path = PiecemakerBridge.recorder('start');
+            if ( file_path && /.*[0-9]\.mp4$/.test(file_path) ) {
+                var file_timestamp = new Date().getTime();
+                var f_ts = self.timestamp_from_movie_path( file_path );
+                if ( f_ts !== null ) {
+                    file_timestamp = f_ts;
+                }
+
+                API.createEvent( self.group_id, {
+                    type : 'group_movie',
+                    utc_timestamp : file_timestamp,
+                    fields : {
+                        movie_path : file_path
+                    }
+                }, function (mov) {
+                    directory.router.navigate('#/groups/'+self.group_id, true);
+                });
+            }
             return false;
         }
     },
@@ -298,7 +328,7 @@ directory.GroupsDetailView = Backbone.View.extend({
                             movie_path : file_path
                         }
                     }, function (mov) {
-                        console.log(mov);
+                        directory.router.navigate('#/groups/'+self.group_id, true);
                     });
                 });
                 
@@ -352,30 +382,26 @@ directory.GroupsDetailView = Backbone.View.extend({
 
         // get timestamp of video
         var timestamp = $('input[name="video-time"]').val();
+
         $.extend(fields,{'movie_timestamp':timestamp});
 
-        // if type is movie, extend fields object
-        //
-        // at the moment, the "movie"-type isn't used anymore, beacuse movies are attached to groups for now
-        // we leave it, cause i might be useful for future changes
-
-        if (type == 'movie') {
+        if ( type == 'movie' ) {
             var movie_fields = {
                 'movie_description' : $form.find('input[name="movie_description"]').val(),
                 'movie_path' : $form.find('input[name="movie_path"]').val()
             };
 
-            $.extend(fields,movie_fields);
+            $.extend( fields, movie_fields );
         }
 
         // store data
         var data = {
-            utc_timestamp: Date.now(),
+            utc_timestamp: self.get_timestamp_now(),
             type: type,
             fields: fields
         };
 
-        API.createEvent(this.group_id,data,function(res){
+        API.createEvent( this.group_id, data, function(res){
 
             // update event counter
             var $counter = $('.counter-total');
@@ -397,6 +423,36 @@ directory.GroupsDetailView = Backbone.View.extend({
         return false;
     },
 
+    get_movie_time : function () {
+        
+        var self = this, mt = 0.0;
+
+        if ( self.video.duration ) {
+
+            mt = $('input[name="video-time"]').val();
+            mt = ((mt && +(mt)) || 0.0) * 1000.0;
+
+        } else if ( self.video.currentSrc && this.time_reference ) {
+
+            // we have a video with no duration and a time ref, 
+            // let's assume recording mode
+
+            mt = Date.now() - this.time_reference.getTime();
+        }
+
+        return mt;
+    },
+
+    // returns either Date.now() or a time relative to the currently being viewed material
+    get_timestamp_now : function () {
+
+        if ( this.time_reference && this.time_reference !== null ) {
+            var d = new Date( this.time_reference.getTime() + this.get_movie_time() );
+            return d;
+        }
+        return Date.now();
+    },
+
     events_show_all: function() {
 
         var self = this;
@@ -412,9 +468,11 @@ directory.GroupsDetailView = Backbone.View.extend({
 
             // list events
             $.each(res, function(index,value) {
-                if (value.type != 'group_movie') {
-                    
+                if ( value.type !== 'group_movie' ) {
                     // we need an "last-added" class to sort events by timestamp
+
+                    value.utc_timestamp_float = value.utc_timestamp.getTime();
+
                     var content = Mustache.render(_partials.list,value);
                     $list.append(content);
                 }
@@ -488,20 +546,21 @@ directory.GroupsDetailView = Backbone.View.extend({
             parent.find('.link').replaceWith('<form method="post" action="#" class="form-crud"><textarea class="mousetrap">'+res.fields.description+'</textarea><button type="submit" class="event-update-save icon-ok">Save</button><button class="event-update-cancel icon-remove">Cancel</button></form>');
         });
 
-        return false;        
+        return false;
     },
 
     event_update_save: function(e) {
         var obj = e.target;
         var parent = $(obj).closest('.item');
         var event_id = parent.data('id');
+        var event_ts = +(parent.data('timestamp'));
         var event_token = parent.data('token');
         var group_id = this.group_id;
         var content = parent.find('textarea').val();
 
         // store data
         var data = {
-            utc_timestamp: Date.now(),
+            utc_timestamp : new Date( event_ts ),
             token: event_token,
             fields: {
                 description: content
@@ -560,7 +619,17 @@ directory.GroupsDetailView = Backbone.View.extend({
 
         var self = this;
         var obj = e.target;
-        self.video.currentTime = parseFloat($(obj).parent().data('timestamp'));
+        var movie_time = 0.0;
+
+        var ts = $(obj).parent().data('timestamp');
+
+        if ( self.time_reference && self.time_reference > 0.0 ) {
+            movie_time = (ts - self.time_reference.getTime()) / 1000.0;
+        }
+
+        if ( self.video ) {
+            self.video.currentTime = movie_time;
+        }
 
         return false;
     },
