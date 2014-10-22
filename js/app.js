@@ -85,6 +85,20 @@ var directory = {
 
         $.when.apply(null, deferreds).done(callback);
 
+    },
+
+    settings: function ( key, value ) {
+        if ( 'PiecemakerBridge' in window ) {
+            return PiecemakerBridge.settings( key, value );
+        } else if ( 'localStorage' in window ) {
+            if ( value ) {
+                localStorage.setItem( key, value );
+            } else if ( arguments.length == 2 && value === null ) {
+                localStorage.removeItem( key, value );
+                return null;
+            }
+            return localStorage.getItem( key, value );
+        }
     }
 
 };

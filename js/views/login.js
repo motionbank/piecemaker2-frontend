@@ -8,8 +8,8 @@ directory.LoginView = Backbone.View.extend({
         var obj = this.el;
 
         // don't worry, only for development
-        var email = localStorage.getItem('email');
-        var password = localStorage.getItem('password');
+        var email = directory.settings('user.email');
+        var password = directory.settings('user.password');
         var checked = '';
 
         if (email && password) {
@@ -38,8 +38,8 @@ directory.LoginView = Backbone.View.extend({
         var $login_save = $('input[name="login-save"]');
 
         if ( $login_save.is(':checked') ) {
-            localStorage.setItem('email', email);
-            localStorage.setItem('password', password);
+            directory.settings('user.email', email);
+            directory.settings('user.password', password);
         } else {
             this.clear_local_storage();
         }
@@ -58,8 +58,8 @@ directory.LoginView = Backbone.View.extend({
     },
 
     clear_local_storage : function () {
-        localStorage.removeItem('email');
-        localStorage.removeItem('password');
+        directory.settings('email',null);
+        directory.settings('password',null);
     },
 
     login_delete: function() {

@@ -239,6 +239,7 @@ input[type=checkbox]:checked + label:before {
   padding:15px $padding;
 
   input[type="text"],
+  input[type="password"],
   textarea {
     @include input;
 
