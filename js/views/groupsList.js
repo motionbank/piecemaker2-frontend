@@ -163,23 +163,10 @@ directory.GroupsListView = Backbone.View.extend({
                 $wrapper.find('form')[0].reset();
                 $wrapper.find('.group-cancel').click();
 
-                // we have to save the new event that assigns a movie to a group in the createGroup Callback, because
-                // we need the ID of the new group
-
-                // var group_id = res.id;
-                // var event_data = {
-                //     utc_timestamp: movie_date,
-                //     type: 'group_movie',
-                //     fields: {'movie_path':movie_path}
-                // };
-
-                // API.createEvent(group_id,event_data);
-
             });
         }
 
         return false;
-
     },
 
     group_update: function(e) {

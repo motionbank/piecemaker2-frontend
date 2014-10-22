@@ -96,7 +96,8 @@ directory.Router = Backbone.Router.extend({
         "logout":       "logout",
         "home":         "home",
         "groups":       "groupsList",
-        "groups/:id":   "groupsDetail"
+        "groups/:id":   "groupsDetail",
+        "users":        "usersList"
     },
 
     initialize: function () {
@@ -152,6 +153,18 @@ directory.Router = Backbone.Router.extend({
         }
     },
 
+    usersList: function () {
+
+        if (userHasPermission()) {
+            directory.usersListView = new directory.UsersListView();
+            directory.usersListView.render();
+            this.$content.html(directory.usersListView.el);
+
+            // add active class to navigation
+            directory.shellView.selectMenuItem('users-menu');
+        }
+    },
+
     login: function () {
 
         directory.loginView = new directory.LoginView();
@@ -195,7 +208,7 @@ Backbone.history.bind("all", function (route, router) {
 });
 
 $(function(){
-    directory.loadTemplates(["LoginView", "HomeView", "GroupsListView", "GroupsDetailView", "ShellView"],
+    directory.loadTemplates(["LoginView", "HomeView", "GroupsListView", "GroupsDetailView", "ShellView", "UsersListView"],
         function () {
             directory.router = new directory.Router();
             Backbone.history.start();
