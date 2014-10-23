@@ -27,7 +27,7 @@ directory.LoginView = Backbone.View.extend({
     },
 
     events: {
-        "click #login": "login",
+        "click #login":        "login",
         "click #login-delete": "login_delete"
     },
 
@@ -35,6 +35,7 @@ directory.LoginView = Backbone.View.extend({
 
         var email = $('input[name="email"]').val();
         var password = $('input[name="password"]').val();
+
         var $login_save = $('input[name="login-save"]');
 
         if ( $login_save.is(':checked') ) {
@@ -46,7 +47,7 @@ directory.LoginView = Backbone.View.extend({
 
         API.login(email,password,function(api_key){
             API.whoAmI(function(u){
-                user = u;
+                directory.user = u;
             });
             // API.listPermissions(function(perms){
             //     console.log( perms );

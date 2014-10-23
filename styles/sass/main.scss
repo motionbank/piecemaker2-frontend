@@ -192,8 +192,13 @@ input[type="checkbox"] {
   clip: rect(0,0,0,0);
 }
 
+label input[type="checkbox"],
 input[type="checkbox"] + label {
+
   line-height: 16px;
+  display: inline-block;
+  height: 28px;
+
   @include transition(color 0.2s);
 
   &:hover {
@@ -503,9 +508,12 @@ ul.items {
   position: relative;
 
   li.item {
+
     display: block;
-    border-bottom:1px solid $border-color;
+    border-bottom: 1px solid $border-color;
     position: relative;
+    padding:15px $padding;
+
 
     &:hover {
       background-color: $list-hover-light;
@@ -521,8 +529,8 @@ ul.items {
 
     a.link,
     a.details {
+
       display:inline-block;
-      padding:15px $padding;
       color:$body-text-color;
       text-decoration: none;
       width:100%;
@@ -641,60 +649,6 @@ ul.items {
 
   }
 
-  /* tabs */
-  .tab-container {
-    .etabs { 
-      margin: 0; 
-      padding: 10px;
-      padding-bottom: 0;
-      background-color: lighten($sand-dark,35%);
-    }
-    .tab { 
-      display: inline-block; 
-      zoom:1; 
-      *display:inline;
-
-      background-color: rgba($sand-dark,0.4);
-      color: darken($sand-dark,40%);
-      border: 1px solid $border-color;
-      border-bottom: none; 
-      -moz-border-radius: 4px 4px 0 0; 
-      -webkit-border-radius: 4px 4px 0 0; 
-
-      &:hover {
-        background-color:rgba($sand-dark,0.6);
-        border: 1px solid $border-color;
-        border-bottom: none; 
-      }
-
-      a { 
-        color: darken($sand-dark,40%);
-        text-decoration: none;
-        display: block; 
-        padding: 8px; 
-        outline: none;
-      }
-
-      a:hover {
-        color: darken($sand-dark,40%);
-      }
-
-      &.active { 
-        background-color: white;
-        position: relative;
-        top: 1px;
-      }
-
-      a.active {
-      }
-    }
-    .panel-container { 
-      background: white; 
-      // border: solid $sand-dark 1px; 
-      border-top: solid $border-color 1px;
-    }
-  }
-
   /* styles for groups list */
   .groups-list {
 
@@ -702,6 +656,76 @@ ul.items {
       background-color: $list-hover-light;
     }
 
+  }
+}
+
+/* tabs */
+.tab-container {
+  .etabs { 
+    margin: 0; 
+    padding: 10px;
+    padding-bottom: 0;
+    background-color: lighten($sand-dark,35%);
+  }
+  .tab {
+    display: inline-block; 
+    zoom:1; 
+    *display:inline;
+
+    background-color: rgba($sand-dark,0.4);
+    color: darken($sand-dark,40%);
+    border: 1px solid $border-color;
+    border-bottom: none; 
+    -moz-border-radius: 4px 4px 0 0; 
+    -webkit-border-radius: 4px 4px 0 0; 
+
+    &:hover {
+      background-color:rgba($sand-dark,0.6);
+      border: 1px solid $border-color;
+      border-bottom: none; 
+    }
+
+    a { 
+      color: darken($sand-dark,40%);
+      text-decoration: none;
+      display: block; 
+      padding: 8px; 
+      outline: none;
+    }
+
+    a:hover {
+      color: darken($sand-dark,40%);
+    }
+
+    &.active { 
+      background-color: white;
+      position: relative;
+      top: 1px;
+    }
+
+    a.active {
+    }
+  }
+  .panel-container { 
+    background: white; 
+    // border: solid $sand-dark 1px; 
+    border-top: solid $border-color 1px;
+  }
+}
+
+.users-list {
+
+  li.item.current-user {
+    a {
+      font-weight: bold;
+    }
+  }
+
+  li.item a small {
+    min-width: 24px;
+    display: inline-block;
+    top: -1px;
+    position: relative;
   }
 
 }

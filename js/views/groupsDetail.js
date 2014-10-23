@@ -190,7 +190,9 @@ directory.GroupsDetailView = Backbone.View.extend({
 
                     $('.group-video-content').hide();
                     $('#event-create-form').hide();
-                    $('.group-video-add .tab-container').easytabs();
+                    $('.group-video-add .tab-container').easytabs({
+                        animate: false
+                    });
 
                 }
 

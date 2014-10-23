@@ -59,16 +59,16 @@ var settings = {
 
 var API = new PieceMakerApi(settings);
 
-var user = undefined;
-
 var userHasRole = function ( role_id ) {
-    return user && 'user_role_id' in user && user.user_role_id === role_id;
+    return directory.user && ('user_role_id' in directory.user) && (directory.user.user_role_id === role_id);
 }
 
 var directory = {
 
     views: {},
+    
     models: {},
+
     loadTemplates: function(views, callback) {
 
         var deferreds = [];
@@ -99,7 +99,9 @@ var directory = {
             }
             return localStorage.getItem( key, value );
         }
-    }
+    },
+
+    user : null,
 
 };
 
@@ -111,7 +113,8 @@ directory.Router = Backbone.Router.extend({
         "home":         "home",
         "groups":       "groupsList",
         "groups/:id":   "groupsDetail",
-        "users":        "usersList"
+        "users":        "usersList",
+        "settings":     "settings"
     },
 
     initialize: function () {
@@ -201,7 +204,16 @@ directory.Router = Backbone.Router.extend({
                 directory.router.navigate("", true);
             });
         }
-    }
+    },
+
+    settings : function () {
+        if (userHasPermission()) {
+            directory.loginView = new directory.SettingsView();
+            directory.loginView.render();
+            this.$content.html(directory.loginView.el);
+            directory.shellView.selectMenuItem('settings-menu');
+        }
+    },
 
 });
 
@@ -222,7 +234,9 @@ Backbone.history.bind("all", function (route, router) {
 });
 
 $(function(){
-    directory.loadTemplates(["LoginView", "HomeView", "GroupsListView", "GroupsDetailView", "ShellView", "UsersListView"],
+    directory.loadTemplates(["LoginView", "HomeView", 
+        "GroupsListView", "GroupsDetailView", 
+        "ShellView", "UsersListView", "SettingsView"],
         function () {
             directory.router = new directory.Router();
             Backbone.history.start();

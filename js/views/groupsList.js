@@ -142,6 +142,7 @@ directory.GroupsListView = Backbone.View.extend({
     },
 
     group_update: function(e) {
+        
         var obj = e.target;
         var parent = $(obj).closest('.item');
         var id = parent.data('id');
@@ -160,14 +161,6 @@ directory.GroupsListView = Backbone.View.extend({
             parent.find('textarea[name="description"]').val(res.description);
 
         });
-
-        // // get assigned group movie
-        // API.listEventsOfType(id,'group_movie',function(res) {
-
-        //     var movie_path = res[0].fields.movie_path;
-        //     parent.find('input[name="movie-path"]').val(movie_path);
-
-        // });
 
         return false;
     },

@@ -8,8 +8,9 @@
         <ul class="items">
 
             <!-- partial template -->
-            <li data-id="{{id}}" class="item">
-                <a class="link users-link" href="#/users/{{id}}"><small>ID {{id}}</small> {{#name}}{{name}}{{/name}} {{^name}}{{email}}{{/name}}</a>
+            <li data-id="{{id}}" class="item {{#is_current}}current-user{{/is_current}}">
+                <a class="link users-link" href="#/users/{{id}}"><small>{{id}}</small> {{#name}}{{name}}{{/name}} {{^name}}{{email}}{{/name}}</a>
+                {{#password}}<div class="new-password-message">{{password}}</div>{{/password}}
                 <div class="actions">
                     <a href="#" class="icon-wrench users-update">&nbsp;</a>
                     <a href="#" class="icon-remove users-delete">&nbsp;</a>
@@ -22,9 +23,13 @@
                     
                     <input type="text" name="name" placeholder="Full Name" class="mousetrap" />
                     <input type="text" name="email" placeholder="Email" class="mousetrap" required />
-                    <input type="password" name="password" placeholder="Password" class="mousetrap" required />
-                    <input type="checkbox" name="disabled" class="mousetrap" />
-                    <label for="disabled">Is Disabled</label>
+
+                    <input type="checkbox" name="new-password" id="new-password" class="mousetrap" />
+                    <label for="new-password">Request New Password</label>
+
+                    <!-- <input type="checkbox" name="is-disabled" id="is-disabled" class="mousetrap" />
+                    <label for="is-disabled">Is Disabled</label> -->
+
                     <input type="text" name="role" placeholder="RoleID" value="user" class="mousetrap" />
 
                     <button type="submit" class="users-save icon-ok">Save</button>
