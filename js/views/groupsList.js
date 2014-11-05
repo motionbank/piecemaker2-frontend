@@ -96,6 +96,13 @@ directory.GroupsListView = Backbone.View.extend({
 
         var title = parent.find('input[name="title"]').val();
         var description = parent.find('textarea[name="description"]').val();
+        var users_new = [];
+        $.each( parent.find('input[name="users"]').val().split(','),
+                function(i,u){
+            u = u.replace(/[^0-9]/g,'');
+            u = parseInt(u,10);
+            if ( !isNaN(u) ) users_new.push(u);
+        });
 
         // if form is inside list item, use update function
         if (parent.attr('class') == 'item') {
@@ -106,12 +113,38 @@ directory.GroupsListView = Backbone.View.extend({
                 description:description
             };
 
-            API.updateGroup(id,data,function(res){
+            API.listGroupUsers(id,function(usrs){
 
-                // update new content
-                var content = Mustache.render(_partials.list,res);
-                parent.replaceWith(content);
+                var users_add = [], users_now = [], users_remove = [];
 
+                $.each( usrs,function(i,u){
+                    if ( users_new.indexOf(u.id) === -1 ) {
+                        users_remove.push(u.id);
+                    }
+                    users_now.push(u.id);
+                });
+                $.each( users_new,function(i,uid){
+                    if ( users_now.indexOf(uid) === -1 ) {
+                        users_add.push(uid);
+                    }
+                });
+                
+                console.log( users_now, users_new, users_add, users_remove );
+
+                API.updateGroup(id,data,function(res){
+
+                    // update new content
+                    var content = Mustache.render(_partials.list,res);
+                    parent.replaceWith(content);
+
+                    $.each(users_add,function(i,uid){
+                        API.addUserToGroup(id,uid,'editor',function(resp){/*ignore?*/});
+                    });
+                    $.each(users_remove,function(i,uid){
+                        API.removeUserFromGroup(id,uid,function(resp){/*ignore?*/});
+                    });
+
+                });
             });
 
         // if form is standalone (add form), use create function
@@ -156,10 +189,16 @@ directory.GroupsListView = Backbone.View.extend({
 
         // get group details and put them in edit form
         API.getGroup(id,function(res){
-
-            parent.find('input[name="title"]').val(res.title);
-            parent.find('textarea[name="description"]').val(res.description);
-
+            API.listGroupUsers(id,function(gusrs){
+                var ustr = "";
+                $.each(gusrs,function(i,u){
+                    if (i > 0) ustr += ',';
+                    ustr += u.id;
+                });
+                parent.find('input[name="title"]').val(res.title);
+                parent.find('textarea[name="description"]').val(res.description);
+                parent.find('input[name="users"]').val(ustr);
+            });
         });
 
         return false;

@@ -16,5 +16,19 @@
     {
         "slug": "note",
         "name": "Note"
+    },
+    {
+        "slug": "scene",
+        "name": "Scene",
+        "fields": [
+            {
+                "field_slug":"scene_title",
+                "field_name":"Scene Title"
+            }
+        ]
+    },
+    {
+        "slug": "marker",
+        "name": "Marker"
     }
 ]

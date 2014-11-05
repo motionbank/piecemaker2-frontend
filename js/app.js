@@ -31,7 +31,11 @@ Mousetrap.bind(['mod+h'], function(e) {
  */
 
 $(document).on('click','.help', function(){
-    alert('This alert box will be styled soon\n\n- Press CMD/CTRL + S to save forms\n- Columns in group detail view are resizable\n- Open this Help-Box by pressing CMD/CTRL + H');
+    alert('This alert box will be styled soon\n'+
+          '\n'+
+          '- Press CMD/CTRL + S to save forms\n'+
+          '- Columns in group detail view are resizable\n'+
+          '- Open this Help-Box by pressing CMD/CTRL + H');
 });
 
 /*
@@ -48,22 +52,29 @@ function errorHandling(err) {
     }
 }
 
-var settings = {
+var piecemaker_settings = {
     context: {
         piecemakerError: function () {
             errorHandling(arguments);
         }
-    },
-    host: 'http://localhost:9292'
+    }
 };
 
-var API = new PieceMakerApi(settings);
+if ( 'config' in window && config.piecemaker ) {
+    $.extend(piecemaker_settings,config.piecemaker);
+}
+
+var API = new PieceMakerApi( piecemaker_settings );
 
 var userHasRole = function ( role_id ) {
     return directory.user && ('user_role_id' in directory.user) && (directory.user.user_role_id === role_id);
 }
 
 var directory = {
+
+    config : {
+        host : window.location.href.replace(/^http[s]?:\/\/([^\/:]+)(:[0-9]+)?\/.*/i,'$1')
+    },
 
     views: {},
     
@@ -108,13 +119,14 @@ var directory = {
 directory.Router = Backbone.Router.extend({
 
     routes: {
-        "":             "login",
-        "logout":       "logout",
-        "home":         "home",
-        "groups":       "groupsList",
-        "groups/:id":   "groupsDetail",
-        "users":        "usersList",
-        "settings":     "settings"
+        "":                         "login",
+        "logout":                   "logout",
+        "home":                     "home",
+        "groups":                   "groupsList",
+        "groups/:id":               "groupsDetail",
+        "groups/:id/context/:eid":  "groupsDetail",
+        "users":                    "usersList",
+        "settings":                 "settings"
     },
 
     initialize: function () {
@@ -158,10 +170,14 @@ directory.Router = Backbone.Router.extend({
         }
     },
 
-    groupsDetail: function (id) {
+    groupsDetail: function (id, eid) {
 
-        if (userHasPermission()) {
-            directory.groupsDetailView = new directory.GroupsDetailView({model: id});
+        if (userHasPermission()) 
+        {
+            var opts = { group_id: id };
+            if ( eid ) opts.context_event_id = eid;
+
+            directory.groupsDetailView = new directory.GroupsDetailView(opts);
             directory.groupsDetailView.render();
             this.$content.html(directory.groupsDetailView.el);
 

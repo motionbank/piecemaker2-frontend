@@ -34,7 +34,13 @@ directory.GroupsDetailView = Backbone.View.extend({
     tmp: null,
     id: 'content-inner',
 
-    time_reference : null,      // a Date reference, for example utc_timestamp of a movie 
+    context_event : null,
+    time_reference : null,      // a Date reference, for example utc_timestamp of a movie
+
+    initialize : function ( opts ) {
+        this.group_id = opts.group_id;
+        if ( opts.context_event_id ) this.context_event_id = opts.context_event_id;
+    },
 
     render:function () {
         
@@ -44,7 +50,9 @@ directory.GroupsDetailView = Backbone.View.extend({
         var template = this.template();
 
         // save object vars
-        var data = {};
+        var data = {
+            event_count: 0
+        };
 
         // get partial: list element
         var $template = $(template);
@@ -56,23 +64,22 @@ directory.GroupsDetailView = Backbone.View.extend({
         };
 
         // store the id of the group
-        this.group_id = this.model;
         var group_id = this.group_id;
 
         // get group details and render html
-        API.getGroup(this.group_id,function(group) {
+        API.getGroup( group_id, function(group) {
             $.extend(data,{group:group});
         });
 
-        // get events counter
-        // don't count events with type "group_movie"
-        API.listEvents(this.group_id,function(res) {
-            var count = 0;
-            $.each(res,function(){
-                if (this.type != 'group_movie') count++;
-            });
-            $.extend(data,{event_counter:count});
-        });
+        // // get events counter
+        // // don't count events with type "group_movie"
+        // API.listEvents( group_id, function(res) {
+        //     var count = 0;
+        //     $.each(res,function(){
+        //         if (this.type != 'group_movie') count++;
+        //     });
+        //     $.extend(data,{event_counter:count});
+        // });
 
         // get event types and put them in a selectbox
         $.getJSON('js/options/event_types.json', function(event_types) {
@@ -81,9 +88,6 @@ directory.GroupsDetailView = Backbone.View.extend({
 
             $.each(event_types, function(key, val) {
 
-                // at the moment, the "movie"-type isn't used anymore, beacuse movies are attached to groups for now
-                // that's why we leave it out, but we don't remove the code, because it might be useful for the future
-
                 if (val.slug != 'movie') {
                     event_types_array.push(val);
                 }
@@ -91,14 +95,32 @@ directory.GroupsDetailView = Backbone.View.extend({
             });
 
             $.extend(data,{event_types:event_types_array});
+        
+            // console.log(event_types_array);
         });
 
         // render template when all ajax requests are finished
         // render it only once at initialization; prevent rendering everytime an ajax call stops
         $(document).one('ajaxStop', function() {
 
+            console.log( 'Ajax Stop' );
+
             // render template
             $(el).html(Mustache.render(template,data));
+
+            if ( !('PiecemakerBridge' in window) ) {
+                $('.tab.active').removeClass('active');
+                $('.tab.app-only').hide();
+                $('.tab').not('.app-only').first().addClass('active');
+                $('.tab-content.app-only').hide();
+            }
+
+            $('.group-video-add .tab-container').easytabs({
+                animate: false
+            });
+
+            $('.group-video-content').hide();
+            $('#event-create-form').hide();
 
             // set focus to form field
             $('textarea').focus();
@@ -120,86 +142,134 @@ directory.GroupsDetailView = Backbone.View.extend({
                 width: "100%"
             });
 
-            // get assigned movie
-            API.listEventsOfType( group_id, 'group_movie', function(res) {
+            if ( self.context_event_id ) {
 
-                // any group videos available?
-                if ( res.length > 0 ) {
+                API.getEvent( group_id, self.context_event_id, function (res) {
 
-                    var current_movie = res[0];
+                    if ( res && res.id == self.context_event_id && res.type == 'group_movie' ) {
 
-                    self.time_reference = new Date(current_movie.utc_timestamp.getTime());
+                        self.set_context_event(res);
+                        self.events_show_all();
 
-                    $('.group-video-add').hide();
+                    } else {
 
-                    var movie_path = current_movie.fields.movie_path;
-                    $('.group-video-content').find('video').attr({
-                        src: 'http://localhost/piecemaker2-app/mov/'+movie_path
-                    });
+                        console.log( 'Unable to set context movie' );
+                    }
+                });
 
-                    // cache video object
-                    var $video = self.$('video');
-                    var $items = $('.items');
-                    
-                    var video = $video.get(0);
-                    self.video = video;
+            } else {
 
-                    var end_time;
+                API.listEventsOfType( group_id, 'group_movie', function(res) {
 
-                    video.addEventListener('loadedmetadata', function() {
-                        end_time = video.duration;
-                    });
+                    // any group videos available?
+                    if ( res.length > 0 ) {
 
-                    // add active class to events while playing 
-                    video.addEventListener('timeupdate',function() {
-                        
-                        self.active_event = $items.find('li.active');
-                        var $active = self.active_event;
-                        var current_time = video.currentTime; 
+                        self.update_event_list( res );
+                        //self.set_context_event(res[0]);
 
-                        // update timestamp on input field while playing video                    
-                        self.$('#video-time').val(current_time);
+                    } else {
 
-                        $active.removeClass('active');
-                        $items.find('li').slice(2).filter(function() {
+                        $('.group-video-content').hide();
+                        $('#event-create-form').hide();
 
-                            var range_min = $(this).data('timestamp');
-                            var range_max = $(this).next().data('timestamp');
-                            
-                            if (range_max == null) {  
-                                range_max = end_time;                            
-                            } 
-                            
-                            return current_time >= range_min && current_time < range_max;
-                            
-                        }).addClass('active');
-                        
-                        // fix for last item at video end
-                        if (current_time == end_time) {
-                            $items.find('li:last-child').addClass('active');
-                        }
-                         
-                    },false);
+                    }
 
-                    // set video time on input change
-                    self.$('#video-time').bind('input', function(){
-                        self.video.currentTime = parseFloat($(this).val());
-                    });
-
-                } else {
-
-                    $('.group-video-content').hide();
-                    $('#event-create-form').hide();
-                    $('.group-video-add .tab-container').easytabs({
-                        animate: false
-                    });
-
-                }
-
-            });
+                });
+            }
 
         });
+    },
 
+    set_context_event : function ( current_movie ) {
+
+        var self = this;
+
+        self.context_event = current_movie;
+        self.time_reference = new Date( current_movie.utc_timestamp.getTime() );
+
+        $('.group-video-add').hide();
+        $('.group-video-content').show();
+        $('#event-create-form').show();
+
+        var movie_path = current_movie.fields.movie_path;
+        $('.group-video-content').find('video').attr({
+            src: 'http://'+directory.config.host+'/piecemaker2-app/mov/'+movie_path
+        });
+
+        // cache video object
+        var $video = self.$('video');
+        var $items = $('.items');
+        
+        var video = $video.get(0);
+        self.video = video;
+
+        var end_time;
+
+        video.addEventListener('loadedmetadata', function() {
+            end_time = video.duration;
+
+            // video.src.replace(/.+\/([^\/]+)$/,'$1')
+            if ( self.context_event.duration == 0 ) {
+                self.context_event.duration = video.duration;
+                API.getEvent( self.group_id, self.context_event.id, function ( evt ) {
+                    API.updateEvent( self.group_id, self.context_event.id, {
+                        duration: self.context_event.duration,
+                        utc_timestamp: evt.utc_timestamp,
+                        token: evt.token
+                    }, function ( updt_evt ) {
+                        self.context_event = updt_evt;
+                    });
+                });
+            }
+        });
+
+        // add active class to events while playing 
+        video.addEventListener('timeupdate',function() {
+            
+            self.active_event = $items.find('li.active');
+            var $active = self.active_event;
+            var current_time = video.currentTime; 
+
+            // update timestamp on input field while playing video                    
+            self.$('#video-time').val(current_time);
+
+            $active.removeClass('active');
+            $items.find('li').slice(2).filter(function() {
+
+                var range_min = $(this).data('timestamp');
+                var range_max = $(this).next().data('timestamp');
+                
+                if (range_max == null) {  
+                    range_max = end_time;                            
+                } 
+                
+                return current_time >= range_min && current_time < range_max;
+                
+            }).addClass('active');
+            
+            // fix for last item at video end
+            if (current_time == end_time) {
+                $items.find('li:last-child').addClass('active');
+            }
+             
+        },false);
+
+        // set video time on input change
+        self.$('#video-time').bind('input', function(){
+            self.video.currentTime = parseFloat($(this).val());
+        });
+
+        var video_controller = {
+            'video-go-to-beginning':            function(e){var v=$('video').get(0);v.currentTime=0;return false},
+            'video-step-back-second':           function(e){var v=$('video').get(0);v.currentTime-=1;return false},
+            'video-step-back-frame':            function(e){var v=$('video').get(0);v.currentTime-=(1/25.0);return false},
+            'video-step-forward-frame':         function(e){var v=$('video').get(0);v.currentTime+=(1/25.0);return false},
+            'video-step-forward-second':        function(e){var v=$('video').get(0);v.currentTime+=1;return false},
+            'video-go-to-end':                  function(e){var v=$('video').get(0);v.currentTime=1000000000;return false}
+        };
+        for ( var k in video_controller ) {
+            $('a.'+k).click(video_controller[k]);
+        }
     },
 
     check_list_placeholder: function() {
@@ -249,6 +319,7 @@ directory.GroupsDetailView = Backbone.View.extend({
 
     events: {
         "submit #event-create-form":        "event_save",
+
         "click .events-show-all":           "events_show_all",
         "click .toggle-filter-bubble":      "toggle_filter_bubble",
         "click .events-filter":             "events_filter",
@@ -258,18 +329,34 @@ directory.GroupsDetailView = Backbone.View.extend({
         "click .event-delete":              "event_delete",
         "click .event-go-to-timestamp":     "event_go_to_timestamp",
         "click .group-toggle-details":      "group_toggle_details",
+
         "change select[name=event-type]":   "change_event_type",
+        'change .chosen-select':            'change_add_file',
 
         'click #event-start-recording':     'start_recording',
         'click #event-add-local-media':     'add_local_media',
-        'click #event-add-remote-media':    'add_remote_media', 
+        'click #event-add-remote-media':    'add_remote_media',
     },
 
-    start_recording : function () {
+    change_add_file : function (e) {
 
         var self = this;
+        var movie_file = $(e.target).val();
 
-        if ( typeof PiecemakerBridge !== 'undefined' ) {
+        var m_timestamp = self.timestamp_from_movie_path( movie_file );
+        if ( m_timestamp == null ) {
+            m_timestamp = new Date();
+        }
+
+        $('.add-local-media-form input[name=utc_timestamp]').val( m_timestamp.getTime() / 1000.0 );
+    },
+
+    start_recording : function (e) {
+
+        var self = this;
+        var $el = $(e.target);
+
+        if ( 'PiecemakerBridge' in window ) {
             var file_path = PiecemakerBridge.recorder('start');
             if ( file_path && /.*[0-9]\.mp4$/.test(file_path) ) {
                 var file_timestamp = new Date().getTime();
@@ -285,10 +372,11 @@ directory.GroupsDetailView = Backbone.View.extend({
                         movie_path : file_path
                     }
                 }, function (mov) {
-                    directory.router.navigate('#/groups/'+self.group_id, true);
+                    directory.router.navigate('#/groups/'+self.group_id+'/context/'+mov.id, true);
                 });
             }
             return false;
+        } else {
         }
     },
 
@@ -300,7 +388,7 @@ directory.GroupsDetailView = Backbone.View.extend({
         var $ms = $('<div class="media-source" />');
         $('#tab-add-local-media .media-source').remove();
 
-        if ( typeof PiecemakerBridge !== 'undefined' ) {
+        if ( 'PiecemakerBridge' in window ) {
 
             var local_media = PiecemakerBridge.recorder("fetch").split(";");
 
@@ -314,24 +402,27 @@ directory.GroupsDetailView = Backbone.View.extend({
                 $select_list.chosen({width:'100%'});
                 $select_container.show();
                 
-                $( 'button', $select_container ).bind('click',function(){
+                $( 'button', $select_container ).bind('click',function(e){
                     
                     var file_path = $select_list.val();
-                    var file_timestamp = new Date().getTime();
-                    var f_ts = self.timestamp_from_movie_path( file_path );
-                    if ( f_ts !== null ) {
-                        file_timestamp = f_ts;
+                    var form = $(e.target).closest('form');
+                    var file_timestamp = new Date( $( 'input[name=utc_timestamp]', form ).val() * 1000.0 );
+
+                    if ( file_timestamp ) {
+                        API.createEvent( self.group_id, {
+                            type : 'group_movie',
+                            utc_timestamp : file_timestamp,
+                            fields : {
+                                movie_path : file_path
+                            }
+                        }, function (mov) {
+                            directory.router.navigate('#/groups/'+self.group_id, true);
+                        });
+                    } else {
+                        console.log( 'UTC timestamp seems to be wrong:', file_timestamp );
                     }
 
-                    API.createEvent( self.group_id, {
-                        type : 'group_movie',
-                        utc_timestamp : file_timestamp,
-                        fields : {
-                            movie_path : file_path
-                        }
-                    }, function (mov) {
-                        directory.router.navigate('#/groups/'+self.group_id, true);
-                    });
+                    return false;
                 });
                 
                 $ms.append($select_container);
@@ -406,11 +497,11 @@ directory.GroupsDetailView = Backbone.View.extend({
         API.createEvent( this.group_id, data, function(res){
 
             // update event counter
-            var $counter = $('.counter-total');
-            $counter.text(parseInt($counter.text()) + 1);
+            // var $counter = $('.counter-total');
+            // $counter.text(parseInt($counter.text()) + 1);
 
             // show new event after active item
-            var content = Mustache.render(_partials.list,res);
+            var content = self.render_event(res);
             $('.events-list').find('ul').append(content);
 
             self.sort_events_list();
@@ -455,39 +546,76 @@ directory.GroupsDetailView = Backbone.View.extend({
         return Date.now();
     },
 
-    events_show_all: function() {
+    events_show_all : function() {
 
         var self = this;
         var _partials = this.partials;
 
-        // get events
-        API.listEvents( this.group_id, function(res) {
+        if ( self.context_event ) {
 
-            var $events_list = $('.events-list');
-            var $list = $events_list.find('ul');
-            
-            $events_list.find('.item').not(':first-child').remove();
+            if ( self.context_event.duration > 0 ) {
+                API.listEventsForTimespan(
+                    self.group_id, 
+                    self.context_event.utc_timestamp.getTime() / 1000.0,
+                    (self.context_event.utc_timestamp.getTime() / 1000.0) + self.context_event.duration ,
+                    'intersect',
+                    function(res) {
+                        self.update_event_list( res );
+                    });
+            } else {
+                API.listEventsForTimespan(
+                    self.group_id, 
+                    self.context_event.utc_timestamp.getTime() / 1000.0,
+                    undefined,
+                    'intersect',
+                    function(res) {
+                        self.update_event_list( res );
+                    });
+            }
 
-            // list events
-            $.each(res, function(index,value) {
-                if ( value.type !== 'group_movie' ) {
-                    // we need an "last-added" class to sort events by timestamp
+        } else {
 
-                    value.utc_timestamp_float = value.utc_timestamp.getTime();
+            API.listEvents( self.group_id, function(res) {
 
-                    var content = Mustache.render(_partials.list,value);
-                    $list.append(content);
-                }
+                self.update_event_list( res );
             });
-
-            self.sort_events_list();
-            self.check_list_placeholder();
-            self.get_selected_events_count();
-            self.make_first_item_active();
-
-        });
+        }
 
         return false;
+    },
+
+    update_event_list : function ( events ) {
+
+        var self = this;
+        var _partials = self.partials;
+
+        var $events_list = $('.events-list');
+        var $list = $events_list.find('ul');
+        
+        $events_list.find('.item').not(':first-child').remove();
+
+        // list events
+        var events_html = "";
+        $.each( events, function(index,value) {
+            events_html += self.render_event( value );
+        });
+        $list.append(events_html);
+
+        self.sort_events_list();
+        self.check_list_placeholder();
+        self.get_selected_events_count();
+        self.make_first_item_active();
+
+    },
+
+    render_event : function ( evnt ) {
+
+        var self = this;
+        evnt.is_context_event = evnt.type == 'group_movie';
+        evnt.is_current_context_event = self.context_event && self.context_event.id == evnt.id;
+        evnt.utc_timestamp_float = evnt.utc_timestamp.getTime();
+
+        return Mustache.render( self.partials.list, evnt );
     },
 
     toggle_filter_bubble: function() {
@@ -536,26 +664,50 @@ directory.GroupsDetailView = Backbone.View.extend({
     },
 
     event_update: function(e) {
+
         var obj = e.target;
         var parent = $(obj).closest('.item');
         var event_id = parent.data('id');
         var group_id = this.group_id;
+        var self = this;
         
         // get event details and put them in edit form
         API.getEvent(group_id,event_id,function(res){
             parent.data('token',res.token);
             // TODO: cleanup!
-            parent.find('.link').replaceWith('<form method="post" action="#" class="form-crud"><textarea class="mousetrap">'+res.fields.description+'</textarea><button type="submit" class="event-update-save icon-ok">Save</button><button class="event-update-cancel icon-remove">Cancel</button></form>');
+            parent.find('.link').hide().after(
+                '<form method="post" action="#" class="form-crud">'+
+                    '<textarea class="mousetrap">'+
+                        (res.fields.description || res.fields.title || res.fields.movie_path )+
+                    '</textarea>'+
+                    '<input type="number" name="utc_timestamp" value="'+(res.utc_timestamp.getTime() / 1000.0)+'" /> '+
+                    '<a href="#" class="event-set-in">Set In</a> <a href="#" class="event-set-out">Set Out</a>'+
+                    '<br/><br/>'+
+                    '<button type="submit" class="event-update-save icon-ok">Save</button>'+
+                    '<button class="event-update-cancel icon-remove">Cancel</button>'+
+                '</form>'
+            );
+            $('.form-crud a',parent).click(function(e){
+                var $link = $(e.target);
+                var ts = self.get_timestamp_now();
+                $('input[name=utc_timestamp]',$link.parent()).val( ts.getTime() / 1000.0 );
+                return false;
+            });
         });
 
         return false;
     },
 
     event_update_save: function(e) {
+
+        var self = this;
         var obj = e.target;
         var parent = $(obj).closest('.item');
         var event_id = parent.data('id');
-        var event_ts = +(parent.data('timestamp'));
+        
+        //var event_ts = +(parent.data('timestamp'));
+        var event_ts = ($('form input[name=utc_timestamp]',parent).val())*1000.0;
+
         var event_token = parent.data('token');
         var group_id = this.group_id;
         var content = parent.find('textarea').val();
@@ -572,7 +724,9 @@ directory.GroupsDetailView = Backbone.View.extend({
         // get event details and put them in edit form
         API.updateEvent(group_id,event_id,data,function(res){
             parent.data('token',res.token);
-            parent.find('form').replaceWith('<a class="link event-go-to-timestamp" href="#">'+res.fields.description+'</a>');
+            parent.find('form').remove();
+            parent.replaceWith( self.render_event(res) );
+            self.sort_events_list();
         });
         
         return false;
@@ -583,7 +737,8 @@ directory.GroupsDetailView = Backbone.View.extend({
         var parent = $(obj).closest('.item');
         var content = parent.find('textarea').val();
         
-        parent.find('form').replaceWith('<a class="link event-go-to-timestamp" href="#">'+content+'</a>');
+        parent.find('form').remove();
+        parent.find('.link').show();
         
         return false;
     },    
@@ -617,7 +772,7 @@ directory.GroupsDetailView = Backbone.View.extend({
         return false;
     },
 
-    event_go_to_timestamp: function(e) {
+    event_go_to_timestamp: function ( e ) {
 
         var self = this;
         var obj = e.target;

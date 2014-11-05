@@ -2,22 +2,35 @@
 	<div class='tab-container'>
 		<ul class='etabs'>
 	        <li class='tab active'>
-	            <a href="#tab-record-media" class="icon-caret-right">Recording</a></li>
-	        <li class='tab'>
-	            <a href="#tab-add-local-media" id="event-add-local-media" class="icon-film">Add file</a></li>
-	        <li class='tab'>
-	            <a href="#tab-add-remote-media" class="icon-youtube">Embed media</a></li>
+	            <a href="#tab-record-media" class="icon-caret-right">Recording Settings</a></li>
+            <li class='tab'>
+	            <a href="#tab-system-information" id="event-get-system-information" class="icon-info-sign">System Information</a></li>
+	        <!-- <li class='tab'>
+	            <a href="#tab-add-remote-media" class="icon-youtube">Embed media</a></li> -->
 	    </ul>
 	    <div class='panel-container padding'>
             <div id="tab-record-media">
-                This panel will hold all recording settings
+                <p>Current recorder device: {{recorder_device_name}}</p>
+                <p>
+                	<form action="#" id="recorder-device-settings">
+                		<select name="recorder-device-name" required>
+                		{{#recorder_devices}}
+                			<option value="{{id}}" {{#current}}selected{{/current}}>{{name}}</option>
+                		{{/recorder_devices}}
+                		</select>
+                        <br /><br />
+                        <input type="submit" valse="Save" />
+                	</form>
+                </p>
             </div>
-            <div id="tab-add-local-media">
-                Here we will have more space
+            <div id="tab-system-information">
+                {{#system_information}}
+                    {{name}} : {{value}}
+                {{/system_information}}
             </div>
-            <div id="tab-add-remote-media">
+            <!-- <div id="tab-system-information">
                 Another nice panel to use
-            </div>
+            </div> -->
         </div>
 	</div>
 </section>

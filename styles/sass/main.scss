@@ -94,7 +94,6 @@ h1 {
   font-size: 26px;
   margin:0 0 40px 0;
   padding:0 0 10px 0;
-  border-bottom: 1px solid $border-color;
 }
 
 h2 {
@@ -721,13 +720,25 @@ ul.items {
     }
   }
 
+}
+
+.events-list-content {
+  .items {
+    .item.context-event {
+      a {
+        font-weight: bold;
+      }
+    }
+  }
+}
+
+.items {
   li.item a small {
     min-width: 24px;
     display: inline-block;
     top: -1px;
     position: relative;
   }
-
 }
 
 /* styles for login form */
@@ -801,8 +812,11 @@ ul.items {
 
       }
 
-      .item[data-type="movie"]:before {
-        content: "\e012"; // .icon-video
+      .item[data-type="movie"]:before,
+      .item[data-type="group_movie"]:before,
+      .item[data-type="video"]:before {
+        // content: "\e012"; // .icon-video
+        content: "\e0e9"; // icon-film
       }
 
       .item[data-type="note"]:before {
@@ -818,6 +832,21 @@ ul.items {
   }
 
 }
+
+#content-inner {
+  .group-detail-view {
+    .wrapper-left {
+      position: fixed;
+    }
+    .wrapper-right {
+      display: inherit !important;
+      padding-left: 500px;
+      overflow: inside;
+      display: block;
+    }
+  } 
+}
+
 
 /* ==========================================================================
    Special UI functions

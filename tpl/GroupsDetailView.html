@@ -1,3 +1,4 @@
+<div class="group-detail-view">
 <section class="wrapper-left">
     <div class="group-detail">
 
@@ -7,7 +8,7 @@
 
         <div class="group-detail-content padding toggle">
 
-            <h1>{{group.title}}</h1>
+            <h1><a href="#/groups/{{group.id}}">{{group.title}}</a></h1>
             <p>{{group.description}}</p>
             <input type="hidden" name="group-id" val="{{group.id}}" />
 
@@ -18,30 +19,34 @@
             <div id="tab-container" class='tab-container'>
                 <ul class='etabs'>
                     <li class='tab'>
-                        <a href="#tab-record-media" class="icon-caret-right">Start recording</a></li>
-                    <li class='tab'>
-                        <a href="#tab-add-local-media" id="event-add-local-media" class="icon-film">Add file</a></li>
-                    <li class='tab'>
                         <a href="#tab-add-remote-media" class="icon-youtube">Embed media</a></li>
+                    <li class='app-only tab'>
+                        <a href="#tab-record-media" class="icon-caret-right">Start recording</a></li>
+                    <li class='app-only tab'>
+                        <a href="#tab-add-local-media" id="event-add-local-media" class="icon-film">Add file</a></li>
                 </ul>
                 <div class='panel-container padding'>
-                    <div id="tab-record-media">
+                    <div id="tab-add-remote-media" class="tab-content">
+                        Soon you will be able to add from: YouTube, Vimeo, ...
+                    </div>
+                    <div id="tab-record-media app-only" class="tab-content app-only">
                         <a href="#" id="event-start-recording" class="is-button first">Record</a>
                     </div>
-                    <div id="tab-add-local-media">
+                    <div id="tab-add-local-media" class="tab-content app-only">
                         <!-- partial -->
                         <div id="select-local-media" style="display:none">
-                            <select class="chosen-select">
-                                {{#.}}
-                                    <option name="" id="" value="{{.}}">{{.}}</option>
-                                {{/.}}
-                            </select>
-                            <button>Add</button>
+                            <form action="#" class="add-local-media-form">
+                                <select class="chosen-select">
+                                    {{#.}}
+                                        <option name="" id="" value="{{.}}">{{.}}</option>
+                                    {{/.}}
+                                </select>
+                                <input type="number" value="" placeholder="Movie UTC Timestamp" name="utc_timestamp" />
+                                <br/><br/>
+                                <button>Add</button>
+                            </form>
                         </div>
                         <!-- /partial -->
-                    </div>
-                    <div id="tab-add-remote-media">
-                        YouTube, Vimeo, ...
                     </div>
                 </div>
             </div>
@@ -51,6 +56,14 @@
         <div class="group-video-content padding">
 
             <video id="video" controls></video>
+            <a href="#" class="button video-go-to-beginning">&lt;--</a> 
+            <a href="#" class="button video-step-back-second">&lt;&lt;</a> 
+            <a href="#" class="button video-step-back-frame">&lt;</a> 
+            <a href="#" class="button video-step-forward-frame">&gt;</a> 
+            <a href="#" class="button video-step-forward-second">&gt;&gt;</a> 
+            <a href="#" class="button video-go-to-end">--&gt;</a>
+            <br />
+            <br />
             <label for="video-time">Movie Timestamp:</label>
             <input id="video-time" name="video-time" type="text" />
             <div class="timestamp-note"></div>
@@ -117,9 +130,15 @@
                 <!-- partial template -->
                 <li data-id="{{id}}" 
                     data-timestamp="{{utc_timestamp_float}}" data-type="{{type}}" 
-                    data-token="{{token}}" class="item">
-                    <a class="link event-go-to-timestamp" href="#">{{#fields.description}}{{fields.description}}{{/fields.description}}{{^fields.description}}Untitled event{{/fields.description}}</a>
-
+                    data-token="{{token}}" class="item {{#is_current_context_event}}context-event{{/is_current_context_event}}">
+                    <a  class="link {{^is_context_event}}event-go-to-timestamp{{/is_context_event}}" 
+                        href="#{{#is_context_event}}/groups/{{event_group_id}}/context/{{id}}{{/is_context_event}}" >
+                        {{#fields.description}}{{fields.description}}{{/fields.description}}
+                        {{^fields.description}}
+                            {{#is_context_event}}{{fields.movie_path}}{{/is_context_event}}
+                            {{^is_context_event}}Untitled event{{/is_context_event}}
+                        {{/fields.description}}
+                    </a>
                     <div class="actions">
                         <a href="#" class="icon-wrench event-update">&nbsp;</a>
                         <a href="#" class="icon-remove event-delete">&nbsp;</a>
@@ -136,3 +155,4 @@
 
     </div>
 </section>
+</div>

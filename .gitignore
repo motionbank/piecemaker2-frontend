@@ -5,3 +5,5 @@ Gemfile.lock
 .idea/.bundle
 .ruby-version
 .bundle/
+.sass-cache
+config/config*.js
