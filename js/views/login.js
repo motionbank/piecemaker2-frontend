@@ -17,9 +17,10 @@ directory.LoginView = Backbone.View.extend({
         }
 
         var login_data = {
-            email: email,
-            password: password,
-            checked: checked
+            api_url : piecemaker_settings.host,
+            email : email,
+            password : password,
+            checked : checked
         };
 
         // render login template and set email and password if available
@@ -32,6 +33,13 @@ directory.LoginView = Backbone.View.extend({
     },
 
     login: function(){
+
+        var api_url = $('input[name="api-url"]').val();
+
+        if (api_url && api_url !== piecemaker_settings.host && /^http[s]?:\/\//.test(api_url) ) {
+            piecemaker_settings.host = api_url;
+            API = new PieceMakerApi( piecemaker_settings );
+        }
 
         var email = $('input[name="email"]').val();
         var password = $('input[name="password"]').val();

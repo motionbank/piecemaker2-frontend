@@ -5,9 +5,13 @@ directory.SettingsView = Backbone.View.extend({
     render : function () {
     	var template = this.template();
         var obj = this.el;
+        var devices = [];
+        if ( 'PiecemakerBridge' in window && PiecemakerBridge ) {
+            devices = JSON.parse( PiecemakerBridge.recorder("devices") );
+        }
         var opts = {
             recorder_device_name : directory.settings("recorder.device.name") || directory.settings("recorder.device.id"),
-            recorder_devices : JSON.parse( PiecemakerBridge.recorder("devices") ),
+            recorder_devices : devices,
             system_information : [
                 {name: 'Link', value: 'http://'+directory.config.host+':50726/index.html'}
             ]
