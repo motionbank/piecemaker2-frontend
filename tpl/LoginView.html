@@ -2,7 +2,7 @@
     <h1>Login</h1>
     <form action="#" method="post" id="login-form">
 
-        {{^api_url}}<input type="text" name="api-url" placeholder="Piecemaker2 URL" value="{{api_url}}" tabindex="1" />{{/api_url}}
+        {{^api_url}}<input type="text" name="api-url" placeholder="Piecemaker2 URL" value="{{last_api_url}}" tabindex="1" />{{/api_url}}
 
         <input type="email" name="email" placeholder="Email" value="{{email}}" required tabindex="1" />
         <input type="password" name="password" placeholder="Password" value="{{password}}" required tabindex="2" />

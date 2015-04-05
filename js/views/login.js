@@ -16,11 +16,14 @@ directory.LoginView = Backbone.View.extend({
             checked = 'checked="checked"';
         }
 
+        var last_api_url = directory.settings('api_url.last');
+
         var login_data = {
             api_url : piecemaker_settings.host,
             email : email,
             password : password,
-            checked : checked
+            checked : checked,
+            last_api_url : last_api_url
         };
 
         // render login template and set email and password if available
@@ -49,6 +52,7 @@ directory.LoginView = Backbone.View.extend({
         if ( $login_save.is(':checked') ) {
             directory.settings('user.email', email);
             directory.settings('user.password', password);
+            directory.settings('api_url.last', $('input[name="api-url"]').val() );
         } else {
             this.clear_local_storage();
         }
