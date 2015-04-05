@@ -2,9 +2,6 @@
   "name": "Piecemaker2 Frontend",
   "version": "0.0.0",
   "main": "index.html",
-  "no-edit-menu" : "false",
-  "inject-js-end" : "app/js/after-start.js",
-  "chromium-args" : "--disable-web-security",
   "window": {
     "title": "Piecemaker2",
     "toolbar": false,
@@ -12,7 +9,10 @@
     "position": "center",
     "width": 1024,
     "height": 768,
+    "show": false,
     "focus": true,
     "resizable": true
+  },
+  "dependencies": {
   }
 }

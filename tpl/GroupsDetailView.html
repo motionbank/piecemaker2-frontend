@@ -112,7 +112,10 @@
         <div class="button-row">
 
             <a href="#" class="icon-video events-show-all">Show all Events</a>
-            <a href="#" class="icon-search toggle-filter-bubble">Filter</a>
+            
+            <a href="#" class="icon-search events-load-type">Show videos</a>
+
+            <!-- <a href="#" class="icon-search toggle-filter-bubble">Filter</a> -->
             
             <div class="bubble">
                 <form action="#" method="post">
@@ -134,15 +137,21 @@
             <ul class="items">
 
                 <!-- partial template -->
-                <li data-id="{{id}}" 
+                <li data-id="{{id}}"
                     data-timestamp="{{utc_timestamp_float}}" data-type="{{type}}" 
                     data-token="{{token}}" class="item {{#is_current_context_event}}context-event{{/is_current_context_event}}">
                     <a  class="link {{^is_context_event}}event-go-to-timestamp{{/is_context_event}}" 
                         href="#{{#is_context_event}}/groups/{{event_group_id}}/context/{{id}}{{/is_context_event}}" >
                         {{#fields.description}}{{fields.description}}{{/fields.description}}
                         {{^fields.description}}
-                            {{#is_context_event}}{{fields.movie_path}}{{/is_context_event}}
-                            {{^is_context_event}}Untitled event{{/is_context_event}}
+                            {{#is_context_event}}
+                                {{#fields.title}}{{fields.title}}{{/fields.title}}
+                                {{^fields.title}}{{fields.movie_path}}{{/fields.title}}
+                            {{/is_context_event}}
+                            {{^is_context_event}}
+                                {{#fields.title}}{{fields.title}}{{/fields.title}}
+                                {{^fields.title}}Untitled event{{/fields.title}}
+                            {{/is_context_event}}
                         {{/fields.description}}
                     </a>
                     <div class="actions">

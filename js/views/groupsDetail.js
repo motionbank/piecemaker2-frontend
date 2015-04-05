@@ -191,13 +191,10 @@ directory.GroupsDetailView = Backbone.View.extend({
         $('.group-video-content').show();
         $('#event-create-form').show();
 
-        var movie_path = current_movie.fields.movie_path;
-        var $video_element = $('.group-video-content').find('video');
-        $video_element.empty();
-        ['mp4','ogv','webm'].forEach(function(e,i){
-            var m = movie_path;
-            m = m.replace(/\.[^.]+$/,'.'+e);
-            $video_element.append( '<source src="'+'http://'+config.media.host+config.media.base_url+'/'+m+'"></source>' );
+        var movie_path = current_movie.fields.movie_path || (current_movie.fields.title + '.mp4');
+
+        $('.group-video-content').find('video').attr({
+            src: 'http://' + config.media.host + config.media.base_url + '/' + movie_path
         });
 
         // cache video object
@@ -322,7 +319,6 @@ directory.GroupsDetailView = Backbone.View.extend({
     },
 
     events: {
-        
         "submit #event-create-form":        "event_save",
 
         "click .events-show-all":           "events_show_all",
