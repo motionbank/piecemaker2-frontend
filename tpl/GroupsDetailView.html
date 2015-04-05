@@ -27,9 +27,15 @@
                 </ul>
                 <div class='panel-container padding'>
                     <div id="tab-add-remote-media" class="tab-content">
-                        Soon you will be able to add from: YouTube, Vimeo, ...
+                        <form action="#" class="add-remote-media-form">
+                            <input type="text" placeholder="Paste embed code here" name="video-url" />
+                            <br/><br/>
+                            <input type="number" value="" placeholder="Movie UTC Timestamp" name="utc_timestamp" />
+                            <br/><br/>
+                            <button>Add</button>
+                        </form>
                     </div>
-                    <div id="tab-record-media app-only" class="tab-content app-only">
+                    <div id="tab-record-media" class="tab-content app-only">
                         <a href="#" id="event-start-recording" class="is-button first">Record</a>
                     </div>
                     <div id="tab-add-local-media" class="tab-content app-only">
