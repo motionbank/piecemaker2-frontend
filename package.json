@@ -1,0 +1,18 @@
+{
+  "name": "Piecemaker2 Frontend",
+  "version": "0.0.0",
+  "main": "index.html",
+  "window": {
+    "title": "Piecemaker2",
+    "toolbar": false,
+    "frame": true,
+    "position": "center",
+    "width": 1024,
+    "height": 768,
+    "show": false,
+    "focus": true,
+    "resizable": true
+  },
+  "dependencies": {
+  }
+}
