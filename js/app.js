@@ -77,7 +77,7 @@ var userHasRole = function ( role_id ) {
 var directory = {
 
     config : {
-        host : window.location.href.replace(/^http[s]?:\/\/([^\/:]+)(:[0-9]+)?\/.*/i,'$1')
+        host : window.location.href.replace(/^http[s]?:\/\/(([^\/:]+)(:[0-9]+)?)\/.*/i,'$1')
     },
 
     views: {},

@@ -13,7 +13,7 @@ directory.SettingsView = Backbone.View.extend({
             recorder_device_name : directory.settings("recorder.device.name") || directory.settings("recorder.device.id"),
             recorder_devices : devices,
             system_information : [
-                {name: 'Link', value: 'http://'+directory.config.host+':50726/index.html'}
+                {name: 'Link', value: 'http://'+directory.config.host+'/index.html'}
             ],
             config : config
         };
