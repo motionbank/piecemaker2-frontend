@@ -3,7 +3,6 @@
  */
 
 function userHasPermission() {
-
     // only simple detection (same as userLoggedIn()) until user permissions are implemented
     return API.api_key;
 }
@@ -54,14 +53,19 @@ function errorHandling(err) {
 
 var piecemaker_settings = {
     context: {
-        piecemakerError: function () {
-            errorHandling(arguments);
+        piecemakerError: function (err) {
+            errorHandling(err);
         }
     }
 };
 
 if ( 'config' in window && config.piecemaker ) {
     $.extend(piecemaker_settings,config.piecemaker);
+}
+
+if ( !('config' in window) ) {
+    window.config = {
+    }
 }
 
 var API = new PieceMakerApi( piecemaker_settings );
@@ -140,6 +144,18 @@ directory.Router = Backbone.Router.extend({
         directory.shellView = new directory.ShellView();
         $('body').html(directory.shellView.render().el);
         this.$content = $("#content");
+
+        // load some settings
+        if ( !config || !('media' in config) || !(config.media) ) {
+            if ( !config ) window.config = {};
+            var host = directory.settings("settings.media.host"),
+                base_url = directory.settings("settings.media.base_url");
+            config.media = {
+                host : host || '',
+                base_url : base_url || ''
+            };
+            console.log( host, base_url );
+        }
     },
 
     home: function () {
@@ -234,7 +250,8 @@ directory.Router = Backbone.Router.extend({
 });
 
 // show/hide some elements if they are logged in
-// TODO: improve when implementing user groups: http://stackoverflow.com/questions/17974259/how-to-protect-routes-for-different-user-groups
+// TODO: improve when implementing user groups: 
+// http://stackoverflow.com/questions/17974259/how-to-protect-routes-for-different-user-groups
 Backbone.history.bind("all", function (route, router) {
 
     var $logout_button = $('.logout');

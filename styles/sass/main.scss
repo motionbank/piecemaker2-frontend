@@ -742,7 +742,8 @@ ul.items {
 }
 
 /* styles for login form */
-.view-login {
+.view-login,
+.view-settings .tab-content {
   input[type="text"],
   input[type="email"],
   input[type="password"] {

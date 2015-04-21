@@ -1,15 +1,17 @@
-<section class="settings-view">
+<section class="view-settings">
 	<div class='tab-container'>
 		<ul class='etabs'>
 	        <li class='tab active'>
 	            <a href="#tab-record-media" class="icon-caret-right">Recording Settings</a></li>
             <li class='tab'>
 	            <a href="#tab-system-information" id="event-get-system-information" class="icon-info-sign">System Information</a></li>
+            <li class='tab'>
+                <a href="#tab-media-settings" class="icon-info-sign">Media Settings</a></li>
 	        <!-- <li class='tab'>
 	            <a href="#tab-add-remote-media" class="icon-youtube">Embed media</a></li> -->
 	    </ul>
 	    <div class='panel-container padding'>
-            <div id="tab-record-media">
+            <div id="tab-record-media" class="tab-content">
                 <p>Current recorder device: {{recorder_device_name}}</p>
                 <p>
                 	<form action="#" id="recorder-device-settings">
@@ -23,10 +25,22 @@
                 	</form>
                 </p>
             </div>
-            <div id="tab-system-information">
+            <div id="tab-system-information" class="tab-content">
                 {{#system_information}}
                     {{name}} : {{value}}
                 {{/system_information}}
+            </div>
+            <div id="tab-media-settings" class="tab-content">
+                <p>Media hosting (where do your video live?)</p>
+                <div style="width: 100%; max-width: 500px;">
+                    <form class="nice-form mousetrap" action="#" id="media-hosting-settings">
+                        <input type="text" name="host" id="host"
+                               value="{{config.media.host}}" />
+                        <input type="text" name="base-url" id="base-url"
+                               value="{{config.media.base_url}}" />
+                        <input type="submit" valse="Save" />
+                    </form>
+                </div>
             </div>
             <!-- <div id="tab-system-information">
                 Another nice panel to use

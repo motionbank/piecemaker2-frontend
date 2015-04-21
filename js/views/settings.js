@@ -14,7 +14,8 @@ directory.SettingsView = Backbone.View.extend({
             recorder_devices : devices,
             system_information : [
                 {name: 'Link', value: 'http://'+directory.config.host+':50726/index.html'}
-            ]
+            ],
+            config : config
         };
         template = Mustache.render(template,opts);
         $(obj).html(template);
@@ -22,7 +23,8 @@ directory.SettingsView = Backbone.View.extend({
     },
 
     events : {
-    	"submit #recorder-device-settings" : "recorder_device_settings_changed"
+    	"submit #recorder-device-settings" : "recorder_device_settings_changed",
+        "submit #media-hosting-settings" :  "media_hosting_settings_changed"
     },
 
     recorder_device_settings_changed : function (e) {
@@ -33,6 +35,34 @@ directory.SettingsView = Backbone.View.extend({
         directory.settings("recorder.device.id",device_id);
         directory.settings("recorder.device.name",device_name);
         //console.log( device_id, device_name );
+        return false;
+    },
+
+    media_hosting_settings_changed : function (e) {
+        console.log( e.target );
+        var host = $('#host',e.target).val();
+        var base_url = $('#base-url',e.target).val();
+        if ( !('config' in window) ) {
+            window.config = {
+                media : {
+                    host : host,
+                    base_url : base_url
+                }
+            };
+        } else {
+            if ( !( 'media' in config ) ) {
+                config.media = {
+                    host : host,
+                    base_url : base_url
+                }
+            } else {
+                config.media.host = host;
+                config.media.base_url = base_url;
+            }
+        }
+        //console.log(config.media);
+        directory.settings( "settings.media.host",     config.media.host );
+        directory.settings( "settings.media.base_url", config.media.base_url );
         return false;
     }
 

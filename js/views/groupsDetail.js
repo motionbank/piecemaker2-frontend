@@ -195,11 +195,15 @@ directory.GroupsDetailView = Backbone.View.extend({
         $('.group-video-content').show();
         $('#event-create-form').show();
 
-        var movie_path = current_movie.fields.movie_path || (current_movie.fields.title + '.mp4');
+        var movie_path = current_movie.fields.movie_path || 
+                         current_movie.fields['local-file'] || 
+                         (current_movie.fields.title + '.mp4');
 
-        $('.group-video-content').find('video').attr({
-            src: 'http://' + config.media.host + config.media.base_url + '/' + movie_path
-        });
+        if ( 'config' in window && config.media ) {
+            $('.group-video-content').find('video').attr({
+                src: 'http://' + config.media.host + config.media.base_url + '/' + movie_path
+            });
+        }
 
         // cache video object
         var $video = self.$('video');
@@ -692,6 +696,7 @@ directory.GroupsDetailView = Backbone.View.extend({
         API.getEvent(group_id,event_id,function(res){
             parent.data('token',res.token);
             // TODO: cleanup!
+            $('.form-crud',parent).remove();
             parent.find('.link').hide().after(
                 '<form method="post" action="#" class="form-crud">'+
                     '<textarea class="mousetrap">'+
