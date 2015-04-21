@@ -34,8 +34,6 @@ directory.GroupsDetailView = Backbone.View.extend({
     tmp: null,
     id: 'content-inner',
 
-    context_event_types : [ 'group_movie', 'video', 'movie' ],
-
     context_event : null,
     time_reference : null,      // a Date reference, for example utc_timestamp of a movie
 
@@ -105,7 +103,7 @@ directory.GroupsDetailView = Backbone.View.extend({
         // render it only once at initialization; prevent rendering everytime an ajax call stops
         $(document).one('ajaxStop', function() {
 
-            //console.log( 'Ajax Stop' );
+            console.log( 'Ajax Stop' );
 
             // render template
             $(el).html(Mustache.render(template,data));
@@ -148,9 +146,7 @@ directory.GroupsDetailView = Backbone.View.extend({
 
                 API.getEvent( group_id, self.context_event_id, function (res) {
 
-                    if ( res && 
-                         res.id == self.context_event_id && 
-                         self.context_event_types.indexOf(res.type) >= 0 ) {
+                    if ( res && res.id == self.context_event_id && res.type == 'group_movie' ) {
 
                         self.set_context_event(res);
                         self.events_show_all();
@@ -332,7 +328,6 @@ directory.GroupsDetailView = Backbone.View.extend({
         "click .events-show-all":           "events_show_all",
         "click .toggle-filter-bubble":      "toggle_filter_bubble",
         "click .events-filter":             "events_filter",
-        "click .events-load-type":          "events_load_type",
         "click .event-update":              "event_update",
         "click .event-update-save":         "event_update_save",
         "click .event-update-cancel":       "event_update_cancel",
@@ -621,7 +616,7 @@ directory.GroupsDetailView = Backbone.View.extend({
     render_event : function ( evnt ) {
 
         var self = this;
-        evnt.is_context_event = self.context_event_types.indexOf(evnt.type) >= 0;
+        evnt.is_context_event = evnt.type == 'group_movie';
         evnt.is_current_context_event = self.context_event && self.context_event.id == evnt.id;
         evnt.utc_timestamp_float = evnt.utc_timestamp.getTime();
 
@@ -637,17 +632,6 @@ directory.GroupsDetailView = Backbone.View.extend({
         
         bubble.css({'left':toggle_button_position + 'px'}).toggleClass('bubble-open');
         
-        return false;
-    },
-
-    events_load_type : function ( evnt ) {
-        
-        var self = this;
-
-        API.listEventsOfType( self.group_id, 'video', function(res) {
-            self.update_event_list( res );
-        });
-
         return false;
     },
     
