@@ -30,7 +30,7 @@ directory.GroupsDetailView = Backbone.View.extend({
     group_id: null,
     partials: null,
     active_event: null,
-    video: null,
+    player: null,
     tmp: null,
     id: 'content-inner',
 
@@ -178,45 +178,51 @@ directory.GroupsDetailView = Backbone.View.extend({
                          current_movie.fields['local-file'] || 
                          (current_movie.fields.title + '.mp4');
 
-        if ( 'config' in window && config.media ) {
-            $('.group-video-content').find('video').attr({
-                src: 'http://' + config.media.host + config.media.base_url + '/' + movie_path
-            });
+        if ( current_movie.fields.vid_service ) {
+            var vidService = current_movie.fields.vid_service;
+            if ( vidService == 'youtube' ) {
+                self.player = new PlayerPlayer.YouTube(
+                    current_movie.fields.vid_service_id,
+                    $('#video-content').get(0)
+                );
+            }
+        } else if ( 'config' in window && config.media ) {
+            self.player = new PlayerPlayer.HTML5(
+                'http://' + config.media.host + config.media.base_url + '/' + movie_path,
+                $('#video-content').get(0)
+            );
+            // $('.group-video-content').find('video').attr({
+            //     src: 'http://' + config.media.host + config.media.base_url + '/' + movie_path
+            // });
         }
 
-        // cache video object
-        var $video = self.$('video');
         var $items = $('.items');
-        
-        var video = $video.get(0);
-        self.video = video;
 
         var end_time;
 
-        video.addEventListener('loadedmetadata', function() {
-            end_time = video.duration;
+        // video.addEventListener('loadedmetadata', function() {
+        //     end_time = video.duration;
 
-            // video.src.replace(/.+\/([^\/]+)$/,'$1')
-            if ( self.context_event.duration == 0 ) {
-                self.context_event.duration = video.duration;
-                API.getEvent( self.group_id, self.context_event.id, function ( evt ) {
-                    API.updateEvent( self.group_id, self.context_event.id, {
-                        duration: self.context_event.duration,
-                        utc_timestamp: evt.utc_timestamp,
-                        token: evt.token
-                    }, function ( updt_evt ) {
-                        self.context_event = updt_evt;
-                    });
-                });
-            }
-        });
+        //     // video.src.replace(/.+\/([^\/]+)$/,'$1')
+        //     if ( self.context_event.duration == 0 ) {
+        //         self.context_event.duration = video.duration;
+        //         API.getEvent( self.group_id, self.context_event.id, function ( evt ) {
+        //             API.updateEvent( self.group_id, self.context_event.id, {
+        //                 duration: self.context_event.duration,
+        //                 utc_timestamp: evt.utc_timestamp,
+        //                 token: evt.token
+        //             }, function ( updt_evt ) {
+        //                 self.context_event = updt_evt;
+        //             });
+        //         });
+        //     }
+        // });
 
         // add active class to events while playing 
-        video.addEventListener('timeupdate',function() {
-            
+        self.player.on('player:time-change',function(){
             self.active_event = $items.find('li.active');
             var $active = self.active_event;
-            var current_time = video.currentTime; 
+            var current_time = self.player.currentTime(); 
 
             // update timestamp on input field while playing video                    
             self.$('#video-time').val(current_time);
@@ -239,22 +245,22 @@ directory.GroupsDetailView = Backbone.View.extend({
             if (current_time == end_time) {
                 $items.find('li:last-child').addClass('active');
             }
-             
-        },false);
-
-        // set video time on input change
-        self.$('#video-time').bind('input', function(){
-            self.video.currentTime = parseFloat($(this).val());
         });
 
+        // set video time on input change
+        // self.$('#video-time').bind('input', function(){
+        //     self.video.currentTime = parseFloat($(this).val());
+        // });
+
         var video_controller = {
-            'video-go-to-beginning':            function(e){var v=$('video').get(0);v.currentTime=0;return false},
-            'video-step-back-second':           function(e){var v=$('video').get(0);v.currentTime-=1;return false},
-            'video-step-back-frame':            function(e){var v=$('video').get(0);v.currentTime-=(1/25.0);return false},
-            'video-step-forward-frame':         function(e){var v=$('video').get(0);v.currentTime+=(1/25.0);return false},
-            'video-step-forward-second':        function(e){var v=$('video').get(0);v.currentTime+=1;return false},
-            'video-go-to-end':                  function(e){var v=$('video').get(0);v.currentTime=1000000000;return false}
+            'video-go-to-beginning':     function(e){self.player.currentTime(0);return false},
+            'video-step-back-second':    function(e){self.player.currentTime(self.player.currentTime()-1);return false},
+            'video-step-back-frame':     function(e){self.player.currentTime(self.player.currentTime()-(1/25.0));return false},
+            'video-step-forward-frame':  function(e){self.player.currentTime(self.player.currentTime()+(1/25.0));return false},
+            'video-step-forward-second': function(e){self.player.currentTime(self.player.currentTime()+1);return false},
+            'video-go-to-end':           function(e){self.player.currentTime(1000000000);return false}
         };
+
         for ( var k in video_controller ) {
             $('a.'+k).click(video_controller[k]);
         }
@@ -450,25 +456,63 @@ directory.GroupsDetailView = Backbone.View.extend({
 
             if ( videoUri.host().toLowerCase().indexOf('youtube.com') >= 0 ) {
                 videoID = videoParams.v;
+                var api_key = "AIzaSyCqZ2A4ecD3F5rmWP7jKQj0-6yqTjsp2zo";
+                var parts = ["snippet", "contentDetails", "fileDetails", "player", "processingDetails", "recordingDetails", "statistics", "status", "suggestions", "topicDetails"];
+                $.ajax({
+                    method: 'get',
+                    url: "https://www.googleapis.com/youtube/v3/videos?id="+videoID+"&key="+api_key+"&part=contentDetails,snippet,status",
+                    success: function (res, status, evt) {
+                        if ( res && res.items && res.items.length > 0 ) {
+                            var video_data = res.items[0];
+                            if ( video_data.status.embeddable == false ) {
+                                alert('Sorry, this one can\'t be embedded');
+                                return;
+                            }
+                            // https://en.wikipedia.org/wiki/ISO_8601#Durations
+                            var parseISO8601Duration = function parseISO8601Duration ( str ) {
+                                var mins = str.replace(/^P.*[^0-9]+([0-9]+)M.*/g,'$1');
+                                if ( mins == str ) mins = 0;
+                                var secs = str.replace(/^P.*[^0-9]+([0-9]+)S.*/g,'$1');
+                                if ( secs == str ) secs = 0;
+                                return parseInt( mins, 10 ) * 60 + parseInt( secs, 10 );
+                            };
+                            var dur = parseISO8601Duration(video_data.contentDetails.duration);
+                            API.createEvent(
+                                self.group_id, {
+                                    type : 'video',
+                                    utc_timestamp : timeStamp,
+                                    duration : dur,
+                                    fields : {
+                                        title : video_data.snippet.title,
+                                        vid_service : 'youtube',
+                                        vid_service_id : video_data.id
+                                    }
+                                }, function ( evt ) {
+                                    directory.router.navigate('#/groups/'+self.group_id+'/context/'+evt.id, true);
+                                }
+                            );
+                        }
+                    }
+                });
                 vidService = 'youtube';
                 title = "Youtube video " + videoID;
             }
 
-            if ( videoID ) {
-                API.createEvent(
-                    self.group_id, {
-                        type : 'video',
-                        utc_timestamp : timeStamp,
-                        fields : {
-                            title : title,
-                            vid_service : vidService,
-                            vid_service_id : videoID
-                        }
-                    }, function ( evt ) {
-                        directory.router.navigate('#/groups/'+self.group_id+'/context/'+evt.id, true);
-                    }
-                );
-            }
+            // if ( videoID ) {
+            //     API.createEvent(
+            //         self.group_id, {
+            //             type : 'video',
+            //             utc_timestamp : timeStamp,
+            //             fields : {
+            //                 title : title,
+            //                 vid_service : vidService,
+            //                 vid_service_id : videoID
+            //             }
+            //         }, function ( evt ) {
+            //             directory.router.navigate('#/groups/'+self.group_id+'/context/'+evt.id, true);
+            //         }
+            //     );
+            // }
         }
 
         return false;
@@ -551,12 +595,12 @@ directory.GroupsDetailView = Backbone.View.extend({
         
         var self = this, mt = 0.0;
 
-        if ( self.video.duration ) {
+        if ( self.player.duration() ) {
 
             mt = $('input[name="video-time"]').val();
             mt = ((mt && +(mt)) || 0.0) * 1000.0;
 
-        } else if ( self.video.currentSrc && this.time_reference ) {
+        } else if ( /* self.video.currentSrc && */ this.time_reference ) {
 
             // we have a video with no duration and a time ref, 
             // let's assume recording mode
@@ -827,8 +871,8 @@ directory.GroupsDetailView = Backbone.View.extend({
             movie_time = (ts - self.time_reference.getTime()) / 1000.0;
         }
 
-        if ( self.video ) {
-            self.video.currentTime = movie_time;
+        if ( self.player ) {
+            self.player.currentTime(movie_time);
         }
 
         return false;
