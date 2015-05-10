@@ -743,9 +743,11 @@ ul.items {
 
 /* styles for login form */
 .view-login,
+.group-detail-view .tab-content,
 .view-settings .tab-content {
   input[type="text"],
   input[type="email"],
+  input[type="number"],
   input[type="password"] {
     @include input;
 

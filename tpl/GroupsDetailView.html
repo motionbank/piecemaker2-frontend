@@ -26,18 +26,20 @@
                         <a href="#tab-add-local-media" id="event-add-local-media" class="icon-film">Add file</a></li>
                 </ul>
                 <div class='panel-container padding'>
+
                     <div id="tab-add-remote-media" class="tab-content">
                         <form action="#" class="add-remote-media-form">
-                            <input type="text" placeholder="Paste embed code here" name="video-url" />
-                            <br/><br/>
-                            <input type="number" value="" placeholder="Movie UTC Timestamp" name="utc_timestamp" />
-                            <br/><br/>
+                            <input type="text" placeholder="Paste video URL here" name="video-url" />
+                            <input type="number" value="{{time_now}}" 
+                                   placeholder="Movie UTC Timestamp" name="utc_timestamp" />
                             <button>Add</button>
                         </form>
                     </div>
+
                     <div id="tab-record-media" class="tab-content app-only">
                         <a href="#" id="event-start-recording" class="is-button first">Record</a>
                     </div>
+
                     <div id="tab-add-local-media" class="tab-content app-only">
                         <!-- partial -->
                         <div id="select-local-media" style="display:none">
@@ -47,8 +49,8 @@
                                         <option name="" id="" value="{{.}}">{{.}}</option>
                                     {{/.}}
                                 </select>
-                                <input type="number" value="" placeholder="Movie UTC Timestamp" name="utc_timestamp" />
-                                <br/><br/>
+                                <input type="number" value="{{time_now}}" 
+                                       placeholder="Movie UTC Timestamp" name="utc_timestamp" />
                                 <button>Add</button>
                             </form>
                         </div>
@@ -84,7 +86,7 @@
             <div class="event-type-selection">
                 <select name="event-type" class="mousetrap">
                     {{#event_types}}
-                        <option value="{{slug}}">{{name}}</option>
+                        <option value="{{.}}">{{.}}</option>
                     {{/event_types}}
                 </select>
             </div>

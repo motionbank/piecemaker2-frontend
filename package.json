@@ -1,5 +1,5 @@
 {
-  "name": "Piecemaker2 Frontend",
+  "name": "Piecemaker2",
   "version": "0.0.0",
   "main": "index.html",
   "window": {
@@ -7,9 +7,9 @@
     "toolbar": false,
     "frame": true,
     "position": "center",
-    "width": 1024,
+    "width": 1100,
     "height": 768,
-    "show": false,
+    "show": true,
     "focus": true,
     "resizable": true
   },

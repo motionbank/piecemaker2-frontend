@@ -53,7 +53,8 @@ directory.GroupsDetailView = Backbone.View.extend({
 
         // save object vars
         var data = {
-            event_count: 0
+            event_count: 0,
+            time_now : new Date().getTime()
         };
 
         // get partial: list element
@@ -73,32 +74,10 @@ directory.GroupsDetailView = Backbone.View.extend({
             $.extend(data,{group:group});
         });
 
-        // // get events counter
-        // // don't count events with type "group_movie"
-        // API.listEvents( group_id, function(res) {
-        //     var count = 0;
-        //     $.each(res,function(){
-        //         if (this.type != 'group_movie') count++;
-        //     });
-        //     $.extend(data,{event_counter:count});
-        // });
-
-        // get event types and put them in a selectbox
-        $.getJSON('js/options/event_types.json', function(event_types) {
-
-            var event_types_array = new Array();
-
-            $.each(event_types, function(key, val) {
-
-                if (val.slug != 'movie') {
-                    event_types_array.push(val);
-                }
-
-            });
-
-            $.extend(data,{event_types:event_types_array});
-        
-            // console.log(event_types_array);
+        // get event types from group
+        API.listEventTypes( group_id, function( types ){
+            $.extend(types,["scene","marker","note","comment"]);
+            $.extend(data,{event_types:types});
         });
 
         // render template when all ajax requests are finished
@@ -340,12 +319,13 @@ directory.GroupsDetailView = Backbone.View.extend({
         "click .event-go-to-timestamp":     "event_go_to_timestamp",
         "click .group-toggle-details":      "group_toggle_details",
 
-        "change select[name=event-type]":   "change_event_type",
+        'change select[name=event-type]':   'change_event_type',
         'change .chosen-select':            'change_add_file',
 
         'click #event-start-recording':     'start_recording',
         'click #event-add-local-media':     'add_local_media',
-        'click #event-add-remote-media':    'add_remote_media',
+
+        'submit form.add-remote-media-form': 'add_remote_media',
     },
 
     change_add_file : function (e) {
@@ -449,8 +429,49 @@ directory.GroupsDetailView = Backbone.View.extend({
         return false;
     },
 
-    add_remote_media : function () {
+    add_remote_media : function ( evt ) {
 
+        var self = this;
+
+        var $form = $(evt.currentTarget);
+        var urlRaw = $('input[name=video-url]',$form).val();
+        var timeStamp = $('input[name=utc_timestamp]',$form).val();
+        if ( timeStamp == "" || timeStamp == 0 || timeStamp == -1 ) {
+            timeStamp = new Date().getTime();
+        } else {
+            timeStamp = new Date( parseInt( timeStamp, 10 ) ).getTime();
+        }
+
+        if ( !isNaN(timeStamp) && /^http[s]:\/\//.test(urlRaw) ) {
+
+            var videoUri = URI(urlRaw);
+            var videoParams = videoUri.search(true);
+            var videoID, vidService, title;
+
+            if ( videoUri.host().toLowerCase().indexOf('youtube.com') >= 0 ) {
+                videoID = videoParams.v;
+                vidService = 'youtube';
+                title = "Youtube video " + videoID;
+            }
+
+            if ( videoID ) {
+                API.createEvent(
+                    self.group_id, {
+                        type : 'video',
+                        utc_timestamp : timeStamp,
+                        fields : {
+                            title : title,
+                            vid_service : vidService,
+                            vid_service_id : videoID
+                        }
+                    }, function ( evt ) {
+                        directory.router.navigate('#/groups/'+self.group_id+'/context/'+evt.id, true);
+                    }
+                );
+            }
+        }
+
+        return false;
     },
 
     timestamp_from_movie_path : function ( movie_path ) {

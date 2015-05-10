@@ -275,4 +275,7 @@ $(function(){
             Backbone.history.start();
         });
 
+    if ( 'global' in window && global && require ) {
+        require( './nw/js/after-start' )();
+    }
 });
