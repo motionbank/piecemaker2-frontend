@@ -77,6 +77,7 @@ directory.GroupsDetailView = Backbone.View.extend({
         // get event types from group
         API.listEventTypes( group_id, function( types ){
             $.extend(types,["scene","marker","note","comment"]);
+            types = types.sort();
             $.extend(data,{event_types:types});
         });
 
@@ -550,16 +551,27 @@ directory.GroupsDetailView = Backbone.View.extend({
 
         // get timestamp of video
         var timestamp = $('input[name="video-time"]').val();
+        if ( self.player ) {
+            var ts = self.player.currentTime();
+            if ( !isNaN(ts) ) {
+                timestamp = ts;
+            }
+        }
 
         $.extend(fields,{'movie_timestamp':timestamp});
 
         if ( type == 'movie' ) {
             var movie_fields = {
                 'movie_description' : $form.find('input[name="movie_description"]').val(),
-                'movie_path' : $form.find('input[name="movie_path"]').val()
+                'movie_path' :        $form.find('input[name="movie_path"]').val()
             };
 
             $.extend( fields, movie_fields );
+        }
+
+        if ( self.context_event && self.context_event.id ) {
+            fields['context_event_id']   = self.context_event.id;
+            fields['context_event_type'] = self.context_event.type;
         }
 
         // store data
@@ -808,7 +820,12 @@ directory.GroupsDetailView = Backbone.View.extend({
             }
         };
 
-        // get event details and put them in edit form
+        if ( self.context_event && self.context_event.id ) {
+            data.fields['context_event_update_id']   = self.context_event.id;
+            data.fields['context_event_update_type'] = self.context_event.type;
+        }
+
+        // update event and on success update list
         API.updateEvent(group_id,event_id,data,function(res){
             parent.data('token',res.token);
             parent.find('form').remove();

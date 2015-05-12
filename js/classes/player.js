@@ -1,5 +1,8 @@
 var PlayerPlayer = (function(){
 
+	/** --------------------------------------------------------
+	 *	API
+	 * ------------------------------------------------------ */
 	var PlayerAPI = {
 
 		// ##Controlling video playback
@@ -63,6 +66,10 @@ var PlayerPlayer = (function(){
 		},*/
 	}; /* PlayerAPI */
 
+
+	/** --------------------------------------------------------
+	 *	FlowPlayer
+	 * ------------------------------------------------------ */
 	var PlayerFlowPlayer = (function(){
 
 		var html_tpl = "<div class=\"flowplayer-container\"></div>";
@@ -262,6 +269,10 @@ var PlayerPlayer = (function(){
 		return FlowplayerPlayer;
 	})(); /* PlayerFlowPlayer */
 
+
+	/** --------------------------------------------------------
+	 *	Vimeo
+	 * ------------------------------------------------------ */
 	var PlayerVimeo = (function(){
 
 		// https://developer.vimeo.com/apis/simple
@@ -430,6 +441,10 @@ var PlayerPlayer = (function(){
 
 	})(); /* PlayerVimeo */
 
+
+	/** --------------------------------------------------------
+	 *	YouTube
+	 * ------------------------------------------------------ */
 	var PlayerYouTube = (function(){
 
 		var YouTubePlayer = function () {
@@ -509,7 +524,7 @@ var PlayerPlayer = (function(){
 					player.addEventListener( 'onStateChange', function () {
 
 						if ( debug ) console.log( 'YouTubePlayer.onStateChange', arguments );
-						var state = (arguments && arguments[0] && arguments[0].data) ? arguments[0].data : -1;
+						var state = (arguments[0] && arguments[0].data) ? arguments[0].data : -1;
 						var states = [
 							-1, // unstarted
 							YT.PlayerState.ENDED,
@@ -526,7 +541,7 @@ var PlayerPlayer = (function(){
 								poller.start();
 							} else if ( state === YT.PlayerState.PAUSED ) {
 								self.trigger( 'player:paused' );
-								poller.stop();
+								//poller.stop();
 							} else if ( state === YT.PlayerState.CUED ) {
 								//iframe = $('iframe',dom_element);
 							} else if ( state === YT.PlayerState.ENDED ) {
@@ -535,6 +550,7 @@ var PlayerPlayer = (function(){
 								poller.stop();
 							} else {
 								poller.stop();
+								if ( debug ) console.log( 'YouTubePlayer.onStateChange: other state: ' + state );
 							}
 						}
 					});
@@ -669,6 +685,9 @@ var PlayerPlayer = (function(){
 		return YouTubePlayer;
 	})();
 
+	/** --------------------------------------------------------
+	 *	HTML5
+	 * ------------------------------------------------------ */
 	var PlayerHTML5 = (function(){
 		var HTML5Player = function(){
 			var self = this;
