@@ -41,6 +41,9 @@ directory.LoginView = Backbone.View.extend({
 
         if (api_url && api_url !== piecemaker_settings.host && /^http[s]?:\/\//.test(api_url) ) {
             piecemaker_settings.host = api_url;
+        }
+
+        if ( !API ) {
             API = new PieceMakerApi( piecemaker_settings );
         }
 

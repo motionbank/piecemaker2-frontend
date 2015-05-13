@@ -573,11 +573,11 @@ var PlayerPlayer = (function(){
 					});
 
 				} else {
-					throw( 'YouTubePlayer: Not enough arguments for' );
+					console.log( 'YouTubePlayer: Not enough arguments' );
 				}
 			} else {
 				//console.log( YT, 'YT' in window );
-				throw( 'YouTubePlayer: Native Goole YouTube player API not available' );
+				console.log( 'YouTubePlayer: Native Goole YouTube player API not available' );
 			}
 
 			var PlayerApiImpl = 
