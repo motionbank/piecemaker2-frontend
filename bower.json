@@ -1,0 +1,19 @@
+{
+  "name": "piecemaker2-frontend",
+  "version": "0.0.0",
+  "homepage": "https://github.com/motionbank/piecemaker2-frontend",
+  "authors": [
+    "Florian Jenett <fjenett@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "uri.js": "~1.15.1"
+  }
+}
