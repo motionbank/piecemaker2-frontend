@@ -2,13 +2,15 @@
  * user right management
  */
 
+var API = window.API = undefined;
+
 function userHasPermission() {
     // only simple detection (same as userLoggedIn()) until user permissions are implemented
-    return API.api_key;
+    return API && API.api_key;
 }
 
 function userLoggedIn() {
-    return API.api_key;
+    return API && API.api_key;
 }
 
 /*
@@ -59,16 +61,14 @@ var piecemaker_settings = {
     }
 };
 
-if ( 'config' in window && config.piecemaker ) {
-    $.extend(piecemaker_settings,config.piecemaker);
-}
-
 if ( !('config' in window) ) {
     window.config = {
     }
 }
 
-var API = new PieceMakerApi( piecemaker_settings );
+if ( 'config' in window && config.piecemaker ) {
+    piecemaker_settings = $.extend(piecemaker_settings,config.piecemaker);
+}
 
 var userHasRole = function ( role_id ) {
     return directory.user && ('user_role_id' in directory.user) && (directory.user.user_role_id === role_id);
@@ -129,6 +129,7 @@ directory.Router = Backbone.Router.extend({
         "groups":                   "groupsList",
         "groups/:id":               "groupsDetail",
         "groups/:id/context/:eid":  "groupsDetail",
+        "groups/:id/users":         "groupsUsers",
         "users":                    "usersList",
         "settings":                 "settings"
     },
@@ -202,6 +203,19 @@ directory.Router = Backbone.Router.extend({
         }
     },
 
+    groupsUsers: function (id) {
+
+        if (userHasPermission()) {
+            
+            directory.groupsUsersView = new directory.GroupsUsersView({ group_id: id });
+            directory.groupsUsersView.render();
+            this.$content.html(directory.groupsUsersView.el);
+
+            // add active class to navigation
+            directory.shellView.selectMenuItem('pieces-menu');
+        }
+    },
+
     usersList: function () {
 
         if (userHasPermission()) {
@@ -227,6 +241,9 @@ directory.Router = Backbone.Router.extend({
 
     logout: function() {
         if (userHasPermission()) {
+            
+            directory.settings("login.timeout",0);
+
             API.logout(function(){
 
                 // reset API key
@@ -252,7 +269,7 @@ directory.Router = Backbone.Router.extend({
 // show/hide some elements if they are logged in
 // TODO: improve when implementing user groups: 
 // http://stackoverflow.com/questions/17974259/how-to-protect-routes-for-different-user-groups
-Backbone.history.bind("all", function (route, router) {
+Backbone.history.bind( "all", function (route, router) {
 
     var $logout_button = $('.logout');
 
@@ -268,11 +285,36 @@ Backbone.history.bind("all", function (route, router) {
 
 $(function(){
     directory.loadTemplates(["LoginView", "HomeView", 
-        "GroupsListView", "GroupsDetailView", 
+        "GroupsListView", "GroupsDetailView", "GroupsUsersView", 
         "ShellView", "UsersListView", "SettingsView"],
         function () {
-            directory.router = new directory.Router();
-            Backbone.history.start();
+            var fn = function () {
+                directory.router = new directory.Router();
+                Backbone.history.start();
+            }
+            if ( directory.settings && 
+                 directory.settings("login.timeout") && 
+                 directory.settings("login.api_key") ) {
+
+                var tout = parseInt( directory.settings("login.timeout"), 10 );
+                if ( ((new Date().getTime() - tout) / 1000) < (60 * 30) ) {
+                    var api_key = directory.settings("login.api_key");
+                    piecemaker_settings.api_key = api_key;
+                    var host = directory.settings('login.host');
+                    if ( host ) {
+                        piecemaker_settings.host = host;
+                    }
+                    API = new PieceMakerApi( piecemaker_settings );
+                    API.whoAmI(function(me){
+                        // store new key / time
+                        directory.settings("login.timeout",new Date().getTime());
+                        directory.settings("login.api_key",api_key);
+                        directory.user = me;
+                        // will fail globally if request fails
+                        fn();
+                    });
+                } else fn();
+            } else fn();
         });
 
     if ( 'global' in window && global && require ) {

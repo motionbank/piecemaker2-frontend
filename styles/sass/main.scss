@@ -243,6 +243,7 @@ input[type=checkbox]:checked + label:before {
   padding:15px $padding;
 
   input[type="text"],
+  input[type="number"],
   input[type="password"],
   textarea {
     @include input;
@@ -255,6 +256,10 @@ input[type=checkbox]:checked + label:before {
 
   textarea {
     height:80px;
+  }
+
+  .chosen-container {
+    margin-bottom: 10px;
   }
 
   input[type="submit"],

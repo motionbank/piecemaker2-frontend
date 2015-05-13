@@ -67,8 +67,6 @@ directory.UsersListView = Backbone.View.extend({
             var id = parent.data('id');
             var fnCallback = function(usr){
 
-            	console.log( usr );
-
                 var content = Mustache.render(_partials.list,usr);
                 parent.replaceWith(content);
 
@@ -84,8 +82,6 @@ directory.UsersListView = Backbone.View.extend({
         } else if (parent.hasClass('users-crud-wrapper')) {
 
             API.createUser( name, email, role_id, function(usr){
-
-            	console.log( usr );
 
                 var content = Mustache.render(_partials.list,usr);
                 parent.replaceWith(content);
@@ -116,9 +112,6 @@ directory.UsersListView = Backbone.View.extend({
     },
 
     user_update : function (e) {
-
-
-    	console.log( "updated" );
 
     	var obj = e.target;
         var parent = $(obj).closest('.item');

@@ -154,20 +154,20 @@ directory.GroupsListView = Backbone.View.extend({
             // to save additional fields to groups
             // that's why we create an extra event with a special type to assign a movie to a group
             API.createGroup(title,description,function(res){
+                API.changeUserRoleInGroup( res.id, directory.user.id, 'group_admin', function(){
+                    // append new content
+                    var content = Mustache.render(_partials.list,res);
+                    $('.groups-list').find('ul').append(content);
 
-                // append new content
-                var content = Mustache.render(_partials.list,res);
-                $('.groups-list').find('ul').append(content);
+                    // update group counter
+                    var $counter = $('.counter');
+                    $counter.text(parseInt($counter.text()) + 1);
 
-                // update group counter
-                var $counter = $('.counter');
-                $counter.text(parseInt($counter.text()) + 1);
-
-                // reset form
-                var $wrapper = $('.group-crud-wrapper');
-                $wrapper.find('form')[0].reset();
-                $wrapper.find('.group-cancel').click();
-
+                    // reset form
+                    var $wrapper = $('.group-crud-wrapper');
+                    $wrapper.find('form')[0].reset();
+                    $wrapper.find('.group-cancel').click();
+                });
             });
         }
 

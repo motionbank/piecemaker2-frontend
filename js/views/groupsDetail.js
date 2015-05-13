@@ -316,6 +316,7 @@ directory.GroupsDetailView = Backbone.View.extend({
         "submit #event-create-form":        "event_save",
 
         "click .events-show-all":           "events_show_all",
+        "click .events-show-context":       "events_show_context",
         "click .toggle-filter-bubble":      "toggle_filter_bubble",
         "click .events-filter":             "events_filter",
         "click .events-load-type":          "events_load_type",
@@ -324,6 +325,7 @@ directory.GroupsDetailView = Backbone.View.extend({
         "click .event-update-cancel":       "event_update_cancel",
         "click .event-delete":              "event_delete",
         "click .event-go-to-timestamp":     "event_go_to_timestamp",
+        "click .group-edit-users":          function(){ directory.router.navigate('#/groups/'+this.group_id+'/users', false); return false; },
         "click .group-toggle-details":      "group_toggle_details",
 
         'change select[name=event-type]':   'change_event_type',
@@ -631,6 +633,42 @@ directory.GroupsDetailView = Backbone.View.extend({
             return d;
         }
         return Date.now();
+    },
+
+    events_show_context : function() {
+
+        var self = this;
+        var _partials = this.partials;
+
+        if ( self.context_event ) {
+
+            var context_to = undefined;
+            if ( self.context_event.duration > 0 ) {
+                context_to = (self.context_event.utc_timestamp.getTime() / 1000.0) + self.context_event.duration;
+            }
+
+            API.findEvents(
+                self.group_id,
+                { from: self.context_event.utc_timestamp.getTime() / 1000.0,
+                  to: context_to,
+                  fields: {
+                    context_event_id: self.context_event.id
+                  }
+                },
+                function(res) {
+                    self.update_event_list( res );
+                }
+            );
+
+        } else {
+
+            API.listEvents( self.group_id, function(res) {
+
+                self.update_event_list( res );
+            });
+        }
+
+        return false;
     },
 
     events_show_all : function() {

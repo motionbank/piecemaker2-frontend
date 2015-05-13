@@ -1,8 +1,10 @@
 <section class="wrapper-left">
-    <div class="users-list">
+    <div class="groups-users">
 
         <div class="button-row">
+            
             <a href="#" class="icon-plus users-add">Add User</a>
+
         </div>
 
         <ul class="items">
@@ -10,10 +12,9 @@
             <!-- partial template -->
             <li data-id="{{id}}" class="item {{#is_current}}current-user{{/is_current}}">
                 <a class="link users-link" href="#/users/{{id}}"><small>{{id}}</small> {{#name}}{{name}}{{/name}} {{^name}}{{email}}{{/name}}</a>
-                {{#password}}<div class="new-password-message">{{password}}</div>{{/password}}
                 <div class="actions">
                     <a href="#" class="icon-wrench users-update">&nbsp;</a>
-                    <a href="#" class="icon-remove users-delete">&nbsp;</a>
+                    <a href="#" class="icon-remove users-remove">&nbsp;</a>
                 </div>
             </li>
 
@@ -21,20 +22,16 @@
             <li class="item-form users-crud-wrapper toggle">
                 <form action="#" method="post" class="form-crud">
                     
-                    <input type="text" name="name" placeholder="Full Name" class="mousetrap" />
-                    <input type="text" name="email" placeholder="Email" class="mousetrap" required />
-
-                    <input type="checkbox" name="new-password" id="new-password" class="mousetrap" />
-                    <label for="new-password">Request New Password</label>
-
-                    <!-- <input type="checkbox" name="is-disabled" id="is-disabled" class="mousetrap" />
-                    <label for="is-disabled">Is Disabled</label> -->
-
-                    <input type="text" name="role" placeholder="RoleID" value="user" class="mousetrap" />
+                    <input type="number" name="user_id" placeholder="Users ID" class="mousetrap" required />
+                    <select name="role" required>
+                        {{#roles}}
+                        <option value="{{id}}">{{id}}{{#description}} ({{description}}){{/description}}</option>
+                        {{/roles}}
+                    </select>
 
                     <button type="submit" class="users-save icon-ok">Save</button>
                     <button type="button" class="users-cancel icon-remove">Cancel</button>
-                    
+
                     <div class="clear"></div>
 
                 </form>
