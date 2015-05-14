@@ -337,6 +337,9 @@ directory.GroupsDetailView = Backbone.View.extend({
         'change select[name=event-type]':   'change_event_type',
         'change .chosen-select':            'change_add_file',
 
+        "click .event-set-in":              "event_set_in",
+        "click .event-set-out":             "event_set_out",
+
         'click #event-start-recording':     'start_recording',
         'click #event-add-local-media':     'add_local_media',
 
@@ -915,20 +918,34 @@ directory.GroupsDetailView = Backbone.View.extend({
                     fields: fields
                 })
             );
-            $('.form-crud a.event-set-in',parent).click(function(e){
-                var $link = $(e.target);
-                var ts = self.get_timestamp_now();
-                $('input[name=utc_timestamp]',$link.parent()).val( ts.getTime() / 1000.0 );
-                return false;
-            });
-            $('.form-crud a.event-set-out',parent).click(function(e){
-                // var $link = $(e.target);
-                // var ts = self.get_timestamp_now();
-                // $('input[name=utc_timestamp]',$link.parent()).val( ts.getTime() / 1000.0 );
-                return false;
-            });
         });
 
+        return false;
+    },
+
+    event_set_in : function ( evnt ) {
+        evnt.preventDefault();
+        var self = this;
+        var $link = $(evnt.currentTarget);
+        var $form = $link.parent().parent();
+        var $parent = $form.parent();
+        var ts = self.get_timestamp_now();
+        $('input[name=utc_timestamp]',$form).val( ts.getTime() / 1000.0 );
+        return false;
+    },
+
+    event_set_out : function ( evnt ) {
+        evnt.preventDefault();
+        var self = this;
+        var $link = $(evnt.currentTarget);
+        var $form = $link.parent().parent();
+        var $parent = $form.parent();
+        var $utc_ts = $('input[name=utc_timestamp]',$form);
+        var ts_event = parseFloat( $utc_ts.val() );
+        var now = self.get_timestamp_now().getTime() / 1000.0;
+        var dur_event = now - ts_event;
+        if ( dur_event < 0 ) dur_event = 0;
+        $('input[name=duration]',$form).val( dur_event );
         return false;
     },
 
@@ -941,6 +958,7 @@ directory.GroupsDetailView = Backbone.View.extend({
         
         //var event_ts = +(parent.data('timestamp'));
         var event_ts = ($('form input[name=utc_timestamp]',parent).val())*1000.0;
+        var duration = parseFloat( $('form input[name=duration]',parent).val() );
 
         var event_token = parent.data('token');
         var group_id = this.group_id;
@@ -964,6 +982,7 @@ directory.GroupsDetailView = Backbone.View.extend({
 
         // store data
         var data = {
+            duration : duration,
             utc_timestamp : new Date( event_ts ),
             token: event_token,
             fields: fields
