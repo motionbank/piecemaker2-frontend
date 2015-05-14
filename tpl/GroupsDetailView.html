@@ -115,9 +115,10 @@
     <div class="events-list">
         <div class="button-row">
 
-            <a href="#" class="icon-video events-show-context">Load Context Events</a>
-            <a href="#" class="icon-video events-show-all">Load All Events</a>
-            <a href="#" class="icon-search events-load-type">Load Videos</a>
+            <a href="#" class="icon-search events-show-user">Your Context Events</a>
+            <a href="#" class="icon-search events-show-context">Context Events</a>
+            <a href="#" class="icon-search events-show-all">All Events</a>
+            <a href="#" class="icon-search events-load-type">Videos</a>
 
             <!-- <a href="#" class="icon-search toggle-filter-bubble">Filter</a> -->
             
@@ -146,17 +147,16 @@
                     data-token="{{token}}" class="item {{#is_current_context_event}}context-event{{/is_current_context_event}}">
                     <a  class="link {{^is_context_event}}event-go-to-timestamp{{/is_context_event}}" 
                         href="#{{#is_context_event}}/groups/{{event_group_id}}/context/{{id}}{{/is_context_event}}" >
-                        {{#fields.description}}{{fields.description}}{{/fields.description}}
-                        {{^fields.description}}
+                        {{#fields.title}}{{fields.title}}{{/fields.title}}
+                        {{^fields.title}}
                             {{#is_context_event}}
-                                {{#fields.title}}{{fields.title}}{{/fields.title}}
-                                {{^fields.title}}{{fields.movie_path}}{{/fields.title}}
+                                {{fields.movie_path}}
                             {{/is_context_event}}
                             {{^is_context_event}}
-                                {{#fields.title}}{{fields.title}}{{/fields.title}}
-                                {{^fields.title}}Untitled event{{/fields.title}}
+                                {{#fields.description}}{{fields.description}}{{/fields.description}}
+                                {{^fields.description}}Untitled event{{/fields.description}}
                             {{/is_context_event}}
-                        {{/fields.description}}
+                        {{/fields.title}}
                     </a>
                     <div class="actions">
                         <a href="#" class="icon-wrench event-update">&nbsp;</a>
@@ -170,6 +170,30 @@
                 </li>
 
             </ul>
+            <!-- partial -->
+            <div id="form-event-update" style="display:none">
+                <form method="post" action="#" class="form-crud">
+                    <textarea class="mousetrap">{{description}}</textarea>
+                    <input type="number" name="utc_timestamp" value="{{timestamp}}" style="width:48%;float:left" />
+                    <div style="height:48px;padding:10px">
+                        <a href="#" class="event-set-in" style="padding-left:20px">Set In</a> <a href="#" class="event-set-out">Set Out</a>
+                    </div>
+                    <div class="break"></div>
+                    <span class="fields">
+                        {{#fields}}
+                            <input class="field-id" type="text" name="field[{{id}}][id]" value="{{id}}" style="width:48%;margin-right:2%;float:left" />
+                            <input type="text" name="field[{{id}}][value]" value="{{value}}"  style="width:50%;" />
+                            <div class="break"></div>
+                        {{/fields}}
+                        <input type="text" class="field-id" name="field[new][id]" value="" style="width:48%;margin-right:2%;float:left" />
+                        <input type="text" name="field[new][value]" value=""  style="width:50%;" />
+                    </span>
+                    <div class="break"></div>
+                    <button type="submit" class="event-update-save icon-ok">Save</button>
+                    <button class="event-update-cancel icon-remove">Cancel</button>
+                </form>
+            </div>
+            <!-- /partial -->
         </div>
 
     </div>

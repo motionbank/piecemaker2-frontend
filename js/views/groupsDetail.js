@@ -63,7 +63,8 @@ directory.GroupsDetailView = Backbone.View.extend({
         // define mustache partial
         this.partials = {
             "list" :         $('.events-list-content ul li:nth-child(1)',$template)[0].outerHTML,
-            'select_media' : $('#select-local-media',$template)[0].outerHTML 
+            'select_media' : $('#select-local-media',$template)[0].outerHTML,
+            'update_event' : $('#form-event-update',$template).get(0).innerHTML
         };
 
         // store the id of the group
@@ -179,7 +180,8 @@ directory.GroupsDetailView = Backbone.View.extend({
                          current_movie.fields['local-file'] || 
                          (current_movie.fields.title + '.mp4');
 
-        if ( current_movie.fields.vid_service ) {
+        if ( !current_movie.fields['local-file'] && 
+             current_movie.fields.vid_service ) {
             var vidService = current_movie.fields.vid_service;
             if ( vidService == 'youtube' ) {
                 self.player = new PlayerPlayer.YouTube(
@@ -317,6 +319,7 @@ directory.GroupsDetailView = Backbone.View.extend({
 
         "click .events-show-all":           "events_show_all",
         "click .events-show-context":       "events_show_context",
+        "click .events-show-user":          "events_show_user",
         "click .toggle-filter-bubble":      "toggle_filter_bubble",
         "click .events-filter":             "events_filter",
         "click .events-load-type":          "events_load_type",
@@ -576,6 +579,8 @@ directory.GroupsDetailView = Backbone.View.extend({
             fields['context_event_type'] = self.context_event.type;
         }
 
+        fields['created_by_user_id'] = directory.user.id;
+
         // store data
         var data = {
             utc_timestamp: self.get_timestamp_now(),
@@ -633,6 +638,44 @@ directory.GroupsDetailView = Backbone.View.extend({
             return d;
         }
         return Date.now();
+    },
+
+    events_show_user : function() {
+
+        var self = this;
+        var _partials = this.partials;
+
+        if ( self.context_event ) {
+
+            var context_to = undefined;
+            if ( self.context_event.duration > 0 ) {
+                context_to = (self.context_event.utc_timestamp.getTime() / 1000.0) + self.context_event.duration;
+            }
+
+            API.findEvents(
+                self.group_id,
+                {
+                  from: self.context_event.utc_timestamp.getTime() / 1000.0,
+                  to: context_to,
+                  fields: {
+                    context_event_id: self.context_event.id,
+                    created_by_user_id: directory.user.id,
+                  }
+                },
+                function(res) {
+                    self.update_event_list( res );
+                }
+            );
+
+        } else {
+
+            API.listEvents( self.group_id, function(res) {
+
+                self.update_event_list( res );
+            });
+        }
+
+        return false;
     },
 
     events_show_context : function() {
@@ -736,6 +779,7 @@ directory.GroupsDetailView = Backbone.View.extend({
     render_event : function ( evnt ) {
 
         var self = this;
+
         evnt.is_context_event = self.context_event_types.indexOf(evnt.type) >= 0;
         evnt.is_current_context_event = self.context_event && self.context_event.id == evnt.id;
         evnt.utc_timestamp_float = evnt.utc_timestamp.getTime();
@@ -806,28 +850,38 @@ directory.GroupsDetailView = Backbone.View.extend({
         var event_id = parent.data('id');
         var group_id = this.group_id;
         var self = this;
+        var tpl = self.partials.update_event;
         
         // get event details and put them in edit form
         API.getEvent(group_id,event_id,function(res){
             parent.data('token',res.token);
             // TODO: cleanup!
             $('.form-crud',parent).remove();
+            var fields = [];
+            $.each(res.fields,function(k,v){
+                if ( typeof v !== 'function' )
+                fields.push({id:k,value:v});
+            });
+            fields.sort(function(a,b){
+                return a.id.localeCompare(b.id);
+            });
             parent.find('.link').hide().after(
-                '<form method="post" action="#" class="form-crud">'+
-                    '<textarea class="mousetrap">'+
-                        (res.fields.description || res.fields.title || res.fields.movie_path )+
-                    '</textarea>'+
-                    '<input type="number" name="utc_timestamp" value="'+(res.utc_timestamp.getTime() / 1000.0)+'" /> '+
-                    '<a href="#" class="event-set-in">Set In</a> <a href="#" class="event-set-out">Set Out</a>'+
-                    '<br/><br/>'+
-                    '<button type="submit" class="event-update-save icon-ok">Save</button>'+
-                    '<button class="event-update-cancel icon-remove">Cancel</button>'+
-                '</form>'
+                Mustache.render(tpl,{
+                    description: res.fields.description || res.fields.title || res.fields.movie_path,
+                    timestamp: res.utc_timestamp.getTime() / 1000.0,
+                    fields: fields
+                })
             );
-            $('.form-crud a',parent).click(function(e){
+            $('.form-crud a.event-set-in',parent).click(function(e){
                 var $link = $(e.target);
                 var ts = self.get_timestamp_now();
                 $('input[name=utc_timestamp]',$link.parent()).val( ts.getTime() / 1000.0 );
+                return false;
+            });
+            $('.form-crud a.event-set-out',parent).click(function(e){
+                // var $link = $(e.target);
+                // var ts = self.get_timestamp_now();
+                // $('input[name=utc_timestamp]',$link.parent()).val( ts.getTime() / 1000.0 );
                 return false;
             });
         });
@@ -849,13 +903,27 @@ directory.GroupsDetailView = Backbone.View.extend({
         var group_id = this.group_id;
         var content = parent.find('textarea').val();
 
+        var $fields_in = $('.fields input.field-id', parent);
+        var fields = {
+            description: content,
+            updated_by_user_id: directory.user.id
+        };
+        $fields_in.each(function(i,e){
+            var $e = $(e);
+            var $v = $('.fields input[name="'+$e.attr('name').replace("[id]","[value]")+'"]', parent);
+            if ( $e.length > 0 && $v.length > 0 ) {
+                var key = $e.val();
+                key = key.toLowerCase().replace(/[^-_.0-9a-z]/ig,"_");
+                var val = $v.val();
+                if ( key ) fields[ key ] = val;
+            }
+        });
+
         // store data
         var data = {
             utc_timestamp : new Date( event_ts ),
             token: event_token,
-            fields: {
-                description: content
-            }
+            fields: fields
         };
 
         if ( self.context_event && self.context_event.id ) {
@@ -887,29 +955,31 @@ directory.GroupsDetailView = Backbone.View.extend({
 
     event_delete: function(e) {
 
-        var self = this;
-        var obj = e.target;
-        var event_id = $(obj).closest('.item').data('id');
-        var group_id = $('input[name="group-id"]').val();
+        if ( confirm( 'Delete this event?' ) ) {
+            var self = this;
+            var obj = e.target;
+            var event_id = $(obj).closest('.item').data('id');
+            var group_id = $('input[name="group-id"]').val();
 
-        API.deleteEvent(group_id, event_id, function() {
+            API.deleteEvent(group_id, event_id, function() {
 
-            // remove item
-            $(obj).closest('.item').remove();
+                // remove item
+                $(obj).closest('.item').remove();
 
-            // update event counter
-            var $counter = $('.counter-total');
-            var n = parseInt($counter.text()) - 1;
-            $counter.text(n);
+                // update event counter
+                var $counter = $('.counter-total');
+                var n = parseInt($counter.text()) - 1;
+                $counter.text(n);
 
-            // show placeholder if there are no events
-            if (n == 0) {
-                self.check_list_placeholder();
-            }
+                // show placeholder if there are no events
+                if (n == 0) {
+                    self.check_list_placeholder();
+                }
 
-            self.get_selected_events_count();
+                self.get_selected_events_count();
 
-        });
+            });
+        }
 
         return false;
     },
