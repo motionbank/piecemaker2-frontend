@@ -33,6 +33,8 @@ directory.GroupsDetailView = Backbone.View.extend({
     player: null,
     tmp: null,
     id: 'content-inner',
+    tags: [],
+    active_tags: [],
 
     context_event_types : [ 'group_movie', 'video', 'movie' ],
 
@@ -321,6 +323,7 @@ directory.GroupsDetailView = Backbone.View.extend({
         "click .events-show-context":       "events_show_context",
         "click .events-show-user":          "events_show_user",
         "click .toggle-filter-bubble":      "toggle_filter_bubble",
+        "click .toggle-tag-filter":         "toggle_tag_filter",
         "click .events-filter":             "events_filter",
         "click .events-load-type":          "events_load_type",
         "click .event-update":              "event_update",
@@ -338,6 +341,8 @@ directory.GroupsDetailView = Backbone.View.extend({
         'click #event-add-local-media':     'add_local_media',
 
         'submit form.add-remote-media-form': 'add_remote_media',
+
+        'exit .bubble': function(){ console.log('leave'); }
     },
 
     change_add_file : function (e) {
@@ -762,6 +767,8 @@ directory.GroupsDetailView = Backbone.View.extend({
         
         $events_list.find('.item').not(':first-child').remove();
 
+        self.tags = [];
+
         // list events
         var events_html = "";
         $.each( events, function(index,value) {
@@ -784,6 +791,18 @@ directory.GroupsDetailView = Backbone.View.extend({
         evnt.is_current_context_event = self.context_event && self.context_event.id == evnt.id;
         evnt.utc_timestamp_float = evnt.utc_timestamp.getTime();
 
+        evnt.tags = [];
+        if ( evnt.fields.tags ) {
+            var tags = evnt.fields.tags.split(",");
+            $.each(tags,function(i,t){
+                t = t.replace(/^[\s]+/,'').replace(/[\s]+$/,'');
+                if ( self.tags.indexOf(t) < 0 ) {
+                    self.tags.push(t);
+                }
+                evnt.tags.push('tag-'+t);
+            });
+        }
+
         return Mustache.render( self.partials.list, evnt );
     },
 
@@ -793,9 +812,33 @@ directory.GroupsDetailView = Backbone.View.extend({
         var button = $('.toggle-filter-bubble');
         var bubble = $('.bubble');
         var toggle_button_position = (button.offset().left + (button.outerWidth() / 2)) - (bubble.outerWidth() / 2);
+
+        var self = this;
         
+        if ( self.tags && self.tags.length > 0 ) {
+            var tag_html = "";
+            $.each(self.tags,function(i,t){
+                tag_html += "<a href='#' class='toggle-tag-filter'>"+t+"</a>";
+            });
+            bubble.html(tag_html);
+        } else {
+            bubble.html('No tags found');
+        }
         bubble.css({'left':toggle_button_position + 'px'}).toggleClass('bubble-open');
         
+        return false;
+    },
+
+    toggle_tag_filter : function ( evnt ) {
+        evnt.preventDefault();
+
+        var $target = $( evnt.currentTarget );
+        var tag = $target.text();
+        var $tagged_items = $('.items li.tag-'+tag);
+
+        $('.items li').hide();
+        $tagged_items.show();
+
         return false;
     },
 

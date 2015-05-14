@@ -120,19 +120,14 @@
             <a href="#" class="icon-search events-show-all">All Events</a>
             <a href="#" class="icon-search events-load-type">Videos</a>
 
-            <!-- <a href="#" class="icon-search toggle-filter-bubble">Filter</a> -->
-            
+            <a href="#" class="icon-filter toggle-filter-bubble">Tags</a>
             <div class="bubble">
-                <form action="#" method="post">
-                    <input type="text" name="filter-min" placeholder="From Timestamp" />
-                    <input type="text" name="filter-max"  placeholder="To Timestamp" />
-                    <button type="submit" class="events-filter">Get Events</button>
-                </form>
+                
             </div>
 
             <div class="info-wrapper">
                 <span class="info icon-info-sign">
-                    <span class="counter-selected">0</span>/<span class="counter-total">{{event_counter}}</span> Events selected
+                    <span class="counter-selected">0</span>{{#event_counter}}/<span class="counter-total">{{event_counter}}</span>{{/event_counter}} Events
                 </span>
             </div>
 
@@ -144,8 +139,8 @@
                 <!-- partial template -->
                 <li data-id="{{id}}"
                     data-timestamp="{{utc_timestamp_float}}" data-type="{{type}}" 
-                    data-token="{{token}}" class="item {{#is_current_context_event}}context-event{{/is_current_context_event}}">
-                    <a  class="link {{^is_context_event}}event-go-to-timestamp{{/is_context_event}}" 
+                    data-token="{{token}}" class="item {{#is_current_context_event}}context-event{{/is_current_context_event}} {{#tags}}{{tags}}{{/tags}}">
+                    <a class="link {{^is_context_event}}event-go-to-timestamp{{/is_context_event}}" 
                         href="#{{#is_context_event}}/groups/{{event_group_id}}/context/{{id}}{{/is_context_event}}" >
                         {{#fields.title}}{{fields.title}}{{/fields.title}}
                         {{^fields.title}}
