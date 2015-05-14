@@ -850,10 +850,11 @@ ul.items {
   .group-detail-view {
     .wrapper-left {
       position: fixed;
+      width: 720px;
     }
     .wrapper-right {
       display: inherit !important;
-      padding-left: 500px;
+      padding-left: 720px;
       overflow: inside;
       display: block;
     }

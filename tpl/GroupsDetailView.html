@@ -72,18 +72,16 @@
             <a href="#" class="button video-step-forward-frame">&gt;</a> 
             <a href="#" class="button video-step-forward-second">&gt;&gt;</a> 
             <a href="#" class="button video-go-to-end">--&gt;</a>
-            <br />
-            <br />
-            <label for="video-time">Movie Timestamp:</label>
-            <input id="video-time" name="video-time" type="text" />
-            <div class="timestamp-note"></div>
+            <!-- <label for="video-time">Movie Timestamp:</label> -->
+            <input id="video-time" name="video-time" type="hidden" />
+            <!-- <div class="timestamp-note"></div> -->
 
         </div>
 
         <form action="#" method="post" class="form-crud" id="event-create-form">
 
-            <h2>Add Event</h2>
-            <textarea name="description" placeholder="Text" class="mousetrap" required></textarea>
+            <!-- <h2>Add Event</h2> -->
+            <textarea name="description" placeholder="Description" class="mousetrap" required></textarea>
 
             <div class="event-type-selection">
                 <select name="event-type" class="mousetrap">
@@ -169,7 +167,7 @@
             <div id="form-event-update" style="display:none">
                 <form method="post" action="#" class="form-crud">
                     <textarea class="mousetrap">{{description}}</textarea>
-                    <input type="hidden" name="duration" value="{{duration}}" />
+                    <input type="hidden" name="duration" value="{{#duration}}{{duration}}{{/duration}}{{^duration}}0{{/duration}}" />
                     <input type="number" name="utc_timestamp" value="{{timestamp}}" style="width:48%;float:left" />
                     <div style="height:48px;padding:10px">
                         <a href="#" class="event-set-in" style="padding-left:20px">Set In</a> <a href="#" class="event-set-out">Set Out</a>

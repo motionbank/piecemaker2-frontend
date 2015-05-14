@@ -482,10 +482,13 @@ var PlayerPlayer = (function(){
 					// }));
 					// $(dom_element).append(iframe);
 
+					var player_height = $(dom_element).width()
+					var player_width = player_height * (9/16.0);
+
 					player = new YT.Player(
 						dom_element, { 
-							width: $(dom_element).width()+'px',
-							height: 270+'px',
+							width: player_height+'px',
+							height: player_width+'px',
 							//videoId: yt_video_id,
 							playerVars: {	// http://goo.gl/Bm6Ko
 								// controls    : 1,
