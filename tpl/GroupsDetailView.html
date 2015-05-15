@@ -168,13 +168,13 @@
                 <form method="post" action="#" class="form-crud">
                     <textarea class="mousetrap">{{description}}</textarea>
                     <input type="number" name="utc_timestamp" value="{{timestamp}}" style="width:48%;float:left" />
-                    <div style="height:48px;padding:10px">
-                        <a href="#" class="event-set-in" style="padding-left:20px">Set In</a>
+                    <div style="height:48px;padding:5px">
+                        <button class="event-set-in" style="margin-left:10px">Set In</button>
                     </div>
                     <div class="break"></div>
                     <input type="number" name="duration" value="{{#duration}}{{duration}}{{/duration}}{{^duration}}0{{/duration}}" style="width:48%;float:left" />
-                    <div style="height:48px;padding:10px">
-                        <a href="#" class="event-set-out" style="padding-left:20px">Set Out</a>
+                    <div style="height:48px;padding:5px">
+                        <button class="event-set-out" style="margin-left:10px">Set Out</button>
                     </div>
                     <div class="break"></div>
                     <span class="fields">

@@ -205,26 +205,25 @@ directory.GroupsDetailView = Backbone.View.extend({
 
         var end_time;
 
-        // video.addEventListener('loadedmetadata', function() {
-        //     end_time = video.duration;
-
-        //     // video.src.replace(/.+\/([^\/]+)$/,'$1')
-        //     if ( self.context_event.duration == 0 ) {
-        //         self.context_event.duration = video.duration;
-        //         API.getEvent( self.group_id, self.context_event.id, function ( evt ) {
-        //             API.updateEvent( self.group_id, self.context_event.id, {
-        //                 duration: self.context_event.duration,
-        //                 utc_timestamp: evt.utc_timestamp,
-        //                 token: evt.token
-        //             }, function ( updt_evt ) {
-        //                 self.context_event = updt_evt;
-        //             });
-        //         });
-        //     }
-        // });
+        var fixDuration = function(){
+            if ( self.context_event.duration == 0 && self.player.duration() ) {
+                self.context_event.duration = self.player.duration();
+                API.getEvent( self.group_id, self.context_event.id, function ( evt ) {
+                    API.updateEvent( self.group_id, self.context_event.id, {
+                        duration: self.context_event.duration,
+                        utc_timestamp: evt.utc_timestamp,
+                        token: evt.token
+                    }, function ( updt_evt ) {
+                        self.context_event = updt_evt;
+                    });
+                });
+            }
+            fixDuration = undefined;
+        };
 
         // add active class to events while playing 
         self.player.on('player:time-change',function(){
+            if (fixDuration) fixDuration();
             self.active_event = $items.find('li.active');
             var $active = self.active_event;
             var current_time = self.player.currentTime(); 
@@ -911,12 +910,13 @@ directory.GroupsDetailView = Backbone.View.extend({
             fields.sort(function(a,b){
                 return a.id.localeCompare(b.id);
             });
+            var data = $.extend({},res);
+            data = $.extend(data,{
+                description: res.fields.description || res.fields.title || res.fields.movie_path,
+                timestamp: res.utc_timestamp.getTime() / 1000.0
+            });
             parent.find('.link').hide().after(
-                Mustache.render(tpl,{
-                    description: res.fields.description || res.fields.title || res.fields.movie_path,
-                    timestamp: res.utc_timestamp.getTime() / 1000.0,
-                    fields: fields
-                })
+                Mustache.render(tpl,data)
             );
         });
 
