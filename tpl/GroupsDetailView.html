@@ -167,10 +167,14 @@
             <div id="form-event-update" style="display:none">
                 <form method="post" action="#" class="form-crud">
                     <textarea class="mousetrap">{{description}}</textarea>
-                    <input type="hidden" name="duration" value="{{#duration}}{{duration}}{{/duration}}{{^duration}}0{{/duration}}" />
                     <input type="number" name="utc_timestamp" value="{{timestamp}}" style="width:48%;float:left" />
                     <div style="height:48px;padding:10px">
-                        <a href="#" class="event-set-in" style="padding-left:20px">Set In</a> <a href="#" class="event-set-out">Set Out</a>
+                        <a href="#" class="event-set-in" style="padding-left:20px">Set In</a>
+                    </div>
+                    <div class="break"></div>
+                    <input type="number" name="duration" value="{{#duration}}{{duration}}{{/duration}}{{^duration}}0{{/duration}}" style="width:48%;float:left" />
+                    <div style="height:48px;padding:10px">
+                        <a href="#" class="event-set-out" style="padding-left:20px">Set Out</a>
                     </div>
                     <div class="break"></div>
                     <span class="fields">
