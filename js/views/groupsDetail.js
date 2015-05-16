@@ -316,7 +316,7 @@ directory.GroupsDetailView = Backbone.View.extend({
     },
 
     events: {
-        "submit #event-create-form":        "event_save",
+        "submit .event-create-form":        "event_save",
 
         "click .events-show-all":           "events_show_all",
         "click .events-show-context":       "events_show_context",
@@ -545,13 +545,15 @@ directory.GroupsDetailView = Backbone.View.extend({
         return null;
     },
 
-    event_save: function() {
+    event_save: function ( evt ) {
+
+        evt.preventDefault();
 
         var self = this;
         var _partials = this.partials;
 
         // store form object
-        var $form = $('#event-create-form');
+        var $form = $( evt.currentTarget );
 
         // get additional fields
         var fields = {
@@ -559,7 +561,12 @@ directory.GroupsDetailView = Backbone.View.extend({
         };
 
         // get type of event
-        var type = $form.find('select[name="event-type"]').val();
+        var type = $form.find('*[name="event-type"]').val();
+
+        if ( type == "video" ) {
+            fields['local-file'] = fields.description;
+            fields.title = fields.description;
+        }
 
         // get timestamp of video
         var timestamp = $('input[name="video-time"]').val();
@@ -610,7 +617,7 @@ directory.GroupsDetailView = Backbone.View.extend({
             self.get_selected_events_count();
 
             // reset form
-            $('#event-create-form')[0].reset();
+            $('.event-create-form')[0].reset();
 
         });
 
@@ -917,7 +924,7 @@ directory.GroupsDetailView = Backbone.View.extend({
                 timestamp: res.utc_timestamp.getTime() / 1000.0,
                 fields: fields
             });
-            console.log( data );
+            // console.log( data );
             parent.find('.link').hide().after(
                 Mustache.render(tpl,data)
             );

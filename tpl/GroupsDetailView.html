@@ -21,6 +21,8 @@
                 <ul class='etabs'>
                     <li class='tab'>
                         <a href="#tab-add-remote-media" class="icon-youtube">Embed media</a></li>
+                    <li class='tab'>
+                        <a href="#tab-add-local-media-noapp" class="icon-video">Add media</a></li>
                     <li class='app-only tab'>
                         <a href="#tab-record-media" class="icon-caret-right">Start recording</a></li>
                     <li class='app-only tab'>
@@ -34,6 +36,18 @@
                             <input type="number" value="{{time_now}}" 
                                    placeholder="Movie UTC Timestamp" name="utc_timestamp" />
                             <button>Add</button>
+                        </form>
+                    </div>
+
+                    <div id="tab-add-local-media-noapp" class="tab-content">
+                        <form action="#" method="post" class="form-crud event-create-form" id="video-add-form">
+
+                            <textarea name="description" placeholder="Description" class="mousetrap" required></textarea>
+                            <input type="hidden" name="event-type" value="video" />
+
+                            <button type="submit" class="group-save icon-ok">Save</button>
+                            <br class="clear" />
+
                         </form>
                     </div>
 
@@ -78,7 +92,7 @@
 
         </div>
 
-        <form action="#" method="post" class="form-crud" id="event-create-form">
+        <form action="#" method="post" class="form-crud event-create-form" id="event-create-form">
 
             <!-- <h2>Add Event</h2> -->
             <textarea name="description" placeholder="Description" class="mousetrap" required></textarea>
