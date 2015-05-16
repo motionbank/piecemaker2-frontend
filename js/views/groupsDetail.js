@@ -79,7 +79,7 @@ directory.GroupsDetailView = Backbone.View.extend({
 
         // get event types from group
         API.listEventTypes( group_id, function( types ){
-            $.extend(types,["scene","marker","note","comment"]);
+            $.extend(types,["scene","marker","note","comment","video"]);
             types = types.sort();
             $.extend(data,{event_types:types});
         });
@@ -902,19 +902,22 @@ directory.GroupsDetailView = Backbone.View.extend({
             parent.data('token',res.token);
             // TODO: cleanup!
             $('.form-crud',parent).remove();
-            var fields = [];
+            var fields = $.extend([],res.fields);
             $.each(res.fields,function(k,v){
-                if ( typeof v !== 'function' )
-                fields.push({id:k,value:v});
+                if ( k && v && typeof v !== 'function' )
+                    fields.push({id:k,value:v});
             });
             fields.sort(function(a,b){
-                return a.id.localeCompare(b.id);
+                if ( a && b ) return a.id.localeCompare(b.id);
+                return 0;
             });
             var data = $.extend({},res);
             data = $.extend(data,{
                 description: res.fields.description || res.fields.title || res.fields.movie_path,
-                timestamp: res.utc_timestamp.getTime() / 1000.0
+                timestamp: res.utc_timestamp.getTime() / 1000.0,
+                fields: fields
             });
+            console.log( data );
             parent.find('.link').hide().after(
                 Mustache.render(tpl,data)
             );

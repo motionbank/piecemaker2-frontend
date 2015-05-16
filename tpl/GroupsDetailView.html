@@ -179,9 +179,11 @@
                     <div class="break"></div>
                     <span class="fields">
                         {{#fields}}
+                            {{#value}}
                             <input class="field-id" type="text" name="field[{{id}}][id]" value="{{id}}" style="width:48%;margin-right:2%;float:left" />
                             <input type="text" name="field[{{id}}][value]" value="{{value}}"  style="width:50%;" />
                             <div class="break"></div>
+                            {{/value}}
                         {{/fields}}
                         <input type="text" class="field-id" name="field[new][id]" value="" style="width:48%;margin-right:2%;float:left" />
                         <input type="text" name="field[new][value]" value=""  style="width:50%;" />
