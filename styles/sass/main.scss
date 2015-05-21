@@ -593,7 +593,6 @@ ul.items {
 .wrapper-left {
 
   height: 100%;
-  overflow-y: scroll;
   width: $wrapper-video-width;
   border-right:1px solid $border-color;
 
@@ -854,6 +853,7 @@ ul.items {
 #content-inner {
   .group-detail-view {
     .wrapper-left {
+      overflow-y: scroll;
       position: fixed;
       width: 720px;
     }
