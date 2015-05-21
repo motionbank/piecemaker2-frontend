@@ -163,7 +163,7 @@
                 <!-- partial template -->
                 <li data-id="{{id}}"
                     data-timestamp="{{utc_timestamp_float}}" data-type="{{type}}" 
-                    data-token="{{token}}" class="item {{#is_current_context_event}}context-event{{/is_current_context_event}} {{#tags}}{{tags}}{{/tags}}">
+                    data-token="{{token}}" class="item {{#is_current_context_event}}context-event{{/is_current_context_event}} {{#tags}}{{.}} {{/tags}}">
                     <a class="link {{^is_context_event}}event-go-to-timestamp{{/is_context_event}}" 
                         href="#{{#is_context_event}}/groups/{{event_group_id}}/context/{{id}}{{/is_context_event}}" >
                         {{#fields.title}}{{fields.title}}{{/fields.title}}
