@@ -318,6 +318,9 @@ directory.GroupsDetailView = Backbone.View.extend({
     events: {
         "submit .event-create-form":        "event_save",
 
+        "change #pm2go-import-form input":  "events_import_pm2go_prepare",
+        "submit #pm2go-import-form":        "events_import_pm2go",
+
         "click .events-show-all":           "events_show_all",
         "click .events-show-context":       "events_show_context",
         "click .events-show-user":          "events_show_user",
@@ -1101,6 +1104,98 @@ directory.GroupsDetailView = Backbone.View.extend({
 
         // enable input field for selected type
         $('.event-type-addition:visible').find('input').removeAttr('disabled');
+    },
+
+    events_import_pm2go_prepare : function (evnt) {
+
+        var file = evnt.currentTarget.files[0];
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            var text = e.target.result;
+            var parser = new DOMParser();
+            var doc = parser.parseFromString( text, "application/xml" );
+            //console.log( doc );
+            if ( doc ) {
+                $('#pm2go-import-form button').show();
+            }
+        }
+        reader.readAsText(file,"utf-8");
+
+        return false;
+    },
+
+    events_import_pm2go : function ( evnt ) {
+        
+        var self = this;
+        $('#pm2go-import-form button').hide();
+        
+        var file = $('input',evnt.currentTarget)[0].files[0];
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            var text = e.target.result;
+            var parser = new DOMParser();
+            var doc = parser.parseFromString( text, "application/xml" );
+            if ( doc ) {
+                var utc_time = new Date();
+                var annotations = [];
+                var max_time = 0;
+                $.each(doc.getElementsByTagName('annotation'),function(i,a){
+                    var start = parseInt(a.querySelector('start').textContent,10);
+                    var end = parseInt(a.querySelector('end').textContent,10);
+                    if ( end < start ) end = start;
+                    max_time = Math.max( max_time, start );
+                    max_time = Math.max( max_time, end );
+                    var description = a.querySelector('textdata').textContent;
+                    description = description.replace(/(<([^>]+)>)/ig,"");
+                    var category = a.querySelector('categoryId').textContent;
+                    var data = {
+                        utc_timestamp : new Date( utc_time.getTime() + start ),
+                        duration : end-start,
+                        type : 'annotation',
+                        fields : {
+                            'pm2go-import' : new Date().getTime(),
+                            'pm2go-user-id' : a.querySelector('userId').textContent,
+                            'pm2go-user-name' : a.querySelector('userName').textContent,
+                            'pm2go-created-at' : a.querySelector('createdAt').textContent,
+                            'pm2go-modified-at' : a.querySelector('modifiedAt').textContent,
+                            'pm2go-identifier' : a.querySelector('identifier').textContent,
+                            'pm2go-category-id' : category,
+                            'tags' : category.toLowerCase(),
+                            'description' : description,
+                            'title' : description
+                        }
+                    };
+                    annotations.push(data);
+                });
+                var file = doc.getElementsByTagName('video')[0].textContent;
+                var data = {
+                    utc_timestamp : utc_time,
+                    duration : max_time,
+                    type : 'video',
+                    fields : {
+                        'pm2go-file' : file,
+                        'description' : file,
+                        'title' : file
+                    }
+                };
+                API.createEvent( self.group_id, data, function(vid){
+                    var content = self.render_event(vid);
+                    $('.events-list').find('ul').append(content);
+                    $.each(annotations,function(i,d){
+                        d.fields['context_event_id'] = vid.id;
+                        d.fields['context_event_type'] = vid.type;
+                        API.createEvent( self.group_id, d, function(evt){
+                            var content = self.render_event(evt);
+                            $('.events-list').find('ul').append(content);
+                            self.sort_events_list();
+                        });
+                    });
+                });
+            }
+        }
+        reader.readAsText(file,"utf-8");
+
+        return false;
     }
 
 });

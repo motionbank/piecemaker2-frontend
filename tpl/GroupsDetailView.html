@@ -23,6 +23,8 @@
                         <a href="#tab-add-remote-media" class="icon-youtube">Embed media</a></li>
                     <li class='tab'>
                         <a href="#tab-add-local-media-noapp" class="icon-video">Add media</a></li>
+                    <li class='tab'>
+                        <a href="#tab-add-pm2go" class="icon-video">Import PM2GO</a></li>
                     <li class='app-only tab'>
                         <a href="#tab-record-media" class="icon-caret-right">Start recording</a></li>
                     <li class='app-only tab'>
@@ -46,6 +48,18 @@
                             <input type="hidden" name="event-type" value="video" />
 
                             <button type="submit" class="group-save icon-ok">Save</button>
+                            <br class="clear" />
+
+                        </form>
+                    </div>
+
+                    <div id="tab-add-pm2go" class="tab-content">
+                        <form action="#" method="post" class="form-crud" id="pm2go-import-form">
+
+                            <label for="pm2go-file">Select your PM2GO project.xml</label>
+                            <input type="file" name="pm2go-file" value="" />
+
+                            <button type="submit" class="group-save icon-ok">Import</button>
                             <br class="clear" />
 
                         </form>
@@ -133,11 +147,9 @@
             <a href="#" class="icon-search events-load-type">Videos</a>
 
             <a href="#" class="icon-filter toggle-filter-bubble">Tags</a>
-            <div class="bubble">
-                
-            </div>
+            <div class="bubble"></div>
 
-            <div class="info-wrapper">
+            <div class="info-wrapper" style="display:none">
                 <span class="info icon-info-sign">
                     <span class="counter-selected">0</span>{{#event_counter}}/<span class="counter-total">{{event_counter}}</span>{{/event_counter}} Events
                 </span>

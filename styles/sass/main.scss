@@ -157,10 +157,10 @@ button,
 }
 
 .button-row {
-  height:59px;
-  line-height: 59px;
+  min-height:59px;
+  line-height: 42px;
   border-bottom: 1px solid $border-color;
-  padding:0 $padding;
+  padding: 17px $padding;
   background-color: $list-hover;
 
   a {
@@ -244,6 +244,7 @@ input[type=checkbox]:checked + label:before {
 
   input[type="text"],
   input[type="number"],
+  input[type="file"],
   input[type="password"],
   textarea {
     @include input;
@@ -590,11 +591,15 @@ ul.items {
    ========================================================================== */
 
 .wrapper-left {
+
+  height: 100%;
+  overflow-y: scroll;
   width: $wrapper-video-width;
   border-right:1px solid $border-color;
 
   .group-detail {
     border-bottom: 1px solid $border-color;
+    margin-bottom: 59px;
 
     .group-detail-content {
 

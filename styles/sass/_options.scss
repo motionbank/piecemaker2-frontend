@@ -50,6 +50,7 @@ $sand-light:#D3D0CA;
   @include transition(all 0.2s);
   padding:6px 8px;
   border-radius: 3px;
+  white-space: nowrap;
 }
 
 @mixin buttons {
