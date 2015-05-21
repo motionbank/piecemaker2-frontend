@@ -906,6 +906,12 @@ directory.GroupsDetailView = Backbone.View.extend({
         var group_id = this.group_id;
         var self = this;
         var tpl = self.partials.update_event;
+
+        if ( $('.form-crud',parent).length > 0 ) {
+            parent.find('.link').show()
+            $('.form-crud',parent).remove();
+            return false;
+        }
         
         // get event details and put them in edit form
         API.getEvent(group_id,event_id,function(res){
