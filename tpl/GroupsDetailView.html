@@ -192,7 +192,8 @@
             <!-- partial -->
             <div id="form-event-update" style="display:none">
                 <form method="post" action="#" class="form-crud">
-                    <textarea class="mousetrap">{{description}}</textarea>
+                    <input type="text" name="title" value="{{title}}" />
+                    <textarea name="description" class="mousetrap">{{description}}</textarea>
                     <input type="number" name="utc_timestamp" value="{{timestamp}}" style="width:48%;float:left" />
                     <div style="height:48px;padding:5px">
                         <button class="event-set-in" style="margin-left:10px">Set In</button>

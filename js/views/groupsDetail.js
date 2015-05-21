@@ -913,6 +913,8 @@ directory.GroupsDetailView = Backbone.View.extend({
             // TODO: cleanup!
             $('.form-crud',parent).remove();
             var fields = $.extend([],res.fields);
+            delete fields['description'];
+            delete fields['title'];
             $.each(res.fields,function(k,v){
                 if ( k && v && typeof v !== 'function' )
                     fields.push({id:k,value:v});
@@ -923,6 +925,7 @@ directory.GroupsDetailView = Backbone.View.extend({
             });
             var data = $.extend({},res);
             data = $.extend(data,{
+                title : res.fields.title || res.fields.description || 'Untitled event',
                 description: res.fields.description || res.fields.title || res.fields.movie_path,
                 timestamp: res.utc_timestamp.getTime() / 1000.0,
                 fields: fields
@@ -975,13 +978,11 @@ directory.GroupsDetailView = Backbone.View.extend({
 
         var event_token = parent.data('token');
         var group_id = this.group_id;
-        var content = parent.find('textarea').val();
+        var description = $('textarea[name=description]',parent).val();
+        var title = $('input[name=title]',parent).val();
 
         var $fields_in = $('.fields input.field-id', parent);
-        var fields = {
-            description: content,
-            updated_by_user_id: directory.user.id
-        };
+        var fields = {};
         $fields_in.each(function(i,e){
             var $e = $(e);
             var $v = $('.fields input[name="'+$e.attr('name').replace("[id]","[value]")+'"]', parent);
@@ -991,6 +992,11 @@ directory.GroupsDetailView = Backbone.View.extend({
                 var val = $v.val();
                 if ( key ) fields[ key ] = val;
             }
+        });
+        fields = $.extend(fields,{
+            title: title,
+            description: description,
+            updated_by_user_id: directory.user.id
         });
 
         // store data
@@ -1020,7 +1026,6 @@ directory.GroupsDetailView = Backbone.View.extend({
     event_update_cancel: function(e) {
         var obj = e.target;
         var parent = $(obj).closest('.item');
-        var content = parent.find('textarea').val();
         
         parent.find('form').remove();
         parent.find('.link').show();
