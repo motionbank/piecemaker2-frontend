@@ -811,6 +811,7 @@ directory.GroupsDetailView = Backbone.View.extend({
                 if ( self.tags.indexOf(t) < 0 ) {
                     self.tags.push(t);
                 }
+                t = t.replace(/[\s]+/ig,'-');
                 evnt.tags.push('tag-'+t);
             });
         }
@@ -846,6 +847,7 @@ directory.GroupsDetailView = Backbone.View.extend({
 
         var $target = $( evnt.currentTarget );
         var tag = $target.text();
+        tag = tag.replace(/[\s]+/ig,'-');
         var $tagged_items = $('.items li.tag-'+tag);
 
         $('.items li').hide();
