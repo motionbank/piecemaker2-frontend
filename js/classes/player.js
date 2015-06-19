@@ -538,13 +538,12 @@ var PlayerPlayer = (function(){
 						];
 						if ( states.indexOf( state ) !== -1 ) {
 							self.state = state;
+							poller.start();
 							if ( state === YT.PlayerState.PLAYING ) {
 								self.trigger( 'player:playing' );
 								self.trigger( 'player:time-change', self.currentTime() );
-								poller.start();
 							} else if ( state === YT.PlayerState.PAUSED ) {
 								self.trigger( 'player:paused' );
-								//poller.stop();
 							} else if ( state === YT.PlayerState.CUED ) {
 								//iframe = $('iframe',dom_element);
 							} else if ( state === YT.PlayerState.ENDED ) {
