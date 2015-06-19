@@ -784,15 +784,6 @@ directory.GroupsDetailView = Backbone.View.extend({
         // list events
         var events_html = "";
         $.each( events, function(index,value) {
-            if ( self.context_event ) {
-                var tdiff = value.utc_timestamp - self.context_event.utc_timestamp;
-                tdiff /= 1000.0;
-                tdiff = tdiff.toFixed(2);
-                if ( tdiff < 10 ) tdiff = '0'+tdiff;
-                else tdiff = tdiff + '';
-                tdiff = tdiff.replace('.',':');
-                value.rel_time = tdiff;
-            }
             events_html += self.render_event( value );
         });
         $list.append(events_html);
@@ -807,6 +798,25 @@ directory.GroupsDetailView = Backbone.View.extend({
     render_event : function ( evnt ) {
 
         var self = this;
+
+        if ( self.context_event ) {
+            var tdiff = evnt.utc_timestamp - self.context_event.utc_timestamp;
+            evnt.rel_time = '--:--:--';
+            if (tdiff >= 0) {
+                tdiff /= 1000.0;
+                tdiff = tdiff.toFixed(2);
+                var secs = Math.floor(tdiff);
+                var mins = Math.floor(secs / 60.0);
+                if (mins < 10) mins = '0'+mins;
+                var msecs = Math.floor((tdiff-secs)*100);
+                if (msecs < 10) msecs = '0'+msecs;
+                secs = secs-(mins*60);
+                if (secs < 10) secs = '0'+secs;
+                tdiff = mins + ':' + secs + ':' + msecs;
+                tdiff = tdiff.replace('.',':');
+                evnt.rel_time = tdiff;
+            }
+        }
 
         evnt.is_context_event = self.context_event_types.indexOf(evnt.type) >= 0;
         evnt.is_current_context_event = self.context_event && self.context_event.id == evnt.id;
