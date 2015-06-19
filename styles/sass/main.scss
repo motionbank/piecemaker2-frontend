@@ -508,6 +508,7 @@ nav {
    ========================================================================== */
 
 ul.items {
+
   margin:0px;
   padding:0px;
   list-style: none;
@@ -519,7 +520,6 @@ ul.items {
     border-bottom: 1px solid $border-color;
     position: relative;
     padding:15px $padding;
-
 
     &:hover {
       background-color: $list-hover-light;
@@ -571,6 +571,13 @@ ul.items {
 
       }
 
+    }
+
+    .relative-time {
+      color: #999;
+      border: 1px solid #ddd;
+      padding: 0px 5px 0px 5px;
+      margin-right: 5px;
     }
 
   }
@@ -647,6 +654,20 @@ ul.items {
           @include input-focus;
         }
 
+      }
+
+      .video-controller {
+        text-align: center;
+      }
+
+      .button {
+        span {
+          font-size: 130%;
+        }
+        [class^="icon-"]:before,
+        [class*=" icon-"]:before {
+          margin: 0 !important;
+        }
       }
 
     }
@@ -823,10 +844,14 @@ ul.items {
         }
 
         a.link {
-          padding-left:50px;
+          padding-left:25px;
 
         }
 
+      }
+
+      .item:before {
+        content: "\e029";
       }
 
       .item[data-type="movie"]:before,

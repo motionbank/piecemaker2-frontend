@@ -94,12 +94,14 @@
 
             <!-- <video id="video" controls></video> -->
             <div id="video-container"><div id="video-content"></div></div>
-            <a href="#" class="button video-go-to-beginning">&lt;--</a> 
-            <a href="#" class="button video-step-back-second">&lt;&lt;</a> 
-            <a href="#" class="button video-step-back-frame">&lt;</a> 
-            <a href="#" class="button video-step-forward-frame">&gt;</a> 
-            <a href="#" class="button video-step-forward-second">&gt;&gt;</a> 
-            <a href="#" class="button video-go-to-end">--&gt;</a>
+            <div class="video-controller">
+            <a href="#" class="button video-go-to-beginning"    title="go to beginning"        ><span class="icon-arrow-left"></span></a>
+            <a href="#" class="button video-step-back-second"   title="jump 1 second backward" ><span class="icon-backward"></span></a> 
+            <a href="#" class="button video-step-back-frame"    title="step 1 frame backward"  ><span class="icon-caret-left"></span></a> 
+            <a href="#" class="button video-step-forward-frame" title="step 1 frame forward"   ><span class="icon-caret-right"></span></a> 
+            <a href="#" class="button video-step-forward-second"title="jump 1 second forward"  ><span class="icon-forward"></span></a> 
+            <a href="#" class="button video-go-to-end"          title="go to end"              ><span class="icon-arrow-right"></span></a>
+            </div>
             <!-- <label for="video-time">Movie Timestamp:</label> -->
             <input id="video-time" name="video-time" type="hidden" />
             <!-- <div class="timestamp-note"></div> -->
@@ -166,6 +168,7 @@
                     data-token="{{token}}" class="item {{#is_current_context_event}}context-event{{/is_current_context_event}} {{#tags}}{{.}} {{/tags}}">
                     <a class="link {{^is_context_event}}event-go-to-timestamp{{/is_context_event}}" 
                         href="#{{#is_context_event}}/groups/{{event_group_id}}/context/{{id}}{{/is_context_event}}" >
+                        {{#rel_time}}<small class="relative-time" title="relative time in video">{{rel_time}}</small>{{/rel_time}}
                         {{#fields.title}}{{fields.title}}{{/fields.title}}
                         {{^fields.title}}
                             {{#is_context_event}}
@@ -176,6 +179,7 @@
                                 {{^fields.description}}Untitled event{{/fields.description}}
                             {{/is_context_event}}
                         {{/fields.title}}
+                        <!-- <small>by {{created_by_user_id}}</small> -->
                     </a>
                     <div class="actions">
                         <a href="#" class="icon-wrench event-update">&nbsp;</a>

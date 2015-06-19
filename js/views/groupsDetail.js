@@ -784,6 +784,15 @@ directory.GroupsDetailView = Backbone.View.extend({
         // list events
         var events_html = "";
         $.each( events, function(index,value) {
+            if ( self.context_event ) {
+                var tdiff = value.utc_timestamp - self.context_event.utc_timestamp;
+                tdiff /= 1000.0;
+                tdiff = tdiff.toFixed(2);
+                if ( tdiff < 10 ) tdiff = '0'+tdiff;
+                else tdiff = tdiff + '';
+                tdiff = tdiff.replace('.',':');
+                value.rel_time = tdiff;
+            }
             events_html += self.render_event( value );
         });
         $list.append(events_html);
