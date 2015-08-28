@@ -673,10 +673,18 @@ ul.items {
     }
 
     .form-crud {
+
       background-color: $list-hover-light;
 
       .event-type-selection {
-        margin:0 0 10px 0;
+        margin: 0 10px 10px 0;
+        width: 45%;
+        float: left;
+      }
+
+      button.event-save {
+        float: right;
+        margin-right: 0px;
       }
 
     }
@@ -851,7 +859,7 @@ ul.items {
       }
 
       .item:before {
-        content: "\e029";
+        content: "\e029"; // tag
       }
 
       .item[data-type="movie"]:before,
@@ -862,7 +870,15 @@ ul.items {
       }
 
       .item[data-type="note"]:before {
-        content: "\e029"; // .icon-tag
+        content: "\e029"; // tag
+      }
+
+      .item[data-type="marker"]:before {
+        content: "\e06c"; // paper clip alt
+      }
+
+      .item[data-type="comment"]:before {
+        content: "\e106"; // comment
       }
 
     }
@@ -889,6 +905,70 @@ ul.items {
       display: block;
     }
   } 
+}
+
+// JQuery UI
+// ------------------------------------------
+
+.ui-widget {
+  font-family: sans-serif;
+}
+
+.ui-autocomplete {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    float: left;
+    display: none;
+    min-width: 160px;   
+    padding: 4px 0;
+    padding: 12px;
+    margin: 0 0 10px 25px;
+    list-style: none;
+    background-color: #ffffff;
+    border-color: #ccc;
+    border-color: rgba(0, 0, 0, 0.2);
+    border-style: solid;
+    border-width: 1px;
+
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
+
+    -webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+
+    -webkit-background-clip: padding-box;
+    -moz-background-clip: padding;
+    background-clip: padding-box;
+
+    *border-right-width: 2px;
+    *border-bottom-width: 2px;
+}
+
+.ui-menu-item > a.ui-corner-all {
+    display: block;
+    padding: 3px 15px;
+    clear: both;
+    font-weight: normal;
+    line-height: 18px;
+    color: #555555;
+    white-space: nowrap;
+    text-decoration: none;
+}
+
+.ui-state-hover, 
+.ui-state-active, 
+.ui-state-focus, .ui-widget-content .ui-state-focus, {
+    text-decoration: none;
+    background-color: #eee;
+    border-radius: 0px;
+    border: 0;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    background-image: none;
 }
 
 

@@ -35,6 +35,10 @@ directory.GroupsDetailView = Backbone.View.extend({
     id: 'content-inner',
     tags: [],
     active_tags: [],
+    presets: {
+        events: []
+    },
+    settings : null,
 
     context_event_types : [ 'group_movie', 'video', 'movie' ],
 
@@ -164,7 +168,70 @@ directory.GroupsDetailView = Backbone.View.extend({
                 });
             }
 
+            // finally load pre-set markers
+
+            $.ajax({
+                url: 'presets/groups/'+group_id+'/'+'events.json',
+                dataType:'json',
+                success: function ( events ){
+                    self.presets.events = events.map(function(e,i){
+                        return {
+                            tmp_id : i,
+                            fields : e
+                        }
+                    });
+                    $('#event-create-form textarea').autocomplete({
+                        appendTo: '#event-create-form',
+                        source: function(){
+                            self.autocomplete_event_field.apply(self,arguments);
+                        },
+                        // when an item is clicked from the list
+                        select: function( event, ui ) {
+                            if ( ui.item, ui.item.tmp_id ) {
+                                var tmp_id = ui.item.tmp_id;
+                                self.presets.events.map(function(e,i){
+                                    if ( e.tmp_id == tmp_id ) {
+                                        self.preset_event = e;
+                                    }
+                                });
+                            }
+                        }
+                    });
+                }
+            });
+
+            $.ajax({
+                url: 'presets/groups/'+group_id+'/'+'settings.json',
+                dataType:'json',
+                success: function ( settings ) {
+                    self.settings = settings;
+                },
+                error : function () {
+                    console.log( arguments );
+                }
+            });
+
         });
+    },
+
+    autocomplete_event_field : function ( request, response ) {
+        var self = this;
+        var opts = [];
+        if ( request.term ) {
+            self.presets.events.map(function(e,i){
+                if ( e.fields.title && e.fields.title.toLowerCase().indexOf(request.term.toLowerCase()) >= 0 ) {
+                    opts.push({
+                        label: $.trim(e.fields.title),
+                        value: $.trim(e.fields.title),
+                        tmp_id: e.tmp_id
+                    });
+                }
+            });
+        }
+        opts.sort(function(a,b){
+            return a.label.localeCompare(b.label);
+        });
+        response(opts);
     },
 
     set_context_event : function ( current_movie ) {
@@ -182,7 +249,7 @@ directory.GroupsDetailView = Backbone.View.extend({
                          current_movie.fields['local-file'] || 
                          (current_movie.fields.title + '.mp4');
 
-        if ( !current_movie.fields['local-file'] && 
+        if ( !current_movie.fields['local-file'] &&
              current_movie.fields.vid_service ) {
             var vidService = current_movie.fields.vid_service;
             if ( vidService == 'youtube' ) {
@@ -192,8 +259,13 @@ directory.GroupsDetailView = Backbone.View.extend({
                 );
             }
         } else if ( 'config' in window && config.media ) {
+            var settings = self.settings || config;
             self.player = new PlayerPlayer.HTML5(
-                'http://' + config.media.host + config.media.base_url + '/' + movie_path,
+                'http://' +
+                settings.media.host +
+                settings.media.base_url +
+                '/' +
+                movie_path,
                 $('#video-content').get(0)
             );
             // $('.group-video-content').find('video').attr({
@@ -206,19 +278,22 @@ directory.GroupsDetailView = Backbone.View.extend({
         var end_time;
 
         var fixDuration = function(){
-            if ( self.context_event.duration == 0 && self.player.duration() ) {
-                self.context_event.duration = self.player.duration();
+            var duration = self.player.duration();
+            if ( self.context_event.duration == 0 && duration ) {
+                console.log('changing event duration to', duration);
+                self.context_event.duration = duration;
                 API.getEvent( self.group_id, self.context_event.id, function ( evt ) {
                     API.updateEvent( self.group_id, self.context_event.id, {
-                        duration: self.context_event.duration,
+                        duration: duration,
                         utc_timestamp: evt.utc_timestamp,
                         token: evt.token
                     }, function ( updt_evt ) {
                         self.context_event = updt_evt;
+                        console.log('changed event duration to', duration);
                     });
                 });
+                fixDuration = undefined;
             }
-            fixDuration = undefined;
         };
 
         // add active class to events while playing 
@@ -490,7 +565,9 @@ directory.GroupsDetailView = Backbone.View.extend({
                                 if ( mins == str ) mins = 0;
                                 var secs = str.replace(/^P.*[^0-9]+([0-9]+)S.*/g,'$1');
                                 if ( secs == str ) secs = 0;
-                                return parseInt( mins, 10 ) * 60 + parseInt( secs, 10 );
+                                var dur = parseInt( mins, 10 ) * 60 + parseInt( secs, 10 );
+                                console.log('Parsed duration', str, dur);
+                                return dur;
                             };
                             var dur = parseISO8601Duration(video_data.contentDetails.duration);
                             API.createEvent(
@@ -558,13 +635,22 @@ directory.GroupsDetailView = Backbone.View.extend({
         // store form object
         var $form = $( evt.currentTarget );
 
+        // get type of event
+        var type = $form.find('*[name="event-type"]').val();
+
         // get additional fields
         var fields = {
             description: $form.find('textarea').val()
         };
 
-        // get type of event
-        var type = $form.find('*[name="event-type"]').val();
+        // if a preset event has been selected from autocomplete
+        if ( self.preset_event 
+            /* && fields.description == self.preset_event.fields.title */ ) {
+            $.extend(fields,self.preset_event.fields);
+            type = 'title';
+        }
+        // reset so other future events don't inherit these vals
+        self.preset_event = undefined;
 
         if ( type == "video" ) {
             fields['local-file'] = fields.description;
@@ -856,7 +942,11 @@ directory.GroupsDetailView = Backbone.View.extend({
         } else {
             bubble.html('No tags found');
         }
-        bubble.css({'left':toggle_button_position + 'px'}).toggleClass('bubble-open');
+        bubble.css({
+            left: toggle_button_position + 'px',
+            top: (button.offset().top + button.outerHeight() + 6) + 'px'
+        })
+            .toggleClass('bubble-open');
         
         return false;
     },
@@ -864,6 +954,7 @@ directory.GroupsDetailView = Backbone.View.extend({
     toggle_tag_filter : function ( evnt ) {
         evnt.preventDefault();
 
+        var bubble = $('.bubble');
         var $target = $( evnt.currentTarget );
         var tag = $target.text();
         tag = tag.replace(/[\s]+/ig,'-');
@@ -871,6 +962,8 @@ directory.GroupsDetailView = Backbone.View.extend({
 
         $('.items li').hide();
         $tagged_items.show();
+
+        bubble.toggleClass('bubble-open');
 
         return false;
     },

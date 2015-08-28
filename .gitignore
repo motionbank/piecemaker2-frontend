@@ -8,3 +8,5 @@ Gemfile.lock
 .sass-cache
 config/config*.js
 bower_components
+.idea
+.nvmrc
