@@ -81,10 +81,11 @@ textarea {
 
 html,
 body {
-  height:100%;
+  height: 100%;
 }
 
 body {
+  font-family: 'Helvetica', sans-serif;
   font-size: 14px;
   line-height: 18px;
   color: $body-text-color;
@@ -133,15 +134,20 @@ a:not(.button, .button-light) {
    Buttons & Forms
    ========================================================================== */
 
+[class^="icon-"], [class*=" icon-"] {
+  font-family: sans-serif;
+}
+
 [class^="icon-"]:before,
 [class*=" icon-"]:before {
-  margin:0 6px 0 0 !important;
+  font-family: 'Elusive-Icons';
+  margin: 0 6px 0 0 !important;
   font-size: 0.8em;
 }
 
 nav [class^="icon-"]:before,
 nav [class*=" icon-"]:before {
-  margin:0 0 0 0 !important;
+  margin: 0 0 0 0 !important;
   font-size: 1.2em;
 }
 
@@ -899,10 +905,9 @@ ul.items {
       width: 720px;
     }
     .wrapper-right {
-      display: inherit !important;
-      padding-left: 720px;
-      overflow: inside;
       display: block;
+      padding-left: 720px;
+      overflow: visible;
     }
   } 
 }
@@ -961,7 +966,9 @@ ul.items {
 
 .ui-state-hover, 
 .ui-state-active, 
-.ui-state-focus, .ui-widget-content .ui-state-focus, {
+.ui-state-focus,
+.ui-widget-content .ui-state-focus
+{
     text-decoration: none;
     background-color: #eee;
     border-radius: 0px;
