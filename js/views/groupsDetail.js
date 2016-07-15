@@ -260,7 +260,8 @@ directory.GroupsDetailView = Backbone.View.extend({
             }
         } else if ( 'config' in window && config.media ) {
             var settings = self.settings || config;
-            self.player = new PlayerPlayer.HTML5(
+            var PlayerClass = /\.ogg$/i.test(movie_path) ? PlayerPlayer.HTML5Audio : PlayerPlayer.HTML5Video;
+            self.player = new PlayerClass(
                 'http://' +
                 settings.media.host +
                 settings.media.base_url +

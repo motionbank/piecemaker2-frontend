@@ -688,10 +688,10 @@ var PlayerPlayer = (function(){
 	})();
 
 	/** --------------------------------------------------------
-	 *	HTML5
+	 *	HTML5 Video
 	 * ------------------------------------------------------ */
-	var PlayerHTML5 = (function(){
-		var HTML5Player = function(){
+	var PlayerHTML5Video = (function(){
+		var HTML5PlayerAudio = function(){
 			var self = this;
 			_.extend(this, Backbone.Events);
 			var vid_path = arguments[0];
@@ -731,13 +731,62 @@ var PlayerPlayer = (function(){
 				},
 			});
 		};
-		return HTML5Player;
+		return HTML5PlayerAudio;
+	})();
+
+	/** --------------------------------------------------------
+	 *	HTML5 Audio
+	 * ------------------------------------------------------ */
+	var PlayerHTML5Audio = (function(){
+		var HTML5PlayerAudio = function(){
+			var self = this;
+			_.extend(this, Backbone.Events);
+			var src_path = arguments[0];
+			var elt = arguments[1];
+			var $elt = $('<audio src="'+src_path+'" controls></audio>');
+			var audio = $elt.get(0);
+			audio.addEventListener('timeupdate',function(){
+				self.trigger( 'player:time-change', audio.currentTime );
+			});
+			$('#video-content').empty().append($elt);
+			_.extend(this, PlayerAPI);
+			_.extend(this,{
+				play : function () {
+					audio.play();
+				},
+				pause : function () {
+					audio.pause();
+				},
+				stop : function () {
+					audio.stop();
+				},
+				currentTime : function ( seconds ) {
+					if (seconds) {
+						audio.currentTime = seconds;
+						self.trigger('player:time-change',audio.currentTime);
+					}
+					return audio.currentTime;
+				},
+				duration : function () {
+					return audio.duration;
+				},
+				size : function () {
+					return {
+						width: audio.width,
+						height: audio.height
+					}
+				},
+			});
+		};
+		return HTML5PlayerAudio;
 	})();
 
 	return {
-		HTML5 : PlayerHTML5,
-		Vimeo : PlayerVimeo,
-		YouTube : PlayerYouTube
+		HTML5 : 	 PlayerHTML5Video,
+		HTML5Video : PlayerHTML5Video,
+		HTML5Audio : PlayerHTML5Audio,
+		Vimeo : 	 PlayerVimeo,
+		YouTube : 	 PlayerYouTube
 	};
 
 })();
