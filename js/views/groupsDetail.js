@@ -47,7 +47,8 @@ directory.GroupsDetailView = Backbone.View.extend({
 
     initialize : function ( opts ) {
         this.group_id = opts.group_id;
-        if ( opts.context_event_id ) this.context_event_id = opts.context_event_id;
+        if ( opts.context_event_id )
+            this.context_event_id = opts.context_event_id;
     },
 
     render:function () {
@@ -150,7 +151,7 @@ directory.GroupsDetailView = Backbone.View.extend({
 
             } else {
 
-                API.listEventsOfType( group_id, 'group_movie', function(res) {
+                API.listEventsOfType( group_id, 'video', function(res) {
 
                     // any group videos available?
                     if ( res.length > 0 ) {
@@ -408,6 +409,7 @@ directory.GroupsDetailView = Backbone.View.extend({
         "click .event-update-save":         "event_update_save",
         "click .event-update-cancel":       "event_update_cancel",
         "click .event-delete":              "event_delete",
+        "click .event-timeline":            "event_timeline",
         "click .event-go-to-timestamp":     "event_go_to_timestamp",
         "click .group-edit-users":          function(){ directory.router.navigate('#/groups/'+this.group_id+'/users', false); return false; },
         "click .group-toggle-details":      "group_toggle_details",
@@ -1010,6 +1012,25 @@ directory.GroupsDetailView = Backbone.View.extend({
                 
         });
                 
+        return false;
+    },
+
+    event_timeline : function (e) {
+
+        e.preventDefault();
+
+        var obj = e.target;
+        var parent = $(obj).closest('.item');
+        var event_id = parent.data('id');
+        var group_id = this.group_id;
+        var self = this;
+
+        window.open(
+            'http://lab.motionbank.org/time/?'+
+                'group='+group_id+'&'+
+                'context='+event_id+'&'+
+                'key='+directory.settings("login.api_key") );
+
         return false;
     },
 
