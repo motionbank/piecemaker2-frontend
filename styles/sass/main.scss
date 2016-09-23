@@ -535,6 +535,10 @@ ul.items {
       opacity: 1;
     }
 
+    .actions .event-timeline {
+      display: none;
+    }
+
     &:nth-child(1) {
       display: none !important; /* hide partial template */
     }
@@ -586,6 +590,12 @@ ul.items {
       margin-right: 5px;
     }
 
+  }
+
+  li.item[data-type='video'] {
+    .actions .event-timeline {
+      display: inline;
+    }
   }
 
   li.item-form {
