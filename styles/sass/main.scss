@@ -539,6 +539,12 @@ ul.items {
       display: none;
     }
 
+    .description {
+      white-space: pre;
+      margin-top: 0.8em;
+      color: #555;
+    }
+
     &:nth-child(1) {
       display: none !important; /* hide partial template */
     }

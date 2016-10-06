@@ -924,6 +924,13 @@ directory.GroupsDetailView = Backbone.View.extend({
             });
         }
 
+        if ( evnt.fields.title === evnt.fields.description ) {
+            evnt.fields.description = null;
+        } else if ( ! evnt.fields.title && evnt.fields.description ) {
+            evnt.fields.title = evnt.fields.description;
+            evnt.fields.description = null;
+        }
+
         return Mustache.render( self.partials.list, evnt );
     },
 
