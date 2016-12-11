@@ -208,7 +208,7 @@ directory.GroupsDetailView = Backbone.View.extend({
                     self.settings = settings;
                 },
                 error : function () {
-                    console.log( arguments );
+                    // console.log( arguments );
                 }
             });
 
@@ -401,9 +401,13 @@ directory.GroupsDetailView = Backbone.View.extend({
         "click .events-show-all":           "events_show_all",
         "click .events-show-context":       "events_show_context",
         "click .events-show-user":          "events_show_user",
+
         "click .toggle-filter-bubble":      "toggle_filter_bubble",
+        "click .toggle-authors-bubble":     "toggle_authors_bubble",
         "click .toggle-tag-filter":         "toggle_tag_filter",
+        "click .toggle-author-filter":      "toggle_author_filter",
         "click .events-filter":             "events_filter",
+
         "click .events-load-type":          "events_load_type",
         "click .event-update":              "event_update",
         "click .event-update-save":         "event_update_save",
@@ -869,6 +873,7 @@ directory.GroupsDetailView = Backbone.View.extend({
         $events_list.find('.item').not(':first-child').remove();
 
         self.tags = [];
+        self.authors = [];
 
         // list events
         var events_html = "";
@@ -888,9 +893,10 @@ directory.GroupsDetailView = Backbone.View.extend({
 
         var self = this;
 
+        evnt.rel_time = '--:--:--';
+
         if ( self.context_event ) {
             var tdiff = evnt.utc_timestamp - self.context_event.utc_timestamp;
-            evnt.rel_time = '--:--:--';
             if (tdiff >= 0) {
                 tdiff /= 1000.0;
                 tdiff = tdiff.toFixed(2);
@@ -903,7 +909,27 @@ directory.GroupsDetailView = Backbone.View.extend({
                 if (secs < 10) secs = '0'+secs;
                 tdiff = mins + ':' + secs + ':' + msecs;
                 tdiff = tdiff.replace('.',':');
-                evnt.rel_time = tdiff;
+                if ( mins <= 60 ) {
+                    evnt.rel_time = tdiff;
+                } else {
+                    var hrs = mins / 60.0;
+                    if ( hrs <= 24 ) {
+                        evnt.rel_time = Math.floor(hrs) + ' hour' + (hrs >= 2 ? 's' : '');
+                    } else {
+                        var days = hrs / 24.0;
+                        if ( days <= 31 ) {
+                            evnt.rel_time = Math.floor(days) + ' day' + (days >= 2 ? 's' : '');
+                        } else {
+                            var mnths = days / 31.0;
+                            if ( mnths <= 12 ) {
+                                evnt.rel_time = Math.floor(mnths) + ' month' + (mnths >= 2 ? 's' : '');
+                            } else {
+                                var yrs = mnths / 12.0;
+                                evnt.rel_time = Math.floor(yrs) + ' year' + (yrs >= 2 ? 's' : '');
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -924,6 +950,12 @@ directory.GroupsDetailView = Backbone.View.extend({
             });
         }
 
+        if ( evnt.created_by_user_id ) {
+            if ( self.authors.indexOf(evnt.created_by_user_id ) < 0 ) {
+                self.authors.push( evnt.created_by_user_id  );
+            }
+        }
+
         if ( evnt.fields.title === evnt.fields.description ) {
             evnt.fields.description = null;
         } else if ( ! evnt.fields.title && evnt.fields.description ) {
@@ -934,15 +966,59 @@ directory.GroupsDetailView = Backbone.View.extend({
         return Mustache.render( self.partials.list, evnt );
     },
 
-    toggle_filter_bubble: function() {
-        
+    toggle_authors_bubble: function() {
+
         // set correct position
-        var button = $('.toggle-filter-bubble');
+        var button = $('.toggle-authors-bubble');
         var bubble = $('.bubble');
+        bubble.removeClass('bubble-open');
         var toggle_button_position = (button.offset().left + (button.outerWidth() / 2)) - (bubble.outerWidth() / 2);
 
         var self = this;
-        
+
+        if ( self.authors && self.authors.length > 0 ) {
+            var author_html = "";
+            $.each(self.authors,function(i,a){
+                author_html += "<a href='#' class='toggle-author-filter'>"+a+"</a>";
+            });
+            bubble.html(author_html);
+        } else {
+            bubble.html('No authors found');
+        }
+        bubble.css({
+            left: toggle_button_position + 'px',
+            top: (button.offset().top + button.outerHeight() + 6) + 'px'
+        }).addClass('bubble-open');
+
+        return false;
+    },
+
+    toggle_author_filter : function ( evnt ) {
+        evnt.preventDefault();
+
+        var bubble = $('.bubble');
+        var $target = $( evnt.currentTarget );
+        var author_id = $target.text();
+        var $tagged_items = $('.items li.author-id-'+author_id);
+
+        $('.items li').hide();
+        $tagged_items.show();
+
+        bubble.removeClass('bubble-open');
+
+        return false;
+    },
+
+    toggle_filter_bubble: function() {
+
+        // set correct position
+        var button = $('.toggle-filter-bubble');
+        var bubble = $('.bubble');
+        bubble.removeClass('bubble-open');
+        var toggle_button_position = (button.offset().left + (button.outerWidth() / 2)) - (bubble.outerWidth() / 2);
+
+        var self = this;
+
         if ( self.tags && self.tags.length > 0 ) {
             var tag_html = "";
             $.each(self.tags,function(i,t){
@@ -955,9 +1031,8 @@ directory.GroupsDetailView = Backbone.View.extend({
         bubble.css({
             left: toggle_button_position + 'px',
             top: (button.offset().top + button.outerHeight() + 6) + 'px'
-        })
-            .toggleClass('bubble-open');
-        
+        }).addClass('bubble-open');
+
         return false;
     },
 

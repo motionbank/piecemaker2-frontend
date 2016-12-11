@@ -149,6 +149,8 @@
             <a href="#" class="icon-search events-load-type">Videos</a>
 
             <a href="#" class="icon-filter toggle-filter-bubble">Tags</a>
+            <a href="#" class="icon-filter toggle-authors-bubble">Authors</a>
+
             <div class="bubble"></div>
 
             <div class="info-wrapper" style="display:none">
@@ -165,7 +167,7 @@
                 <!-- partial template -->
                 <li data-id="{{id}}"
                     data-timestamp="{{utc_timestamp_float}}" data-type="{{type}}" 
-                    data-token="{{token}}" class="item {{#is_current_context_event}}context-event{{/is_current_context_event}} {{#tags}}{{.}} {{/tags}}">
+                    data-token="{{token}}" class="item {{#is_current_context_event}}context-event{{/is_current_context_event}} {{#tags}}{{.}} {{/tags}} author-id-{{created_by_user_id}}">
                     <a class="link {{^is_context_event}}event-go-to-timestamp{{/is_context_event}}" 
                         href="#{{#is_context_event}}/groups/{{event_group_id}}/context/{{id}}{{/is_context_event}}" >
                         {{#rel_time}}<small class="relative-time" title="relative time in video">{{rel_time}}</small>{{/rel_time}}
@@ -179,7 +181,7 @@
                                 {{^fields.description}}Untitled event{{/fields.description}}
                             {{/is_context_event}}
                         {{/fields.title}}
-                        <!-- <small>by {{created_by_user_id}}</small> -->
+                        <small>{{created_by_user_id}}</small>
                     </a>
                     <div class="actions">
                         <a href="#" class="icon-wrench event-update">&nbsp;</a>
