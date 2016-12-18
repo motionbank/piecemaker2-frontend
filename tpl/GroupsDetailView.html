@@ -57,7 +57,7 @@
                         <form action="#" method="post" class="form-crud" id="pm2go-import-form">
 
                             <label for="pm2go-file">Select your PM2GO project.xml</label>
-                            <input type="file" name="pm2go-file" value="" />
+                            <input type="file" name="pm2go-file" id="pm2go-file" value="" />
 
                             <button type="submit" class="event-save icon-ok">Import</button>
                             <br class="clear" />
@@ -108,34 +108,55 @@
 
         </div>
 
-        <form action="#" method="post" class="form-crud event-create-form" id="event-create-form">
+        <div id="tab-container-annotate" class='tab-container'>
+            <ul class='etabs'>
+                <li class='tab'>
+                    <a href="#tab-add-event-form" class="icon-video show-event-form"
+                       title="Add an annotation by entering text">Text</a></li>
+                <li class='tab'>
+                    <a href="#tab-add-events-auto" class="icon-video show-capture-events"
+                       title="Add an annotation using keys on your keyboard">Keyboard</a></li>
+            </ul>
+            <div class='panel-container padding'>
 
-            <!-- <h2>Add Event</h2> -->
-            <textarea name="description" placeholder="Description" class="mousetrap" required></textarea>
+                <div id="tab-add-event-form" class="tab-content">
 
-            <div class="event-type-selection">
-                <select name="event-type" class="mousetrap">
-                    {{#event_types}}
-                        <option value="{{.}}">{{.}}</option>
-                    {{/event_types}}
-                </select>
+                    <form action="#" method="post" class="form-crud event-create-form" id="event-create-form">
+
+                        <!-- <h2>Add Event</h2> -->
+                        <textarea name="description" placeholder="Description" class="mousetrap" required></textarea>
+
+                        <div class="event-type-selection">
+                            <select name="event-type" class="mousetrap">
+                                {{#event_types}}
+                                    <option value="{{.}}">{{.}}</option>
+                                {{/event_types}}
+                            </select>
+                        </div>
+
+                        <div class="event-type-additions">
+                        {{#event_types}}
+                            {{#fields}}
+                                <div class="event-type-addition" data-slug="{{slug}}">
+                                    <input name="{{field_slug}}" type="text" placeholder="{{field_name}}" class="mousetrap" required />
+                                </div>
+                            {{/fields}}
+                        {{/event_types}}
+                        </div>
+
+                        <button type="submit" class="event-save icon-ok">Save</button>
+                        <br class="clear" />
+
+                    </form>
+                </div>
+
+                <div id="tab-add-events-auto" class="tab-content">
+                    <div class="info">Press (and hold) any key to create an annotation</div>
+                    <div class="content"></div>
+                </div>
+
             </div>
-
-            <div class="event-type-additions">
-            {{#event_types}}
-                {{#fields}}
-                    <div class="event-type-addition" data-slug="{{slug}}">
-                        <input name="{{field_slug}}" type="text" placeholder="{{field_name}}" class="mousetrap" required />
-                    </div>
-                {{/fields}}
-            {{/event_types}}
-            </div>
-
-            <button type="submit" class="event-save icon-ok">Save</button>
-            <br class="clear" />
-
-        </form>
-
+        </div>
     </div>
 </section>
 

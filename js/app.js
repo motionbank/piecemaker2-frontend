@@ -194,6 +194,9 @@ directory.Router = Backbone.Router.extend({
             var opts = { group_id: id };
             if ( eid ) opts.context_event_id = eid;
 
+            if ( directory.groupsDetailView )
+                directory.groupsDetailView.unbind_events();
+
             directory.groupsDetailView = new directory.GroupsDetailView(opts);
             directory.groupsDetailView.render();
             this.$content.html(directory.groupsDetailView.el);
@@ -269,7 +272,7 @@ directory.Router = Backbone.Router.extend({
 // show/hide some elements if they are logged in
 // TODO: improve when implementing user groups: 
 // http://stackoverflow.com/questions/17974259/how-to-protect-routes-for-different-user-groups
-Backbone.history.bind( "all", function (route, router) {
+Backbone.history.bind( "all", function ( name, router, route, opts ) {
 
     var $logout_button = $('.logout');
 
@@ -281,6 +284,11 @@ Backbone.history.bind( "all", function (route, router) {
         // force to login view if no api key is set
         directory.router.navigate("", true);
     }
+
+    if ( directory.groupsDetailView )
+        directory.groupsDetailView.unbind_events();
+
+    // console.log( name, router, route, opts );
 });
 
 $(function(){

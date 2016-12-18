@@ -40,6 +40,9 @@ directory.GroupsDetailView = Backbone.View.extend({
     },
     settings : null,
 
+    keys_pressed : {},
+    key_capturing : false,
+
     context_event_types : [ 'group_movie', 'video', 'movie' ],
 
     context_event : null,
@@ -49,6 +52,54 @@ directory.GroupsDetailView = Backbone.View.extend({
         this.group_id = opts.group_id;
         if ( opts.context_event_id )
             this.context_event_id = opts.context_event_id;
+
+        this.key_down = (function(self){
+            return function () {
+                // console.log( 'key_down', arguments, this );
+                directory.GroupsDetailView.prototype.key_down_impl.apply(self,arguments);
+            }
+        })(this);
+
+        this.key_up = (function(self){
+            return function () {
+                // console.log( 'key_up', arguments, this );
+                directory.GroupsDetailView.prototype.key_up_impl.apply(self,arguments);
+            }
+        })(this);
+    },
+
+    event_key_done : function ( key, time, duration, fields ) {
+
+        var self = this;
+        var type = 'key-press';
+
+        $.extend(fields,{'description':''});
+
+        if ( self.context_event && self.context_event.id ) {
+            fields['context_event_id']   = self.context_event.id;
+            fields['context_event_type'] = self.context_event.type;
+        }
+
+        fields['created_by_user_id'] = directory.user.id;
+
+        // store data
+        var data = {
+            duration : duration / 1000.0,
+            utc_timestamp: time,
+            type: type,
+            fields: fields
+        };
+
+        API.createEvent( this.group_id, data, function(res){
+
+            // show new event after active item
+            var content = self.render_event(res);
+            $('.events-list').find('ul').append(content);
+
+            self.sort_events_list();
+            self.check_list_placeholder();
+            self.get_selected_events_count();
+        });
     },
 
     render:function () {
@@ -93,24 +144,23 @@ directory.GroupsDetailView = Backbone.View.extend({
         // render it only once at initialization; prevent rendering everytime an ajax call stops
         $(document).one('ajaxStop', function() {
 
-            //console.log( 'Ajax Stop' );
-
             // render template
             $(el).html(Mustache.render(template,data));
 
             if ( !('PiecemakerBridge' in window) ) {
-                $('.tab.active').removeClass('active');
-                $('.tab.app-only').hide();
-                $('.tab').not('.app-only').first().addClass('active');
-                $('.tab-content.app-only').hide();
+                $('.tab-container .tab.active').removeClass('active');
+                $('.tab-container .tab.app-only').hide();
+                $('.tab-container .tab:first-child').not('.app-only').addClass('active');
+                $('.tab-container .tab-content.app-only').hide();
             }
 
-            $('.group-video-add .tab-container').easytabs({
-                animate: false
+            $('.tab-container').easytabs({
+                animate: false,
+                updateHash: false
             });
 
             $('.group-video-content').hide();
-            $('#event-create-form').hide();
+            $('#tab-container-annotate').hide();
 
             // set focus to form field
             $('textarea').focus();
@@ -162,7 +212,7 @@ directory.GroupsDetailView = Backbone.View.extend({
                     } else {
 
                         $('.group-video-content').hide();
-                        $('#event-create-form').hide();
+                        $('#tab-container-annotate').hide();
 
                     }
 
@@ -244,7 +294,7 @@ directory.GroupsDetailView = Backbone.View.extend({
 
         $('.group-video-add').hide();
         $('.group-video-content').show();
-        $('#event-create-form').show();
+        $('#tab-container-annotate').show();
 
         var movie_path = current_movie.fields.movie_path || 
                          current_movie.fields['local-file'] || 
@@ -415,7 +465,10 @@ directory.GroupsDetailView = Backbone.View.extend({
         "click .event-delete":              "event_delete",
         "click .event-timeline":            "event_timeline",
         "click .event-go-to-timestamp":     "event_go_to_timestamp",
-        "click .group-edit-users":          function(){ directory.router.navigate('#/groups/'+this.group_id+'/users', false); return false; },
+        "click .group-edit-users":          function(){
+            directory.router.navigate('#/groups/'+this.group_id+'/users', false);
+            return false;
+        },
         "click .group-toggle-details":      "group_toggle_details",
 
         'change select[name=event-type]':   'change_event_type',
@@ -429,7 +482,88 @@ directory.GroupsDetailView = Backbone.View.extend({
 
         'submit form.add-remote-media-form': 'add_remote_media',
 
+        'click .show-event-form' :          'stop_event_capture',
+        'click .show-capture-events' :      'start_event_capture',
+        'click #tab-add-events-auto' :      function () {
+          this.toggle_capturing();
+          return false;
+        },
+        'easytabs:after' :                  function (event,tab,tabContent,easytabs) {
+            this.toggle_capturing(tab.hasClass('show-capture-events'));
+        },
+
         'exit .bubble': function(){ console.log('leave'); }
+    },
+
+    toggle_capturing : function ( onOff ) {
+
+        this.is_key_capturing =
+            (typeof onOff === 'undefined') ? !this.is_key_capturing : onOff;
+
+        if ( this.is_key_capturing ) {
+            $('#tab-add-events-auto .content').addClass('capturing');
+            var form = $('.events-list .form-crud');
+            form.parent().find('a.link').show();
+            form.remove();
+        } else {
+            this.keys_pressed = {};
+            $('#tab-add-events-auto .content').removeClass('capturing');
+            $('#tab-add-events-auto .content a').remove();
+        }
+    },
+
+    // see initialize
+    key_down : null,
+    key_up : null,
+
+    key_down_impl : function(e){
+        //console.log( 'key_down_impl', arguments, this );
+        var key = e.key;
+        if ( this.is_key_capturing && this.player && key.length == 1 && !(this.keys_pressed[key])) {
+            this.keys_pressed[key] = {
+                movie_timestamp: this.get_movie_time(),
+                utc_timestamp: this.get_timestamp_now()
+            }
+            $('#tab-add-events-auto .content').append('<a href="#" class="button" data-key="'+key+'">'+key+'</a>');
+        }
+    },
+
+    key_up_impl : function(e){
+        //console.log( 'key_up_impl', arguments, this );
+        var key = e.key;
+
+        if ( this.is_key_capturing && this.player && this.keys_pressed[key] ) {
+
+            var fields = this.keys_pressed[key];
+            var duration = this.get_movie_time() - fields['movie_timestamp'];
+
+            var time = fields.utc_timestamp;
+            fields.utc_timestamp = null;
+            delete fields['utc_timestamp'];
+
+            fields['title'] = 'Key-Event ' + key;
+
+            this.event_key_done( key, time, duration, fields );
+
+            $('#tab-add-events-auto .content a[data-key="'+key+'"]').remove();
+        }
+
+        this.keys_pressed[key] = false;
+    },
+
+    unbind_events : function () {
+      console.log( 'unbind events' );
+      this.stop_event_capture();
+    },
+
+    stop_event_capture : function (e){
+        $(document).unbind('keydown',this.key_down);
+        $(document).unbind('keyup',this.key_up);
+    },
+
+    start_event_capture : function () {
+        $(document).bind('keydown',this.key_down);
+        $(document).bind('keyup',this.key_up);
     },
 
     change_add_file : function (e) {
@@ -1124,6 +1258,8 @@ directory.GroupsDetailView = Backbone.View.extend({
         var group_id = this.group_id;
         var self = this;
         var tpl = self.partials.update_event;
+
+        self.toggle_capturing(false);
 
         if ( $('.form-crud',parent).length > 0 ) {
             parent.find('.link').show()

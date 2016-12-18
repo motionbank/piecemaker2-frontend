@@ -19,7 +19,10 @@ directory.SettingsView = Backbone.View.extend({
         };
         template = Mustache.render(template,opts);
         $(obj).html(template);
-        $('.tab-container',obj).easytabs({animate:false});
+        $('.tab-container',obj).easytabs({
+            animate:false,
+            updateHash: false
+        });
     },
 
     events : {
