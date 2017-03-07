@@ -308,6 +308,11 @@ directory.GroupsDetailView = Backbone.View.extend({
                     current_movie.fields.vid_service_id,
                     $('#video-content').get(0)
                 );
+            } else if ( vidService == 'vimeo' ) {
+                self.player = new PlayerPlayer.Vimeo(
+                    current_movie.fields.vid_service_id,
+                    $('#video-content').get(0)
+                );
             }
         } else if ( 'config' in window && config.media ) {
             var settings = self.settings || config;
@@ -332,7 +337,7 @@ directory.GroupsDetailView = Backbone.View.extend({
         var fixDuration = function(){
             var duration = self.player.duration();
             if ( self.context_event.duration == 0 && duration ) {
-                console.log('changing event duration to', duration);
+                // console.log('changing event duration to', duration);
                 self.context_event.duration = duration;
                 API.getEvent( self.group_id, self.context_event.id, function ( evt ) {
                     API.updateEvent( self.group_id, self.context_event.id, {
@@ -341,7 +346,7 @@ directory.GroupsDetailView = Backbone.View.extend({
                         token: evt.token
                     }, function ( updt_evt ) {
                         self.context_event = updt_evt;
-                        console.log('changed event duration to', duration);
+                        // console.log('changed event duration to', duration);
                     });
                 });
                 fixDuration = undefined;
@@ -492,7 +497,7 @@ directory.GroupsDetailView = Backbone.View.extend({
             this.toggle_capturing(tab.hasClass('show-capture-events'));
         },
 
-        'exit .bubble': function(){ console.log('leave'); }
+        'exit .bubble': function(){}
     },
 
     toggle_capturing : function ( onOff ) {
@@ -552,7 +557,7 @@ directory.GroupsDetailView = Backbone.View.extend({
     },
 
     unbind_events : function () {
-      console.log( 'unbind events' );
+      // console.log( 'unbind events' );
       this.stop_event_capture();
     },
 
@@ -707,7 +712,7 @@ directory.GroupsDetailView = Backbone.View.extend({
                                 var secs = str.replace(/^P.*[^0-9]+([0-9]+)S.*/g,'$1');
                                 if ( secs == str ) secs = 0;
                                 var dur = parseInt( mins, 10 ) * 60 + parseInt( secs, 10 );
-                                console.log('Parsed duration', str, dur);
+                                // console.log('Parsed duration', str, dur);
                                 return dur;
                             };
                             var dur = parseISO8601Duration(video_data.contentDetails.duration);

@@ -275,165 +275,137 @@ var PlayerPlayer = (function(){
 	 * ------------------------------------------------------ */
 	var PlayerVimeo = (function(){
 
-		// https://developer.vimeo.com/apis/simple
+		// see documentation here:
+		// https://github.com/vimeo/player.js
 
-		var url_info_tpl 	= "http://vimeo.com/api/v2/video/<%= video_id %>.json";
-		var url_iframe_tpl  = "http://player.vimeo.com/video/<%= video_id %>?api=1&player_id=<%= iframe_id %>";
-		var html_iframe_tpl = "<iframe id=\"<%= iframe_id %>\" class=\"vid-service-player\" src=\"\" allowfullscreen></iframe>";
+		var html_tpl = `
+<div id="<%= vimeo_container_id %>"></div>
+`;
 
 		var VimeoPlayer = function () {
-			if ( '$f' in window ) {
+
+			if ( 'Vimeo' in window ) {
 
 				var self = this;
 
 				_.extend(this, Backbone.Events);
 
 				var vimeo_id = arguments[0];
-				var dom_element = $( arguments[1] );
+				var video_element = $( arguments[1] );
 
-				var iframe_id = "vimeo-iframe-"+vimeo_id;
-				var iframe_url = _.template(url_iframe_tpl,{
-					video_id: vimeo_id, iframe_id: iframe_id});
-				
-				var iframe = $(_.template(html_iframe_tpl,{
-					iframe_id:iframe_id}));
-				var player = self.player = null;
+                // https://github.com/vimeo/player.js#embed-options
+                var options = {
+                    id: vimeo_id,
+                    byline: false,
+                    portrait: false,
+                    title: false,
+                    width: 640,
+                    loop: false
+                };
 
-				var state = -1;
-				var VM_PLAYING = 0;
-				var VM_PAUSED = 1;
-				var VM_FINISHED = 1;
+                var is_playing = false, is_paused = false;
+                var current_volume = 0, video_duration = 0, video_current_time = 0;
 
-				var currentTimeProg = 0;
-				var durationProg = 0;
+                var player = self.player = new Vimeo.Player( video_element, options);
 
-				iframe.load(function(){
-					player = self.player = $f( iframe.get(0) );
-					player.addEvent('ready',function(){
-						
-						/* {
-						    "percent":"0.326",
-						    "bytesLoaded":"32159909",
-						    "bytesTotal":"98650027",
-						    "duration":"365.507"
-						} */
-						player.addEvent('loadProgress',function(){
-
-						});
-
-						/* {
-							"seconds":"4.308",
-							"percent":"0.012",
-							"duration":"359.000"
-						} */
-						player.addEvent('playProgress',function(prog){
-							currentTimeProg = parseFloat( prog.seconds );
-							durationProg 	= parseFloat( prog.duration );
-						});
-
-						player.addEvent('play',function(){
-							state = VM_PLAYING;
-							self.trigger('player:playing');
-						});
-						
-						player.addEvent('pause',function(){
-							state = VM_PAUSED;
-							self.trigger('player:paused');
-						});
-
-						player.addEvent('finish',function(){
-							state = VM_FINISHED;
-							self.trigger('player:finished');
-						});
-
-						/*{
-						    "seconds":"192.622",
-						    "percent":"0.527",
-						    "duration":"365.507"
-						}*/
-						player.addEvent('seek',function(prog){
-							// seconds get floored to int
-							// currentTimeProg = parseFloat( prog.seconds );
-							// durationProg 	= parseFloat( prog.duration );
-						});
-
-						_.extend( self, PlayerApiImpl );
+                player.on( 'pause', function(data) {
+                	is_paused = true;
+                    is_playing = false;
+                });
+                player.on( 'play', function(data) {
+                    is_paused = false;
+                    is_playing = true;
+                });
+                player.on( 'volumechange', function(data) {
+                    current_volume = data.volume;
+                });
+                player.on( 'timeupdate', function(data) {
+                    video_current_time = data.seconds;
+                    self.trigger( 'player:time-change', data.seconds );
+                });
+                player.on( 'loaded', function(duration) {
+                    player.getDuration().then(function(data){
+                    	video_duration = duration;
 					});
-				});
+                    player.getVideoWidth().then(function(width){
+                    	video_width = width;
+					});
+                    player.getVideoWidth().then(function(height){
+                    	video_height = height;
+					});
+                    player.getVideoUrl().then(function(url) {
+                    }).catch(function(error) {
+                    	if ( error.name === 'PrivacyError' ) {
+                    		video_url = null;
+						} else {
+                    		video_url = url;
+						}
+                    });
 
-				iframe.attr('src',iframe_url);
+                    _.extend( self, PlayerApiImpl );
+                });
 
-				dom_element.append( iframe );
 
 			} else {
-				throw( 'VimeoPlayer: froogaloop not loaded' );
+				throw( 'Vimeo Player not loaded' );
 			}
-
-			// https://developer.vimeo.com/player/js-api
 
 			var PlayerApiImpl = 
 				_.extend( PlayerAPI, {
 
 				play : function () {
-					self.player.api('play');
+					self.player.play();
 				},
 				pause : function () {
-					self.player.api('pause');
+					self.player.pause();
 				},
 				stop : function () {
-					self.player.api('pause');
-					self.currentTime(0);
+                    self.player.pause();
+					self.player.setCurrentTime(0);
 				},
 				playing : function () {
-					return state === VM_PLAYING;
+					return is_playing;
 				},
 				paused : function () {
-					return state === VM_PAUSED;
+                    return is_paused;
 				},
 				currentTime : function ( seconds ) {
-					if ( seconds ) {
-						// seekTo can only jump to full seconds, not ms
-						self.player.api('seekTo',seconds);
-						if ( seconds >= 0 && seconds <= self.duration() )
-							return seconds;
-					}
-					return currentTimeProg;
+				    if ( seconds && seconds > 0 ) {
+                        self.player.setCurrentTime(seconds);
+                    }
+					return video_current_time;
 				},
-
-				mute : function ( yesno ) {
-					self.player.api('setVolume',0);
+				mute : function () {
+                    self.player.setVolume(0);
 				},
 				muted : function () {
-					return self.volume() === 0;
+					return current_volume <= 0;
 				},
 				volume : function ( volume ) {
 					if ( volume ) {
-						self.player.api('setVolume', volume );
+                        self.player.setVolume( volume );
 					}
-					return self.player.api('getVolume');
+					return current_volume;
 				},
-
 				load : function ( videoId, targetElement, callback ) {
 				},
 				title : function () {
 				},
 				duration : function () {
-					//return self.player.api('getDuration');
-					return durationProg;
+					return video_duration;
 				},
 				size : function () {
 					return {
-						width: self.player.api('getVideoWidth'),
-						height: self.player.api('getVideoHeight')
+						width: video_width,
+						height: video_height
 					};
 				},
 				url : function () {
-					return self.player.api('getVideoUrl');
+					return video_url;
 				},
 				service : function () {
 					return 'Vimeo';
 				}
-
 			});
 		}
 
