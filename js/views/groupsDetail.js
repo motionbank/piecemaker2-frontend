@@ -927,6 +927,9 @@ directory.GroupsDetailView = Backbone.View.extend({
                   }
                 },
                 function(res) {
+                    res = res.filter(function(e){
+                        return e.type !== 'key-press';
+                    });
                     self.update_event_list( res );
                 }
             );
@@ -934,7 +937,9 @@ directory.GroupsDetailView = Backbone.View.extend({
         } else {
 
             API.listEvents( self.group_id, function(res) {
-
+                res = res.filter(function(e){
+                    return e.type !== 'key-press';
+                });
                 self.update_event_list( res );
             });
         }
@@ -963,6 +968,9 @@ directory.GroupsDetailView = Backbone.View.extend({
                   }
                 },
                 function(res) {
+                    res = res.filter(function(e){
+                        return e.type !== 'key-press';
+                    });
                     self.update_event_list( res );
                 }
             );
@@ -970,7 +978,9 @@ directory.GroupsDetailView = Backbone.View.extend({
         } else {
 
             API.listEvents( self.group_id, function(res) {
-
+                res = res.filter(function(e){
+                    return e.type !== 'key-press';
+                });
                 self.update_event_list( res );
             });
         }
@@ -996,12 +1006,18 @@ directory.GroupsDetailView = Backbone.View.extend({
                 ts_to,
                 'intersect',
                 function(res) {
+                    res = res.filter(function(e){
+                        return e.type !== 'key-press';
+                    });
                     self.update_event_list( res );
                 });
 
         } else {
 
             API.listEvents( self.group_id, function(res) {
+                res = res.filter(function(e){
+                    return e.type !== 'key-press';
+                });
                 self.update_event_list( res );
             });
         }
