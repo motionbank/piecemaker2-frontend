@@ -80,6 +80,7 @@ directory.GroupsDetailView = Backbone.View.extend({
             fields['context_event_type'] = self.context_event.type;
         }
 
+        fields['created_on'] = Date.now();
         fields['created_by_user_id'] = directory.user.id;
 
         // store data
@@ -602,7 +603,9 @@ directory.GroupsDetailView = Backbone.View.extend({
                     type : 'group_movie',
                     utc_timestamp : file_timestamp,
                     fields : {
-                        movie_path : file_path
+                        movie_path : file_path,
+                        created_on : Date.now(),
+                        created_by_user_id : directory.user.id
                     }
                 }, function (mov) {
                     directory.router.navigate('#/groups/'+self.group_id+'/context/'+mov.id, true);
@@ -646,7 +649,9 @@ directory.GroupsDetailView = Backbone.View.extend({
                             type : 'group_movie',
                             utc_timestamp : file_timestamp,
                             fields : {
-                                movie_path : file_path
+                                movie_path : file_path,
+                                created_on : Date.now(),
+                                created_by_user_id : directory.user.id
                             }
                         }, function (mov) {
                             directory.router.navigate('#/groups/'+self.group_id, true);
@@ -724,7 +729,9 @@ directory.GroupsDetailView = Backbone.View.extend({
                                     fields : {
                                         title : video_data.snippet.title,
                                         vid_service : 'youtube',
-                                        vid_service_id : video_data.id
+                                        vid_service_id : video_data.id,
+                                        created_on : Date.now(),
+                                        created_by_user_id : directory.user.id
                                     }
                                 }, function ( evt ) {
                                     directory.router.navigate('#/groups/'+self.group_id+'/context/'+evt.id, true);
@@ -828,6 +835,7 @@ directory.GroupsDetailView = Backbone.View.extend({
             fields['context_event_type'] = self.context_event.type;
         }
 
+        fields['created_on'] = Date.now();
         fields['created_by_user_id'] = directory.user.id;
 
         // store data
@@ -1545,7 +1553,9 @@ directory.GroupsDetailView = Backbone.View.extend({
                     fields : {
                         'pm2go-file' : file,
                         'description' : file,
-                        'title' : file
+                        'title' : file,
+                        created_on : Date.now(),
+                        created_by_user_id : directory.user.id
                     }
                 };
                 API.createEvent( self.group_id, data, function(vid){
@@ -1554,6 +1564,8 @@ directory.GroupsDetailView = Backbone.View.extend({
                     $.each(annotations,function(i,d){
                         d.fields['context_event_id'] = vid.id;
                         d.fields['context_event_type'] = vid.type;
+                        d.fields['created_on'] = Date.now();
+                        d.fields['created_by_user_id'] = directory.user.id;
                         API.createEvent( self.group_id, d, function(evt){
                             var content = self.render_event(evt);
                             $('.events-list').find('ul').append(content);
