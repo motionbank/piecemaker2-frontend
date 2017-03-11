@@ -464,7 +464,14 @@ directory.GroupsDetailView = Backbone.View.extend({
         "click .toggle-author-filter":      "toggle_author_filter",
         "click .events-filter":             "events_filter",
 
-        "click .events-load-type":          "events_load_type",
+        "click .events-show-key-events":    function () {
+            this.events_load_type('key-press');
+            return false;
+        },
+        "click .events-show-video-events":   function () {
+            this.events_load_type('video');
+            return false;
+        },
         "click .event-update":              "event_update",
         "click .event-update-save":         "event_update_save",
         "click .event-update-cancel":       "event_update_cancel",
@@ -978,30 +985,23 @@ directory.GroupsDetailView = Backbone.View.extend({
 
         if ( self.context_event ) {
 
+            var ts_from = self.context_event.utc_timestamp.getTime() / 1000.0;
+            var ts_to = undefined;
             if ( self.context_event.duration > 0 ) {
-                API.listEventsForTimespan(
-                    self.group_id, 
-                    self.context_event.utc_timestamp.getTime() / 1000.0,
-                    (self.context_event.utc_timestamp.getTime() / 1000.0) + self.context_event.duration ,
-                    'intersect',
-                    function(res) {
-                        self.update_event_list( res );
-                    });
-            } else {
-                API.listEventsForTimespan(
-                    self.group_id, 
-                    self.context_event.utc_timestamp.getTime() / 1000.0,
-                    undefined,
-                    'intersect',
-                    function(res) {
-                        self.update_event_list( res );
-                    });
+                ts_to = ts_from + self.context_event.duration;
             }
+            API.listEventsForTimespan(
+                self.group_id,
+                ts_from,
+                ts_to,
+                'intersect',
+                function(res) {
+                    self.update_event_list( res );
+                });
 
         } else {
 
             API.listEvents( self.group_id, function(res) {
-
                 self.update_event_list( res );
             });
         }
@@ -1200,11 +1200,11 @@ directory.GroupsDetailView = Backbone.View.extend({
         return false;
     },
 
-    events_load_type : function ( evnt ) {
+    events_load_type : function ( type ) {
         
         var self = this;
 
-        API.listEventsOfType( self.group_id, 'video', function(res) {
+        API.listEventsOfType( self.group_id, type, function(res) {
             self.update_event_list( res );
         });
 
