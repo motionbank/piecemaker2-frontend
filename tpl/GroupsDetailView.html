@@ -225,6 +225,13 @@
             <div id="form-event-update" style="display:none">
                 <form method="post" action="#" class="form-crud">
                     <input type="text" name="title" value="{{title}}" />
+                    <div class="event-type-selection">
+                        <select name="event-type">
+                            {{#event_types}}
+                            <option value="{{.}}">{{.}}</option>
+                            {{/event_types}}
+                        </select>
+                    </div>
                     <textarea name="description" class="mousetrap">{{description}}</textarea>
                     <input type="number" name="utc_timestamp" value="{{timestamp}}" style="width:48%;float:left" />
                     <div style="height:48px;padding:5px">

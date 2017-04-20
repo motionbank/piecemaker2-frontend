@@ -43,6 +43,7 @@ directory.GroupsDetailView = Backbone.View.extend({
     keys_pressed : {},
     key_capturing : false,
 
+    event_types : ["scene", "marker", "note", "comment", "video", "scene"],
     context_event_types : [ 'group_movie', 'video', 'movie' ],
 
     context_event : null,
@@ -136,8 +137,9 @@ directory.GroupsDetailView = Backbone.View.extend({
 
         // get event types from group
         API.listEventTypes( group_id, function( types ){
-            $.extend(types,["scene","marker","note","comment","video"]);
+            $.extend(types,self.event_types);
             types = types.sort();
+            self.event_types = types;
             $.extend(data,{event_types:types});
         });
 
@@ -178,7 +180,7 @@ directory.GroupsDetailView = Backbone.View.extend({
             });
 
             // enable nice styled select boxes
-            $('select').chosen({
+            $('#event-create-form select').chosen({
                 disable_search_threshold: 10, // enable search only if there are more than 10 entries
                 width: "100%"
             });
@@ -1317,11 +1319,16 @@ directory.GroupsDetailView = Backbone.View.extend({
                 title : res.fields.title || res.fields.description || 'Untitled event',
                 description: res.fields.description || res.fields.title || res.fields.movie_path,
                 timestamp: res.utc_timestamp.getTime() / 1000.0,
+                event_types: self.event_types,
                 fields: fields
             });
             // console.log( data );
+            var form_html = $(Mustache.render(tpl,data));
+            $( 'select', form_html ).val(res.type).chosen({
+                width: '100%'
+            });
             parent.find('.link').hide().after(
-                Mustache.render(tpl,data)
+                form_html
             );
         });
 
@@ -1370,6 +1377,8 @@ directory.GroupsDetailView = Backbone.View.extend({
         var description = $('textarea[name=description]',parent).val();
         var title = $('input[name=title]',parent).val();
 
+        var event_type = $('select[name=event-type]',parent).val();
+
         var $fields_in = $('.fields input.field-id', parent);
         var fields = {};
         $fields_in.each(function(i,e){
@@ -1391,6 +1400,7 @@ directory.GroupsDetailView = Backbone.View.extend({
         // store data
         var data = {
             duration : duration,
+            type : event_type,
             utc_timestamp : new Date( event_ts ),
             token: event_token,
             fields: fields
