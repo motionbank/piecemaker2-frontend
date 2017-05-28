@@ -114,7 +114,7 @@ directory.GroupsDetailView = Backbone.View.extend({
         // save object vars
         var data = {
             event_count: 0,
-            time_now : new Date().getTime()
+            time_now : (new Date().getTime()) / 1000.0
         };
 
         // get partial: list element
@@ -696,7 +696,7 @@ directory.GroupsDetailView = Backbone.View.extend({
         if ( timeStamp == "" || timeStamp == 0 || timeStamp == -1 ) {
             timeStamp = new Date().getTime();
         } else {
-            timeStamp = new Date( parseFloat( timeStamp, 10 ) ).getTime();
+            timeStamp = new Date( parseFloat( timeStamp, 10 ) * 1000 ).getTime();
         }
 
         if ( !isNaN(timeStamp) && /^http[s]:\/\//.test(urlRaw) ) {
