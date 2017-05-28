@@ -696,7 +696,7 @@ directory.GroupsDetailView = Backbone.View.extend({
         if ( timeStamp == "" || timeStamp == 0 || timeStamp == -1 ) {
             timeStamp = new Date().getTime();
         } else {
-            timeStamp = new Date( parseInt( timeStamp, 10 ) ).getTime();
+            timeStamp = new Date( parseFloat( timeStamp, 10 ) ).getTime();
         }
 
         if ( !isNaN(timeStamp) && /^http[s]:\/\//.test(urlRaw) ) {
