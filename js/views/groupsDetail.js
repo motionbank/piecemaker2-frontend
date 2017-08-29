@@ -707,7 +707,7 @@ directory.GroupsDetailView = Backbone.View.extend({
 
             if ( videoUri.host().toLowerCase().indexOf('youtube.com') >= 0 ) {
                 videoID = videoParams.v;
-                var api_key = "AIzaSyCqZ2A4ecD3F5rmWP7jKQj0-6yqTjsp2zo";
+                var api_key = "AIzaSyBgx4xHiuPlnjxOz3zckix6wwcym2sfb18";
                 var parts = ["snippet", "contentDetails", "fileDetails", "player", "processingDetails", "recordingDetails", "statistics", "status", "suggestions", "topicDetails"];
                 $.ajax({
                     method: 'get',
