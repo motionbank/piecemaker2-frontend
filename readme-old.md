@@ -1,3 +1,5 @@
+# These are awfully outdated. Please ignore for now.
+
 # App Tips
 
 ## Shortcuts
