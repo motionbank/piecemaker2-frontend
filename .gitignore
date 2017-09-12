@@ -10,3 +10,4 @@ config/config*.js
 bower_components
 .idea
 .nvmrc
+node_modules/*

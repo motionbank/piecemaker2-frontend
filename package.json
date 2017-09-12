@@ -13,9 +13,11 @@
     "focus": true,
     "resizable": true
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "scripts": {
-    "start" : "python -m SimpleHTTPServer 9393"
+    "start": "static-server -p 9393 ./"
+  },
+  "devDependencies": {
+    "static-server": "^2.0.5"
   }
 }
