@@ -691,7 +691,9 @@ directory.GroupsDetailView = Backbone.View.extend({
         var self = this;
 
         var $form = $(evt.currentTarget);
+
         var urlRaw = $('input[name=video-url]',$form).val();
+
         var timeStamp = $('input[name=utc_timestamp]',$form).val();
         if ( timeStamp == "" || timeStamp == 0 || timeStamp == -1 ) {
             timeStamp = new Date().getTime();
@@ -701,11 +703,13 @@ directory.GroupsDetailView = Backbone.View.extend({
 
         if ( !isNaN(timeStamp) && /^http[s]:\/\//.test(urlRaw) ) {
 
-            var videoUri = URI(urlRaw);
-            var videoParams = videoUri.search(true);
-            var videoID, vidService, title;
+          var videoUri = URI(urlRaw);
 
             if ( videoUri.host().toLowerCase().indexOf('youtube.com') >= 0 ) {
+
+                  var videoParams = videoUri.search(true);
+                  var videoID, vidService, title;
+
                 videoID = videoParams.v;
                 var api_key = "AIzaSyBgx4xHiuPlnjxOz3zckix6wwcym2sfb18";
                 var parts = ["snippet", "contentDetails", "fileDetails", "player", "processingDetails", "recordingDetails", "statistics", "status", "suggestions", "topicDetails"];
@@ -752,6 +756,29 @@ directory.GroupsDetailView = Backbone.View.extend({
                 vidService = 'youtube';
                 title = "Youtube video " + videoID;
             }
+            else if ( videoUri.host().toLowerCase().indexOf('vimeo.com') >= 0 ) {
+
+                var videoId = videoUri.path().split('/').pop()
+
+                API.createEvent(
+                    self.group_id,
+                    {
+                      type : 'video',
+                      utc_timestamp : timeStamp,
+                      duration : 0,
+                      fields : {
+                        title : urlRaw,
+                        vid_service : 'vimeo',
+                        vid_service_id : videoId,
+                        created_on : Date.now(),
+                        created_by_user_id : directory.user.id
+                      }
+                    },
+                    function ( evt ) {
+                      directory.router.navigate('#/groups/'+self.group_id+'/context/'+evt.id, true);
+                    }
+                )
+            }
 
             // if ( videoID ) {
             //     API.createEvent(
@@ -768,6 +795,9 @@ directory.GroupsDetailView = Backbone.View.extend({
             //         }
             //     );
             // }
+        }
+        else {
+            console.log(timeStamp, urlRaw)
         }
 
         return false;
