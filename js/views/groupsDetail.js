@@ -507,7 +507,9 @@ directory.GroupsDetailView = Backbone.View.extend({
             this.toggle_capturing(tab.hasClass('show-capture-events'));
         },
 
-        'exit .bubble': function(){}
+        'exit .bubble': function(){},
+
+        'click .jump-to-end' :              'event_go_to_end'
     },
 
     toggle_capturing : function ( onOff ) {
@@ -1510,6 +1512,25 @@ directory.GroupsDetailView = Backbone.View.extend({
         }
 
         return false;
+    },
+
+    event_go_to_end: function ( e ) {
+      var self = this;
+      var obj = e.target;
+      var movie_time = 0.0;
+
+      var ts = $(obj).parent().data('timestamp');
+      var duration = $(obj).parent().data('duration') || 0;
+
+      if ( self.time_reference && self.time_reference > 0.0 ) {
+        movie_time = (ts - self.time_reference.getTime()) / 1000.0;
+      }
+
+      if ( self.player ) {
+        self.player.currentTime(movie_time + duration);
+      }
+
+      return false;
     },
 
     group_toggle_details: function() {

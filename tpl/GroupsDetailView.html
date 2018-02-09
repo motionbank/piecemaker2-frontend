@@ -126,7 +126,6 @@
 
                     <form action="#" method="post" class="form-crud event-create-form" id="event-create-form">
 
-                        <!-- <h2>Add Event</h2> -->
                         <textarea name="description" placeholder="Description" class="mousetrap" required></textarea>
 
                         <div class="event-type-selection">
@@ -191,12 +190,13 @@
 
                 <!-- partial template -->
                 <li data-id="{{id}}"
-                    data-timestamp="{{utc_timestamp_float}}" data-type="{{type}}" 
+                    data-timestamp="{{utc_timestamp_float}}" data-type="{{type}}" data-duration="{{duration}}"
                     data-token="{{token}}" class="item {{#is_current_context_event}}context-event{{/is_current_context_event}} {{#tags}}{{.}} {{/tags}} author-id-{{created_by_user_id}}">
-                    <a class="link {{^is_context_event}}event-go-to-timestamp{{/is_context_event}}" 
-                        href="#{{#is_context_event}}/groups/{{event_group_id}}/context/{{id}}{{/is_context_event}}" >
+                    <a class="link" href="#">
                         {{#rel_time}}<small class="relative-time" title="relative time in video">{{rel_time}}</small>{{/rel_time}}
-                        {{#fields.title}}{{fields.title}}{{/fields.title}}
+                        {{^is_context_event}}<a href="#" class="link jump-to-end" title="jump to end of event">⇥</a>{{/is_context_event}}
+                        <a href="#{{#is_context_event}}/groups/{{event_group_id}}/context/{{id}}{{/is_context_event}}"
+                           class="{{^is_context_event}}event-go-to-timestamp{{/is_context_event}}">{{#fields.title}}{{fields.title}}{{/fields.title}}</a>
                         {{^fields.title}}
                             {{#is_context_event}}
                                 {{fields.movie_path}}
@@ -206,7 +206,7 @@
                                 {{^fields.description}}Untitled event{{/fields.description}}
                             {{/is_context_event}}
                         {{/fields.title}}
-                        <small>{{created_by_user_id}}</small>
+                        <small><a href="#/users/{{created_by_user_id}}">{{created_by_user_id}}</a></small>
                     </a>
                     <div class="actions">
                         <a href="#" class="icon-wrench event-update">&nbsp;</a>
