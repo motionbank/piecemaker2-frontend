@@ -1,5 +1,5 @@
 {
-  "name": "Piecemaker2",
+  "name": "piecemaker2",
   "version": "0.0.0",
   "main": "index.html",
   "window": {
@@ -15,9 +15,11 @@
   },
   "dependencies": {},
   "scripts": {
-    "start": "static-server -p 9393 ./"
+    "start": "static-server -p 9393 ./",
+    "bower": "npx bower install"
   },
   "devDependencies": {
+    "bower": "^1.8.4",
     "static-server": "^2.0.5"
   }
 }
