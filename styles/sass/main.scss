@@ -549,19 +549,26 @@ ul.items {
       display: none !important; /* hide partial template */
     }
 
+    a {
+      color: $body-text-color;
+      text-decoration: none;
+    }
+
     a.link,
     a.details {
 
-      display:inline-block;
-      color:$body-text-color;
-      text-decoration: none;
-      width:100%;
+      display: inline-block;
+      padding-left: 25px;
 
       span {
         display: block;
         color:#999;
       }
 
+    }
+
+    a.link.jump-to-end {
+      padding-left: 0;
     }
 
     .actions {
@@ -912,11 +919,6 @@ ul.items {
 
         &:hover:before {
           color:rgba($body-text-color,0.6);
-        }
-
-        a.link {
-          padding-left:25px;
-
         }
 
       }
