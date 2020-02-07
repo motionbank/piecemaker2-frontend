@@ -1,6 +1,6 @@
 var config = {
   piecemaker : {
-    host : 'http://api.piecemaker.org'
+    host : 'https://api.piecemaker.org'
   },
   media : {
     base_url : '/pm2-public/piecemaker',
