@@ -16,7 +16,10 @@
   "dependencies": {},
   "scripts": {
     "start": "static-server -p 9393 ./",
-    "bower": "npx bower install"
+    "bower": "npx bower install",
+    "docker-build": "npm run build && docker build -t motionbank/piecemaker2-frontend .",
+    "docker-push": "docker push motionbank/piecemaker2-frontend",
+    "docker-release": "npm run docker-build && npm run docker-push"
   },
   "devDependencies": {
     "bower": "^1.8.4",
